@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace FileCabinetApp
 {
@@ -113,37 +114,44 @@ namespace FileCabinetApp
 
         private static void Create(string parameters)
         {
-            Console.Write("First name: ");
-            string? firstName = Console.ReadLine();
-            Console.Write("Last name: ");
-            string? lastName = Console.ReadLine();
-            Console.Write("Date of birth: ");
-            string? dateOfBirthString = Console.ReadLine();
-            Console.Write("Age: ");
-            string? ageString = Console.ReadLine();
-            Console.Write("Savings: ");
-            string? savingsString = Console.ReadLine();
-            Console.Write("Favorite English letter: ");
-            string? letterString = Console.ReadLine();
+            bool isDone = false;
+            while (!isDone)
+            {
+                Console.Write("First name: ");
+                string? firstName = Console.ReadLine();
+                Console.Write("Last name: ");
+                string? lastName = Console.ReadLine();
+                Console.Write("Date of birth: ");
+                string? dateOfBirth = Console.ReadLine();
+                Console.Write("Age: ");
+                string? age = Console.ReadLine();
+                Console.Write("Savings: ");
+                string? savings = Console.ReadLine();
+                Console.Write("Favorite English letter: ");
+                string? letter = Console.ReadLine();
 
-            DateTime dateOfBirth;
-            short age;
-            decimal savings;
-            char letter;
-            if (DateTime.TryParse(dateOfBirthString, out dateOfBirth)
-                && firstName != null && firstName != string.Empty
-                && lastName != null && lastName != string.Empty
-                && short.TryParse(ageString, out age)
-                && decimal.TryParse(savingsString, out savings)
-                && char.TryParse(letterString, out letter))
-            {
-                Console.WriteLine(
-                    "Record #{0} is created.",
-                    Program.fileCabinetService.CreateRecord(firstName, lastName, dateOfBirth, age, savings, letter));
-            }
-            else
-            {
-                Console.WriteLine("Record is not created.");
+                try
+                {
+                    Console.WriteLine(
+                        "Record #{0} is created.",
+                        Program.fileCabinetService.CreateRecord(firstName, lastName, dateOfBirth, age, savings, letter));
+                    isDone = true;
+                }
+                catch (ArgumentNullException e)
+                {
+                    Console.WriteLine("ERROR: " + e.Message);
+                    isDone = CheckIfEscPressed();
+                }
+                catch (ArgumentException e)
+                {
+                    Console.WriteLine("ERROR: " + e.Message);
+                    isDone = CheckIfEscPressed();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                    isDone = CheckIfEscPressed();
+                }
             }
         }
 
@@ -161,6 +169,15 @@ namespace FileCabinetApp
                     record.Savings,
                     record.Letter);
             }
+        }
+
+        private static bool CheckIfEscPressed()
+        {
+            Console.Write("Press ESC to cancel entry or any other key to try again...");
+            var key = Console.ReadKey(true);
+            Console.WriteLine();
+
+            return key.Key == ConsoleKey.Escape;
         }
     }
 }
