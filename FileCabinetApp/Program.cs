@@ -10,18 +10,23 @@ namespace FileCabinetApp
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
 
+        private static FileCabinetService fileCabinetService = new FileCabinetService();
         private static bool isRunning = true;
 
         private static Tuple<string, Action<string>>[] commands = new Tuple<string, Action<string>>[]
         {
             new Tuple<string, Action<string>>("help", PrintHelp),
             new Tuple<string, Action<string>>("exit", Exit),
+            new Tuple<string, Action<string>>("stat", Stat),
+            new Tuple<string, Action<string>>("create", Create),
         };
 
         private static string[][] helpMessages = new string[][]
         {
             new string[] { "help", "prints the help screen", "The 'help' command prints the help screen." },
             new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
+            new string[] { "stat", "prints the number of records", "The 'stat' command prints the number of records." },
+            new string[] { "create", "creates a new record", "The 'create' command creates a new record." },
         };
 
         public static void Main(string[] args)
@@ -102,6 +107,24 @@ namespace FileCabinetApp
         {
             var recordsCount = Program.fileCabinetService.GetStat();
             Console.WriteLine($"{recordsCount} record(s).");
+        }
+
+        private static void Create(string parameters)
+        {
+            Console.Write("First name: ");
+            var firstName = Console.ReadLine();
+            Console.Write("Last name: ");
+            var lastName = Console.ReadLine();
+            Console.Write("Date of birth: ");
+            DateTime dateOfBirth;
+            if (DateTime.TryParse(Console.ReadLine(), out dateOfBirth))
+            {
+                Console.WriteLine("Record #{0} is created.", fileCabinetService.CreateRecord(firstName, lastName, dateOfBirth));
+            }
+            else
+            {
+                Console.WriteLine("Record is not created.");
+            }
         }
     }
 }
