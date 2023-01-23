@@ -97,5 +97,11 @@ namespace FileCabinetApp
             Console.WriteLine("Exiting an application...");
             isRunning = false;
         }
+
+        private static void Stat(string parameters)
+        {
+            var recordsCount = Program.fileCabinetService.GetStat();
+            Console.WriteLine($"{recordsCount} record(s).");
+        }
     }
 }
