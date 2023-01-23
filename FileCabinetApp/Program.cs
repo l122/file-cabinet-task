@@ -118,14 +118,28 @@ namespace FileCabinetApp
             Console.Write("Last name: ");
             string? lastName = Console.ReadLine();
             Console.Write("Date of birth: ");
+            string? dateOfBirthString = Console.ReadLine();
+            Console.Write("Age: ");
+            string? ageString = Console.ReadLine();
+            Console.Write("Savings: ");
+            string? savingsString = Console.ReadLine();
+            Console.Write("Favorite English letter: ");
+            string? letterString = Console.ReadLine();
+
             DateTime dateOfBirth;
-            if (DateTime.TryParse(Console.ReadLine(), out dateOfBirth)
+            short age;
+            decimal savings;
+            char letter;
+            if (DateTime.TryParse(dateOfBirthString, out dateOfBirth)
                 && firstName != null && firstName != string.Empty
-                && lastName != null && lastName != string.Empty)
+                && lastName != null && lastName != string.Empty
+                && short.TryParse(ageString, out age)
+                && decimal.TryParse(savingsString, out savings)
+                && char.TryParse(letterString, out letter))
             {
                 Console.WriteLine(
                     "Record #{0} is created.",
-                    Program.fileCabinetService.CreateRecord(firstName, lastName, dateOfBirth));
+                    Program.fileCabinetService.CreateRecord(firstName, lastName, dateOfBirth, age, savings, letter));
             }
             else
             {
@@ -138,11 +152,14 @@ namespace FileCabinetApp
             foreach (var record in fileCabinetService.GetRecords())
             {
                 Console.WriteLine(
-                    "#{0}, {1}, {2}, {3:yyyy-MMM-dd}",
+                    "#{0}, {1}, {2}, {3:yyyy-MMM-dd}, {4}, {5:C2}, {6}",
                     record.Id,
                     record.FirstName,
                     record.LastName,
-                    record.DateOfBirth);
+                    record.DateOfBirth,
+                    record.Age,
+                    record.Savings,
+                    record.Letter);
             }
         }
     }
