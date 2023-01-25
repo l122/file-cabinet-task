@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 
 namespace FileCabinetApp
 {
@@ -56,6 +57,18 @@ namespace FileCabinetApp
             this.list[id - 1].Age = record.Age;
             this.list[id - 1].Savings = record.Savings;
             this.list[id - 1].Letter = record.Letter;
+        }
+
+        public FileCabinetRecord[] FindByFirstName(string firstName)
+        {
+            if (firstName == null)
+            {
+                throw new ArgumentNullException(nameof(firstName));
+            }
+
+            var result = this.list.Where(p => p.FirstName.Equals(firstName, StringComparison.OrdinalIgnoreCase));
+
+            return result.ToArray();
         }
 
         private FileCabinetRecord ValidateData(

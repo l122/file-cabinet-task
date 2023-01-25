@@ -1,7 +1,7 @@
-﻿using Microsoft.VisualBasic;
-using System;
+﻿using System;
 using System.Diagnostics.Metrics;
 using System.Globalization;
+using Microsoft.VisualBasic;
 
 namespace FileCabinetApp
 {
@@ -24,6 +24,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("create", Create),
             new Tuple<string, Action<string>>("list", List),
             new Tuple<string, Action<string>>("edit", Edit),
+            new Tuple<string, Action<string>>("find", Find),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -34,6 +35,7 @@ namespace FileCabinetApp
             new string[] { "create", "creates a new record", "The 'create' command creates a new record." },
             new string[] { "list", "prints all records", "The 'list' command prints all records." },
             new string[] { "edit", "edits a record", "The 'edit #id' command edits record #id." },
+            new string[] { "find", "searches records", "The 'find <field> <criterion>' command searches all records with <field> = <criterion>." },
         };
 
         public static void Main(string[] args)
@@ -194,6 +196,41 @@ namespace FileCabinetApp
                 Console.WriteLine("Record #{0} is updated.", id);
             }
             catch (ArgumentException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        private static void Find(string parameters)
+        {
+            var input = parameters.Split(" ");
+            if (input.Length != 2)
+            {
+                Console.WriteLine("Invalid parameters.");
+                Console.WriteLine("Use syntax 'find <field> <criterion>'");
+                return;
+            }
+
+            string? field = input[0];
+            string? criterion = input[1];
+            FileCabinetRecord[] foundRecords;
+            try
+            {
+                if (field.Equals("firstname", StringComparison.OrdinalIgnoreCase))
+                {
+                    foundRecords = fileCabinetService.FindByFirstName(criterion);
+                    foreach (var record in foundRecords)
+                    {
+                        Console.WriteLine(record.ToString());
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Invalid parameters.");
+                    Console.WriteLine("Use syntax 'find <field> <criterion>'");
+                }
+            }
+            catch (ArgumentNullException e)
             {
                 Console.WriteLine(e.Message);
             }
