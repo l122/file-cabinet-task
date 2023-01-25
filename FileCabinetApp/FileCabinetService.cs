@@ -11,6 +11,7 @@ namespace FileCabinetApp
         private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
+        private readonly Dictionary<string, List<FileCabinetRecord>> dateOfBirthDictionary = new Dictionary<string, List<FileCabinetRecord>>();
 
         public int CreateRecord(
             string? firstName,
@@ -73,8 +74,7 @@ namespace FileCabinetApp
 
         public FileCabinetRecord[] FindByFirstName(string firstName)
         {
-            List<FileCabinetRecord>? result;
-            if (this.firstNameDictionary.TryGetValue(firstName.ToUpperInvariant(), out result))
+            if (this.firstNameDictionary.TryGetValue(firstName.ToUpperInvariant(), out List<FileCabinetRecord>? result))
             {
                 return result.ToArray();
             }
@@ -84,8 +84,7 @@ namespace FileCabinetApp
 
         public FileCabinetRecord[] FindByLastName(string lastName)
         {
-            List<FileCabinetRecord>? result;
-            if (this.lastNameDictionary.TryGetValue(lastName.ToUpperInvariant(), out result))
+            if (this.lastNameDictionary.TryGetValue(lastName.ToUpperInvariant(), out List<FileCabinetRecord>? result))
             {
                 return result.ToArray();
             }
@@ -95,20 +94,17 @@ namespace FileCabinetApp
 
         public FileCabinetRecord[] FindByDateOfBirth(string dateOfBirthString)
         {
-            if (dateOfBirthString == null)
+            if (DateTime.TryParse(dateOfBirthString, out DateTime dateOfBirth))
             {
-                throw new ArgumentNullException(nameof(dateOfBirthString));
+                dateOfBirthString = dateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture);
             }
 
-            DateTime dateOfBirth;
-            if (!DateTime.TryParse(dateOfBirthString, out dateOfBirth))
+            if (this.dateOfBirthDictionary.TryGetValue(dateOfBirthString, out List<FileCabinetRecord>? result))
             {
-                throw new ArgumentException("Date of birth is invalid.", nameof(dateOfBirthString));
+                return result.ToArray();
             }
 
-            var result = this.list.Where(p => p.DateOfBirth.Equals(dateOfBirth));
-
-            return result.ToArray();
+            return Array.Empty<FileCabinetRecord>();
         }
 
         private FileCabinetRecord GetValidRecord(
@@ -239,6 +235,17 @@ namespace FileCabinetApp
             {
                 this.lastNameDictionary.Add(record.LastName.ToUpperInvariant(), new List<FileCabinetRecord> { record });
             }
+
+            // Add record to dateOfBirthDictionary
+            string dateOfBirthString = record.DateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture);
+            if (this.dateOfBirthDictionary.TryGetValue(dateOfBirthString, out value))
+            {
+                value.Add(record);
+            }
+            else
+            {
+                this.dateOfBirthDictionary.Add(dateOfBirthString, new List<FileCabinetRecord> { record });
+            }
         }
 
         private void RemoveRecordFromSearchDictionaries(int inputId)
@@ -259,6 +266,15 @@ namespace FileCabinetApp
             if (recordList.Count == 0)
             {
                 this.lastNameDictionary.Remove(this.list[listId].LastName.ToUpperInvariant());
+            }
+
+            // Update dateOfBirthDictionary
+            string dateOfBirthString = this.list[listId].DateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture);
+            recordList = this.dateOfBirthDictionary[dateOfBirthString];
+            recordList.RemoveAll(p => p.Id == inputId);
+            if (recordList.Count == 0)
+            {
+                this.dateOfBirthDictionary.Remove(dateOfBirthString);
             }
         }
     }
