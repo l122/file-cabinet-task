@@ -10,6 +10,7 @@ namespace FileCabinetApp
         private static readonly DateTime MinDate = new DateTime(1950, 1, 1);
         private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
+        private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
 
         public int CreateRecord(
             string? firstName,
@@ -83,14 +84,13 @@ namespace FileCabinetApp
 
         public FileCabinetRecord[] FindByLastName(string lastName)
         {
-            if (lastName == null)
+            List<FileCabinetRecord>? result;
+            if (this.lastNameDictionary.TryGetValue(lastName.ToUpperInvariant(), out result))
             {
-                throw new ArgumentNullException(nameof(lastName));
+                return result.ToArray();
             }
 
-            var result = this.list.Where(p => p.LastName.Equals(lastName, StringComparison.OrdinalIgnoreCase));
-
-            return result.ToArray();
+            return Array.Empty<FileCabinetRecord>();
         }
 
         public FileCabinetRecord[] FindByDateOfBirth(string dateOfBirthString)
@@ -220,24 +220,45 @@ namespace FileCabinetApp
 
         private void AddRecordToSearchDictionaries(in FileCabinetRecord record)
         {
+            // Add record to firstNameDictionary
             if (this.firstNameDictionary.TryGetValue(record.FirstName.ToUpperInvariant(), out var value))
             {
                 value.Add(record);
             }
             else
             {
-                this.firstNameDictionary.Add(record.FirstName.ToUpperInvariant(), new List<FileCabinetRecord>() { record });
+                this.firstNameDictionary.Add(record.FirstName.ToUpperInvariant(), new List<FileCabinetRecord> { record });
+            }
+
+            // Add record to lastNameDictionary
+            if (this.lastNameDictionary.TryGetValue(record.LastName.ToUpperInvariant(), out value))
+            {
+                value.Add(record);
+            }
+            else
+            {
+                this.lastNameDictionary.Add(record.LastName.ToUpperInvariant(), new List<FileCabinetRecord> { record });
             }
         }
 
-        private void RemoveRecordFromSearchDictionaries(int intputId)
+        private void RemoveRecordFromSearchDictionaries(int inputId)
         {
-            int listId = intputId - 1;
+            int listId = inputId - 1;
+
+            // Update firstNameDictionary
             var recordList = this.firstNameDictionary[this.list[listId].FirstName.ToUpperInvariant()];
-            recordList.RemoveAll(p => p.Id == intputId);
+            recordList.RemoveAll(p => p.Id == inputId);
             if (recordList.Count == 0)
             {
                 this.firstNameDictionary.Remove(this.list[listId].FirstName.ToUpperInvariant());
+            }
+
+            // Update lastNameDictionary
+            recordList = this.lastNameDictionary[this.list[listId].LastName.ToUpperInvariant()];
+            recordList.RemoveAll(p => p.Id == inputId);
+            if (recordList.Count == 0)
+            {
+                this.lastNameDictionary.Remove(this.list[listId].LastName.ToUpperInvariant());
             }
         }
     }
