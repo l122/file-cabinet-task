@@ -6,6 +6,7 @@ namespace FileCabinetApp
 {
     public class FileCabinetService
     {
+        private static readonly DateTime MinDate = new DateTime(1950, 1, 1);
         private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
 
         public int CreateRecord(
@@ -16,22 +17,73 @@ namespace FileCabinetApp
             string? savingsString,
             string? letterString)
         {
-            if (firstName == null)
+            var record = this.ValidateData(firstName, lastName, dateOfBirthString, ageString, savingsString, letterString);
+
+            this.list.Add(record);
+
+            return record.Id;
+        }
+
+        public FileCabinetRecord[] GetRecords()
+        {
+            return this.list.ToArray();
+        }
+
+        public int GetStat()
+        {
+            return this.list.Count;
+        }
+
+        public void EditRecord(
+            int id,
+            string? firstName,
+            string? lastName,
+            string? dateOfBirthString,
+            string? ageString,
+            string? savingsString,
+            string? letterString)
+        {
+            if (id < 1 || id > this.list.Count)
             {
-                throw new ArgumentNullException(nameof(firstName));
+                throw new ArgumentException("id is not found.", nameof(id));
             }
 
-            if (firstName.Trim().Length < 2 || firstName.Trim().Length > 60)
+            var record = this.ValidateData(firstName, lastName, dateOfBirthString, ageString, savingsString, letterString);
+
+            this.list[id - 1].FirstName = record.FirstName;
+            this.list[id - 1].LastName = record.LastName;
+            this.list[id - 1].DateOfBirth = record.DateOfBirth;
+            this.list[id - 1].Age = record.Age;
+            this.list[id - 1].Savings = record.Savings;
+            this.list[id - 1].Letter = record.Letter;
+        }
+
+        private FileCabinetRecord ValidateData(
+            string? firstName,
+            string? lastName,
+            string? dateOfBirthString,
+            string? ageString,
+            string? savingsString,
+            string? letterString)
+        {
+            if (string.IsNullOrWhiteSpace(firstName))
+            {
+                throw new ArgumentException("First name cannot be empty or have only white spaces.", nameof(firstName));
+            }
+
+            firstName = firstName.Trim();
+            if (firstName.Length < 2 || firstName.Length > 60)
             {
                 throw new ArgumentException("First name has to have at least 2 and maximum 60 characters.", nameof(firstName));
             }
 
-            if (lastName == null)
+            if (string.IsNullOrWhiteSpace(lastName))
             {
-                throw new ArgumentNullException(nameof(lastName));
+                throw new ArgumentException("Last name cannot be empty or have only white spaces.", nameof(lastName));
             }
 
-            if (lastName.Trim().Length < 2 || lastName.Trim().Length > 60)
+            lastName = lastName.Trim();
+            if (lastName.Length < 2 || lastName.Length > 60)
             {
                 throw new ArgumentException("Last name has to have at least 2 and maximum 60 characters.", nameof(lastName));
             }
@@ -47,7 +99,7 @@ namespace FileCabinetApp
                 throw new ArgumentException("Date of birth is invalid.", nameof(dateOfBirthString));
             }
 
-            if (DateTime.Compare(dateOfBirth, new DateTime(1950, 1, 1)) < 0
+            if (DateTime.Compare(dateOfBirth, MinDate) < 0
                 || DateTime.Compare(dateOfBirth, DateTime.Today) > 0)
             {
                 throw new ArgumentException("Date of birth should be within 01-Jan-1950 and today.", nameof(dateOfBirthString));
@@ -101,7 +153,7 @@ namespace FileCabinetApp
                 throw new ArgumentException("Not an English letter.", nameof(letterString));
             }
 
-            var record = new FileCabinetRecord
+            return new FileCabinetRecord
             {
                 Id = this.list.Count + 1,
                 FirstName = firstName,
@@ -111,20 +163,6 @@ namespace FileCabinetApp
                 Savings = savings,
                 Letter = letter,
             };
-
-            this.list.Add(record);
-
-            return record.Id;
-        }
-
-        public FileCabinetRecord[] GetRecords()
-        {
-            return this.list.ToArray();
-        }
-
-        public int GetStat()
-        {
-            return this.list.Count;
         }
     }
 }

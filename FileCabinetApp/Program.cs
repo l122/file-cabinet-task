@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.VisualBasic;
+using System;
+using System.Diagnostics.Metrics;
 using System.Globalization;
 
 namespace FileCabinetApp
@@ -11,7 +13,7 @@ namespace FileCabinetApp
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
 
-        private static FileCabinetService fileCabinetService = new FileCabinetService();
+        private static FileCabinetService fileCabinetService = new ();
         private static bool isRunning = true;
 
         private static Tuple<string, Action<string>>[] commands = new Tuple<string, Action<string>>[]
@@ -21,6 +23,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("stat", Stat),
             new Tuple<string, Action<string>>("create", Create),
             new Tuple<string, Action<string>>("list", List),
+            new Tuple<string, Action<string>>("edit", Edit),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -30,6 +33,7 @@ namespace FileCabinetApp
             new string[] { "stat", "prints the number of records", "The 'stat' command prints the number of records." },
             new string[] { "create", "creates a new record", "The 'create' command creates a new record." },
             new string[] { "list", "prints all records", "The 'list' command prints all records." },
+            new string[] { "edit", "edits a record", "The 'edit #id' command edits record #id." },
         };
 
         public static void Main(string[] args)
@@ -117,18 +121,13 @@ namespace FileCabinetApp
             bool isDone = false;
             while (!isDone)
             {
-                Console.Write("First name: ");
-                string? firstName = Console.ReadLine();
-                Console.Write("Last name: ");
-                string? lastName = Console.ReadLine();
-                Console.Write("Date of birth: ");
-                string? dateOfBirth = Console.ReadLine();
-                Console.Write("Age: ");
-                string? age = Console.ReadLine();
-                Console.Write("Savings: ");
-                string? savings = Console.ReadLine();
-                Console.Write("Favorite English letter: ");
-                string? letter = Console.ReadLine();
+                GetData(
+                    out string? firstName,
+                    out string? lastName,
+                    out string? dateOfBirth,
+                    out string? age,
+                    out string? savings,
+                    out string? letter);
 
                 try
                 {
@@ -139,19 +138,28 @@ namespace FileCabinetApp
                 }
                 catch (ArgumentNullException e)
                 {
-                    Console.WriteLine("ERROR: " + e.Message);
+                    Console.WriteLine("\nERROR: " + e.Message);
                     isDone = CheckIfEscPressed();
                 }
                 catch (ArgumentException e)
                 {
-                    Console.WriteLine("ERROR: " + e.Message);
+                    Console.WriteLine("\nERROR: " + e.Message);
                     isDone = CheckIfEscPressed();
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e.Message);
+                    Console.WriteLine("\n" + e.Message);
                     isDone = CheckIfEscPressed();
                 }
+            }
+
+            bool CheckIfEscPressed()
+            {
+                Console.Write("Press ESC to cancel entry or any other key to try again...");
+                var key = Console.ReadKey(true);
+                Console.WriteLine(Environment.NewLine);
+
+                return key.Key == ConsoleKey.Escape;
             }
         }
 
@@ -159,25 +167,58 @@ namespace FileCabinetApp
         {
             foreach (var record in fileCabinetService.GetRecords())
             {
-                Console.WriteLine(
-                    "#{0}, {1}, {2}, {3:yyyy-MMM-dd}, {4}, {5:C2}, {6}",
-                    record.Id,
-                    record.FirstName,
-                    record.LastName,
-                    record.DateOfBirth,
-                    record.Age,
-                    record.Savings,
-                    record.Letter);
+                Console.WriteLine(record.ToString());
             }
         }
 
-        private static bool CheckIfEscPressed()
+        private static void Edit(string parameters)
         {
-            Console.Write("Press ESC to cancel entry or any other key to try again...");
-            var key = Console.ReadKey(true);
-            Console.WriteLine();
+            var recordsCount = Program.fileCabinetService.GetStat();
+            if (!int.TryParse(parameters, out int id) || id < 1 || id > recordsCount)
+            {
+                Console.WriteLine("#{0} record is not found.", id);
+                return;
+            }
 
-            return key.Key == ConsoleKey.Escape;
+            GetData(
+                out string? firstName,
+                out string? lastName,
+                out string? dateOfBirth,
+                out string? age,
+                out string? savings,
+                out string? letter);
+
+            try
+            {
+                fileCabinetService.EditRecord(id, firstName, lastName, dateOfBirth, age, savings, letter);
+                Console.WriteLine("Record #{0} is updated.", id);
+            }
+            catch (ArgumentException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        private static void GetData(
+            out string? firstName,
+            out string? lastName,
+            out string? dateOfBirth,
+            out string? age,
+            out string? savings,
+            out string? letter)
+        {
+            Console.Write("First name: ");
+            firstName = Console.ReadLine();
+            Console.Write("Last name: ");
+            lastName = Console.ReadLine();
+            Console.Write("Date of birth: ");
+            dateOfBirth = Console.ReadLine();
+            Console.Write("Age: ");
+            age = Console.ReadLine();
+            Console.Write("Savings: ");
+            savings = Console.ReadLine();
+            Console.Write("Favorite English letter: ");
+            letter = Console.ReadLine();
         }
     }
 }
