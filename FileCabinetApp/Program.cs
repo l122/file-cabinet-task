@@ -1,7 +1,7 @@
-﻿using Microsoft.VisualBasic;
-using System;
+﻿using System;
 using System.Diagnostics.Metrics;
 using System.Globalization;
+using Microsoft.VisualBasic;
 
 namespace FileCabinetApp
 {
@@ -24,6 +24,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("create", Create),
             new Tuple<string, Action<string>>("list", List),
             new Tuple<string, Action<string>>("edit", Edit),
+            new Tuple<string, Action<string>>("find", Find),
         };
 
         private static string[][] helpMessages = new string[][]
@@ -34,6 +35,7 @@ namespace FileCabinetApp
             new string[] { "create", "creates a new record", "The 'create' command creates a new record." },
             new string[] { "list", "prints all records", "The 'list' command prints all records." },
             new string[] { "edit", "edits a record", "The 'edit #id' command edits record #id." },
+            new string[] { "find", "searches records", "The 'find <field> <criterion>' command searches all records with <field> = <criterion>." },
         };
 
         public static void Main(string[] args)
@@ -165,10 +167,7 @@ namespace FileCabinetApp
 
         private static void List(string parameters)
         {
-            foreach (var record in fileCabinetService.GetRecords())
-            {
-                Console.WriteLine(record.ToString());
-            }
+            PrintRecords(fileCabinetService.GetRecords());
         }
 
         private static void Edit(string parameters)
@@ -199,6 +198,54 @@ namespace FileCabinetApp
             }
         }
 
+        private static void Find(string parameters)
+        {
+            const string firstNameField = "firstname";
+            const string lastNameField = "lastname";
+            const string dateOfBirthField = "dateofbirth";
+
+            var input = parameters.Split(" ");
+            if (input.Length != 2)
+            {
+                Console.WriteLine("Invalid parameters.");
+                Console.WriteLine("Use syntax 'find <field> <criterion>'");
+                return;
+            }
+
+            string field = input[0].ToLower(CultureInfo.InvariantCulture);
+            string criterion = input[1].Trim('"');
+            try
+            {
+                switch (field)
+                {
+                    case firstNameField:
+                        PrintRecords(fileCabinetService.FindByFirstName(criterion));
+                        break;
+
+                    case lastNameField:
+                        PrintRecords(fileCabinetService.FindByLastName(criterion));
+                        break;
+
+                    case dateOfBirthField:
+                        PrintRecords(fileCabinetService.FindByDateOfBirth(criterion));
+                        break;
+
+                    default:
+                        Console.WriteLine("Invalid parameters.");
+                        Console.WriteLine("Use syntax 'find <field> <criterion>'");
+                        break;
+                }
+            }
+            catch (ArgumentNullException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            catch (ArgumentException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
         private static void GetData(
             out string? firstName,
             out string? lastName,
@@ -219,6 +266,19 @@ namespace FileCabinetApp
             savings = Console.ReadLine();
             Console.Write("Favorite English letter: ");
             letter = Console.ReadLine();
+        }
+
+        private static void PrintRecords(FileCabinetRecord[] records)
+        {
+            if (records == null)
+            {
+                return;
+            }
+
+            foreach (var record in records)
+            {
+                Console.WriteLine(record.ToString());
+            }
         }
     }
 }

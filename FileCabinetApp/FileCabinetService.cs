@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 
 namespace FileCabinetApp
 {
@@ -8,6 +9,9 @@ namespace FileCabinetApp
     {
         private static readonly DateTime MinDate = new DateTime(1950, 1, 1);
         private readonly List<FileCabinetRecord> list = new List<FileCabinetRecord>();
+        private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
+        private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
+        private readonly Dictionary<string, List<FileCabinetRecord>> dateOfBirthDictionary = new Dictionary<string, List<FileCabinetRecord>>();
 
         public int CreateRecord(
             string? firstName,
@@ -17,9 +21,11 @@ namespace FileCabinetApp
             string? savingsString,
             string? letterString)
         {
-            var record = this.ValidateData(firstName, lastName, dateOfBirthString, ageString, savingsString, letterString);
+            var record = this.GetValidRecord(firstName, lastName, dateOfBirthString, ageString, savingsString, letterString);
 
             this.list.Add(record);
+
+            this.AddRecordToSearchDictionaries(record);
 
             return record.Id;
         }
@@ -48,17 +54,60 @@ namespace FileCabinetApp
                 throw new ArgumentException("id is not found.", nameof(id));
             }
 
-            var record = this.ValidateData(firstName, lastName, dateOfBirthString, ageString, savingsString, letterString);
+            var record = this.GetValidRecord(firstName, lastName, dateOfBirthString, ageString, savingsString, letterString);
 
-            this.list[id - 1].FirstName = record.FirstName;
-            this.list[id - 1].LastName = record.LastName;
-            this.list[id - 1].DateOfBirth = record.DateOfBirth;
-            this.list[id - 1].Age = record.Age;
-            this.list[id - 1].Savings = record.Savings;
-            this.list[id - 1].Letter = record.Letter;
+            this.RemoveRecordFromSearchDictionaries(id);
+
+            // Update record
+            int listId = id - 1;
+            this.list[listId].FirstName = record.FirstName;
+            this.list[listId].LastName = record.LastName;
+            this.list[listId].DateOfBirth = record.DateOfBirth;
+            this.list[listId].Age = record.Age;
+            this.list[listId].Savings = record.Savings;
+            this.list[listId].Letter = record.Letter;
+
+            // Assign correct id to record, because function 'GetValidRecord' returned a record with id = list.count
+            record.Id = id;
+            this.AddRecordToSearchDictionaries(record);
         }
 
-        private FileCabinetRecord ValidateData(
+        public FileCabinetRecord[] FindByFirstName(string firstName)
+        {
+            if (this.firstNameDictionary.TryGetValue(firstName.ToUpperInvariant(), out List<FileCabinetRecord>? result))
+            {
+                return result.ToArray();
+            }
+
+            return Array.Empty<FileCabinetRecord>();
+        }
+
+        public FileCabinetRecord[] FindByLastName(string lastName)
+        {
+            if (this.lastNameDictionary.TryGetValue(lastName.ToUpperInvariant(), out List<FileCabinetRecord>? result))
+            {
+                return result.ToArray();
+            }
+
+            return Array.Empty<FileCabinetRecord>();
+        }
+
+        public FileCabinetRecord[] FindByDateOfBirth(string dateOfBirthString)
+        {
+            if (DateTime.TryParse(dateOfBirthString, out DateTime dateOfBirth))
+            {
+                dateOfBirthString = dateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture);
+            }
+
+            if (this.dateOfBirthDictionary.TryGetValue(dateOfBirthString, out List<FileCabinetRecord>? result))
+            {
+                return result.ToArray();
+            }
+
+            return Array.Empty<FileCabinetRecord>();
+        }
+
+        private FileCabinetRecord GetValidRecord(
             string? firstName,
             string? lastName,
             string? dateOfBirthString,
@@ -163,6 +212,70 @@ namespace FileCabinetApp
                 Savings = savings,
                 Letter = letter,
             };
+        }
+
+        private void AddRecordToSearchDictionaries(in FileCabinetRecord record)
+        {
+            // Add record to firstNameDictionary
+            if (this.firstNameDictionary.TryGetValue(record.FirstName.ToUpperInvariant(), out var value))
+            {
+                value.Add(record);
+            }
+            else
+            {
+                this.firstNameDictionary.Add(record.FirstName.ToUpperInvariant(), new List<FileCabinetRecord> { record });
+            }
+
+            // Add record to lastNameDictionary
+            if (this.lastNameDictionary.TryGetValue(record.LastName.ToUpperInvariant(), out value))
+            {
+                value.Add(record);
+            }
+            else
+            {
+                this.lastNameDictionary.Add(record.LastName.ToUpperInvariant(), new List<FileCabinetRecord> { record });
+            }
+
+            // Add record to dateOfBirthDictionary
+            string dateOfBirthString = record.DateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture);
+            if (this.dateOfBirthDictionary.TryGetValue(dateOfBirthString, out value))
+            {
+                value.Add(record);
+            }
+            else
+            {
+                this.dateOfBirthDictionary.Add(dateOfBirthString, new List<FileCabinetRecord> { record });
+            }
+        }
+
+        private void RemoveRecordFromSearchDictionaries(int inputId)
+        {
+            int listId = inputId - 1;
+
+            // Update firstNameDictionary
+            var recordList = this.firstNameDictionary[this.list[listId].FirstName.ToUpperInvariant()];
+            recordList.RemoveAll(p => p.Id == inputId);
+            if (recordList.Count == 0)
+            {
+                this.firstNameDictionary.Remove(this.list[listId].FirstName.ToUpperInvariant());
+            }
+
+            // Update lastNameDictionary
+            recordList = this.lastNameDictionary[this.list[listId].LastName.ToUpperInvariant()];
+            recordList.RemoveAll(p => p.Id == inputId);
+            if (recordList.Count == 0)
+            {
+                this.lastNameDictionary.Remove(this.list[listId].LastName.ToUpperInvariant());
+            }
+
+            // Update dateOfBirthDictionary
+            string dateOfBirthString = this.list[listId].DateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture);
+            recordList = this.dateOfBirthDictionary[dateOfBirthString];
+            recordList.RemoveAll(p => p.Id == inputId);
+            if (recordList.Count == 0)
+            {
+                this.dateOfBirthDictionary.Remove(dateOfBirthString);
+            }
         }
     }
 }
