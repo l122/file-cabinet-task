@@ -71,6 +71,18 @@ namespace FileCabinetApp
             return result.ToArray();
         }
 
+        public FileCabinetRecord[] FindByLastName(string lastName)
+        {
+            if (lastName == null)
+            {
+                throw new ArgumentNullException(nameof(lastName));
+            }
+
+            var result = this.list.Where(p => p.LastName.Equals(lastName, StringComparison.OrdinalIgnoreCase));
+
+            return result.ToArray();
+        }
+
         private FileCabinetRecord ValidateData(
             string? firstName,
             string? lastName,

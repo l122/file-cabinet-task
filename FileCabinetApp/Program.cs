@@ -167,10 +167,7 @@ namespace FileCabinetApp
 
         private static void List(string parameters)
         {
-            foreach (var record in fileCabinetService.GetRecords())
-            {
-                Console.WriteLine(record.ToString());
-            }
+            PrintRecords(fileCabinetService.GetRecords());
         }
 
         private static void Edit(string parameters)
@@ -203,6 +200,9 @@ namespace FileCabinetApp
 
         private static void Find(string parameters)
         {
+            const string firstNameField = "firstname";
+            const string lastNameField = "lastname";
+
             var input = parameters.Split(" ");
             if (input.Length != 2)
             {
@@ -211,23 +211,27 @@ namespace FileCabinetApp
                 return;
             }
 
-            string? field = input[0];
-            string? criterion = input[1];
+            string field = input[0].ToLower(CultureInfo.InvariantCulture);
+            string criterion = input[1].Trim('"');
             FileCabinetRecord[] foundRecords;
             try
             {
-                if (field.Equals("firstname", StringComparison.OrdinalIgnoreCase))
+                switch (field)
                 {
-                    foundRecords = fileCabinetService.FindByFirstName(criterion);
-                    foreach (var record in foundRecords)
-                    {
-                        Console.WriteLine(record.ToString());
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("Invalid parameters.");
-                    Console.WriteLine("Use syntax 'find <field> <criterion>'");
+                    case firstNameField:
+                        foundRecords = fileCabinetService.FindByFirstName(criterion);
+                        PrintRecords(foundRecords);
+                        break;
+
+                    case lastNameField:
+                        foundRecords = fileCabinetService.FindByLastName(criterion);
+                        PrintRecords(foundRecords);
+                        break;
+
+                    default:
+                        Console.WriteLine("Invalid parameters.");
+                        Console.WriteLine("Use syntax 'find <field> <criterion>'");
+                        break;
                 }
             }
             catch (ArgumentNullException e)
@@ -256,6 +260,14 @@ namespace FileCabinetApp
             savings = Console.ReadLine();
             Console.Write("Favorite English letter: ");
             letter = Console.ReadLine();
+        }
+
+        private static void PrintRecords(FileCabinetRecord[] records)
+        {
+            foreach (var record in records)
+            {
+                Console.WriteLine(record.ToString());
+            }
         }
     }
 }
