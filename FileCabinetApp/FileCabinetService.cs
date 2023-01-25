@@ -83,6 +83,24 @@ namespace FileCabinetApp
             return result.ToArray();
         }
 
+        public FileCabinetRecord[] FindByDateOfBirth(string dateOfBirthString)
+        {
+            if (dateOfBirthString == null)
+            {
+                throw new ArgumentNullException(nameof(dateOfBirthString));
+            }
+
+            DateTime dateOfBirth;
+            if (!DateTime.TryParse(dateOfBirthString, out dateOfBirth))
+            {
+                throw new ArgumentException("Date of birth is invalid.", nameof(dateOfBirthString));
+            }
+
+            var result = this.list.Where(p => p.DateOfBirth.Equals(dateOfBirth));
+
+            return result.ToArray();
+        }
+
         private FileCabinetRecord ValidateData(
             string? firstName,
             string? lastName,

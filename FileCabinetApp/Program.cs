@@ -202,6 +202,7 @@ namespace FileCabinetApp
         {
             const string firstNameField = "firstname";
             const string lastNameField = "lastname";
+            const string dateOfBirthField = "dateofbirth";
 
             var input = parameters.Split(" ");
             if (input.Length != 2)
@@ -213,19 +214,20 @@ namespace FileCabinetApp
 
             string field = input[0].ToLower(CultureInfo.InvariantCulture);
             string criterion = input[1].Trim('"');
-            FileCabinetRecord[] foundRecords;
             try
             {
                 switch (field)
                 {
                     case firstNameField:
-                        foundRecords = fileCabinetService.FindByFirstName(criterion);
-                        PrintRecords(foundRecords);
+                        PrintRecords(fileCabinetService.FindByFirstName(criterion));
                         break;
 
                     case lastNameField:
-                        foundRecords = fileCabinetService.FindByLastName(criterion);
-                        PrintRecords(foundRecords);
+                        PrintRecords(fileCabinetService.FindByLastName(criterion));
+                        break;
+
+                    case dateOfBirthField:
+                        PrintRecords(fileCabinetService.FindByDateOfBirth(criterion));
                         break;
 
                     default:
@@ -235,6 +237,10 @@ namespace FileCabinetApp
                 }
             }
             catch (ArgumentNullException e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            catch (ArgumentException e)
             {
                 Console.WriteLine(e.Message);
             }
@@ -264,6 +270,11 @@ namespace FileCabinetApp
 
         private static void PrintRecords(FileCabinetRecord[] records)
         {
+            if (records == null)
+            {
+                return;
+            }
+
             foreach (var record in records)
             {
                 Console.WriteLine(record.ToString());
