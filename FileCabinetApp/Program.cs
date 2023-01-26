@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Diagnostics.Metrics;
 using System.Globalization;
-using Microsoft.VisualBasic;
 
 namespace FileCabinetApp
 {
@@ -13,10 +11,8 @@ namespace FileCabinetApp
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
 
-        private static FileCabinetService fileCabinetService = new ();
-        private static bool isRunning = true;
-
-        private static Tuple<string, Action<string>>[] commands = new Tuple<string, Action<string>>[]
+        private static readonly FileCabinetService FileCabinetService = new ();
+        private static readonly Tuple<string, Action<string>>[] Commands = new Tuple<string, Action<string>>[]
         {
             new Tuple<string, Action<string>>("help", PrintHelp),
             new Tuple<string, Action<string>>("exit", Exit),
@@ -27,7 +23,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("find", Find),
         };
 
-        private static string[][] helpMessages = new string[][]
+        private static readonly string[][] HelpMessages = new string[][]
         {
             new string[] { "help", "prints the help screen", "The 'help' command prints the help screen." },
             new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
@@ -35,8 +31,10 @@ namespace FileCabinetApp
             new string[] { "create", "creates a new record", "The 'create' command creates a new record." },
             new string[] { "list", "prints all records", "The 'list' command prints all records." },
             new string[] { "edit", "edits a record", "The 'edit #id' command edits record #id." },
-            new string[] { "find", "searches records", "The 'find <field> <criterion>' command searches all records with <field> = <criterion>." },
+            new string[] { "find", "searches records", "The 'find <firstname, lastname, dateofbirth> <criterion>' command searches all records with <field> = <criterion>." },
         };
+
+        private static bool isRunning = true;
 
         public static void Main(string[] args)
         {
@@ -58,12 +56,12 @@ namespace FileCabinetApp
                     continue;
                 }
 
-                var index = Array.FindIndex(commands, 0, commands.Length, i => i.Item1.Equals(command, StringComparison.OrdinalIgnoreCase));
+                var index = Array.FindIndex(Commands, 0, Commands.Length, i => i.Item1.Equals(command, StringComparison.OrdinalIgnoreCase));
                 if (index >= 0)
                 {
                     const int parametersIndex = 1;
                     var parameters = inputs.Length > 1 ? inputs[parametersIndex] : string.Empty;
-                    commands[index].Item2(parameters);
+                    Commands[index].Item2(parameters);
                 }
                 else
                 {
@@ -83,10 +81,10 @@ namespace FileCabinetApp
         {
             if (!string.IsNullOrEmpty(parameters))
             {
-                var index = Array.FindIndex(helpMessages, 0, helpMessages.Length, i => string.Equals(i[Program.CommandHelpIndex], parameters, StringComparison.OrdinalIgnoreCase));
+                var index = Array.FindIndex(HelpMessages, 0, HelpMessages.Length, i => string.Equals(i[Program.CommandHelpIndex], parameters, StringComparison.OrdinalIgnoreCase));
                 if (index >= 0)
                 {
-                    Console.WriteLine(helpMessages[index][Program.ExplanationHelpIndex]);
+                    Console.WriteLine(HelpMessages[index][Program.ExplanationHelpIndex]);
                 }
                 else
                 {
@@ -97,7 +95,7 @@ namespace FileCabinetApp
             {
                 Console.WriteLine("Available commands:");
 
-                foreach (var helpMessage in helpMessages)
+                foreach (var helpMessage in HelpMessages)
                 {
                     Console.WriteLine("\t{0}\t- {1}", helpMessage[Program.CommandHelpIndex], helpMessage[Program.DescriptionHelpIndex]);
                 }
@@ -114,7 +112,7 @@ namespace FileCabinetApp
 
         private static void Stat(string parameters)
         {
-            var recordsCount = Program.fileCabinetService.GetStat();
+            var recordsCount = Program.FileCabinetService.GetStat();
             Console.WriteLine($"{recordsCount} record(s).");
         }
 
@@ -127,52 +125,52 @@ namespace FileCabinetApp
                     out string? firstName,
                     out string? lastName,
                     out string? dateOfBirth,
-                    out string? age,
-                    out string? savings,
-                    out string? letter);
+                    out string? workPlaceNumber,
+                    out string? salary,
+                    out string? department);
 
                 try
                 {
                     Console.WriteLine(
                         "Record #{0} is created.",
-                        Program.fileCabinetService.CreateRecord(firstName, lastName, dateOfBirth, age, savings, letter));
+                        Program.FileCabinetService.CreateRecord(firstName, lastName, dateOfBirth, workPlaceNumber, salary, department));
                     isDone = true;
                 }
                 catch (ArgumentNullException e)
                 {
-                    Console.WriteLine("\nERROR: " + e.Message);
+                    Console.WriteLine($"\nERROR: {0}", e.Message);
                     isDone = CheckIfEscPressed();
                 }
                 catch (ArgumentException e)
                 {
-                    Console.WriteLine("\nERROR: " + e.Message);
+                    Console.WriteLine($"\nERROR: {0}", e.Message);
                     isDone = CheckIfEscPressed();
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("\n" + e.Message);
+                    Console.WriteLine($"\nERROR: {0}", e.Message);
                     isDone = CheckIfEscPressed();
                 }
             }
+        }
 
-            bool CheckIfEscPressed()
-            {
-                Console.Write("Press ESC to cancel entry or any other key to try again...");
-                var key = Console.ReadKey(true);
-                Console.WriteLine(Environment.NewLine);
+        private static bool CheckIfEscPressed()
+        {
+            Console.Write("Press ESC to cancel entry or any other key to try again...");
+            var key = Console.ReadKey(true);
+            Console.WriteLine(Environment.NewLine);
 
-                return key.Key == ConsoleKey.Escape;
-            }
+            return key.Key == ConsoleKey.Escape;
         }
 
         private static void List(string parameters)
         {
-            PrintRecords(fileCabinetService.GetRecords());
+            PrintRecords(FileCabinetService.GetRecords());
         }
 
         private static void Edit(string parameters)
         {
-            var recordsCount = Program.fileCabinetService.GetStat();
+            var recordsCount = Program.FileCabinetService.GetStat();
             if (!int.TryParse(parameters, out int id) || id < 1 || id > recordsCount)
             {
                 Console.WriteLine("#{0} record is not found.", id);
@@ -183,13 +181,13 @@ namespace FileCabinetApp
                 out string? firstName,
                 out string? lastName,
                 out string? dateOfBirth,
-                out string? age,
-                out string? savings,
-                out string? letter);
+                out string? workPlaceNumber,
+                out string? salary,
+                out string? department);
 
             try
             {
-                fileCabinetService.EditRecord(id, firstName, lastName, dateOfBirth, age, savings, letter);
+                FileCabinetService.EditRecord(id, firstName, lastName, dateOfBirth, workPlaceNumber, salary, department);
                 Console.WriteLine("Record #{0} is updated.", id);
             }
             catch (ArgumentException e)
@@ -208,7 +206,7 @@ namespace FileCabinetApp
             if (input.Length != 2)
             {
                 Console.WriteLine("Invalid parameters.");
-                Console.WriteLine("Use syntax 'find <field> <criterion>'");
+                Console.WriteLine("Use syntax 'find <firstname, lastname, dateofbirth> <criterion>'");
                 return;
             }
 
@@ -219,20 +217,20 @@ namespace FileCabinetApp
                 switch (field)
                 {
                     case firstNameField:
-                        PrintRecords(fileCabinetService.FindByFirstName(criterion));
+                        PrintRecords(FileCabinetService.FindByFirstName(criterion));
                         break;
 
                     case lastNameField:
-                        PrintRecords(fileCabinetService.FindByLastName(criterion));
+                        PrintRecords(FileCabinetService.FindByLastName(criterion));
                         break;
 
                     case dateOfBirthField:
-                        PrintRecords(fileCabinetService.FindByDateOfBirth(criterion));
+                        PrintRecords(FileCabinetService.FindByDateOfBirth(criterion));
                         break;
 
                     default:
                         Console.WriteLine("Invalid parameters.");
-                        Console.WriteLine("Use syntax 'find <field> <criterion>'");
+                        Console.WriteLine("Use syntax 'find <firstname, lastname, dateofbirth> <criterion>'");
                         break;
                 }
             }
@@ -250,9 +248,9 @@ namespace FileCabinetApp
             out string? firstName,
             out string? lastName,
             out string? dateOfBirth,
-            out string? age,
-            out string? savings,
-            out string? letter)
+            out string? workPlaceNumber,
+            out string? salary,
+            out string? department)
         {
             Console.Write("First name: ");
             firstName = Console.ReadLine();
@@ -260,12 +258,12 @@ namespace FileCabinetApp
             lastName = Console.ReadLine();
             Console.Write("Date of birth: ");
             dateOfBirth = Console.ReadLine();
-            Console.Write("Age: ");
-            age = Console.ReadLine();
-            Console.Write("Savings: ");
-            savings = Console.ReadLine();
-            Console.Write("Favorite English letter: ");
-            letter = Console.ReadLine();
+            Console.Write("Work Place Number: ");
+            workPlaceNumber = Console.ReadLine();
+            Console.Write("Salary: ");
+            salary = Console.ReadLine();
+            Console.Write("Department (one letter): ");
+            department = Console.ReadLine();
         }
 
         private static void PrintRecords(FileCabinetRecord[] records)

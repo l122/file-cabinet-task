@@ -14,11 +14,11 @@ namespace FileCabinetApp
 
         public DateTime DateOfBirth { get; set; }
 
-        public short Age { get; set; }
+        public short WorkPlaceNumber { get; set; }
 
-        public decimal Savings { get; set; }
+        public decimal Salary { get; set; }
 
-        public char Letter { get; set; }
+        public char Department { get; set; }
 
         public override string ToString()
         {
@@ -27,9 +27,9 @@ namespace FileCabinetApp
             builder.Append(CultureInfo.InvariantCulture, $"{this.FirstName}, ");
             builder.Append(CultureInfo.InvariantCulture, $"{this.LastName}, ");
             builder.Append(CultureInfo.InvariantCulture, $"{this.DateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture)}, ");
-            builder.Append(CultureInfo.InvariantCulture, $"{this.Age}, ");
-            builder.Append(CultureInfo.InvariantCulture, $"{this.Savings}, ");
-            builder.Append(CultureInfo.InvariantCulture, $"{this.Letter}");
+            builder.Append(CultureInfo.InvariantCulture, $"{this.WorkPlaceNumber}, ");
+            builder.Append(CultureInfo.InvariantCulture, $"{this.Salary}, ");
+            builder.Append(CultureInfo.InvariantCulture, $"{this.Department}");
             return builder.ToString();
         }
     }
