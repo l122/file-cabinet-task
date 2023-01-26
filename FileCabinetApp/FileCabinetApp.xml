@@ -7,6 +7,7 @@
         <member name="T:FileCabinetApp.FileCabinetCustomService">
             <summary>
             Helper class with default parameters.
+            Inherits <see cref="T:FileCabinetApp.FileCabinetService"/>.
             </summary>
         </member>
         <member name="F:FileCabinetApp.FileCabinetCustomService.MinDate">
@@ -26,6 +27,7 @@
         <member name="T:FileCabinetApp.FileCabinetDefaultService">
             <summary>
             Helper class with default parameters.
+            Inherits <see cref="T:FileCabinetApp.FileCabinetService"/>.
             </summary>
         </member>
         <member name="M:FileCabinetApp.FileCabinetDefaultService.ValidateParameters(FileCabinetApp.FileCabinetService.RecordParameters)">
@@ -228,6 +230,13 @@
             The Main method class of the program.
             </summary>
             <param name="args">The <see cref="T:System.String"/> array instance of input arguments.</param>
+        </member>
+        <member name="M:FileCabinetApp.Program.SetFileCabinetServiceInstance(System.String[])">
+            <summary>
+            Creates and sets a <see cref="T:FileCabinetApp.FileCabinetService"/> instance with the type, depending on input args.
+            </summary>
+            <param name="args">The <see cref="T:System.String"/> array instance of input arguments.</param>
+            <exception cref="T:System.ArgumentException">Invalid validation rule flag.</exception>
         </member>
     </members>
 </doc>

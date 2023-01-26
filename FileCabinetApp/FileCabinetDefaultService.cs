@@ -5,6 +5,7 @@ namespace FileCabinetApp
 {
     /// <summary>
     /// Helper class with default parameters.
+    /// Inherits <see cref="FileCabinetService"/>.
     /// </summary>
     public class FileCabinetDefaultService : FileCabinetService
     {

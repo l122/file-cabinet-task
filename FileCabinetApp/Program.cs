@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
 
 [assembly: CLSCompliant(true)]
 
@@ -16,7 +17,6 @@ namespace FileCabinetApp
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
 
-        private static readonly FileCabinetCustomService FileCabinetService = new ();
         private static readonly Tuple<string, Action<string>>[] Commands = new Tuple<string, Action<string>>[]
         {
             new Tuple<string, Action<string>>("help", PrintHelp),
@@ -39,6 +39,7 @@ namespace FileCabinetApp
             new string[] { "find", "searches records", "The 'find <firstname, lastname, dateofbirth> <criterion>' command searches all records with <field> = <criterion>." },
         };
 
+        private static FileCabinetService fileCabinetService = new FileCabinetDefaultService();
         private static bool isRunning = true;
 
         /// <summary>
@@ -50,6 +51,8 @@ namespace FileCabinetApp
             Console.WriteLine($"File Cabinet Application, developed by {Program.DeveloperName}");
             Console.WriteLine(Program.HintMessage);
             Console.WriteLine();
+
+            SetFileCabinetServiceInstance(args);
 
             do
             {
@@ -121,7 +124,7 @@ namespace FileCabinetApp
 
         private static void Stat(string parameters)
         {
-            var recordsCount = Program.FileCabinetService.GetStat();
+            var recordsCount = Program.fileCabinetService.GetStat();
             Console.WriteLine($"{recordsCount} record(s).");
         }
 
@@ -136,7 +139,7 @@ namespace FileCabinetApp
                 {
                     Console.WriteLine(
                         "Record #{0} is created.",
-                        FileCabinetService.CreateRecord(recordParameters));
+                        fileCabinetService.CreateRecord(recordParameters));
                     isDone = true;
                 }
                 catch (ArgumentNullException e)
@@ -168,12 +171,12 @@ namespace FileCabinetApp
 
         private static void List(string parameters)
         {
-            PrintRecords(FileCabinetService.GetRecords());
+            PrintRecords(fileCabinetService.GetRecords());
         }
 
         private static void Edit(string parameters)
         {
-            var recordsCount = Program.FileCabinetService.GetStat();
+            var recordsCount = Program.fileCabinetService.GetStat();
             if (!int.TryParse(parameters, out int id) || id < 1 || id > recordsCount)
             {
                 Console.WriteLine("#{0} record is not found.", id);
@@ -184,7 +187,7 @@ namespace FileCabinetApp
 
             try
             {
-                FileCabinetService.EditRecord(id, inputData);
+                fileCabinetService.EditRecord(id, inputData);
                 Console.WriteLine("Record #{0} is updated.", id);
             }
             catch (ArgumentException e)
@@ -214,15 +217,15 @@ namespace FileCabinetApp
                 switch (field)
                 {
                     case firstNameField:
-                        PrintRecords(FileCabinetService.FindByFirstName(criterion));
+                        PrintRecords(fileCabinetService.FindByFirstName(criterion));
                         break;
 
                     case lastNameField:
-                        PrintRecords(FileCabinetService.FindByLastName(criterion));
+                        PrintRecords(fileCabinetService.FindByLastName(criterion));
                         break;
 
                     case dateOfBirthField:
-                        PrintRecords(FileCabinetService.FindByDateOfBirth(criterion));
+                        PrintRecords(fileCabinetService.FindByDateOfBirth(criterion));
                         break;
 
                     default:
@@ -272,6 +275,44 @@ namespace FileCabinetApp
             {
                 Console.WriteLine(record.ToString());
             }
+        }
+
+        /// <summary>
+        /// Creates and sets a <see cref="FileCabinetService"/> instance with the type, depending on input args.
+        /// </summary>
+        /// <param name="args">The <see cref="string"/> array instance of input arguments.</param>
+        /// <exception cref="ArgumentException">Invalid validation rule flag.</exception>
+        private static void SetFileCabinetServiceInstance(string[] args)
+        {
+            const string FlagValidationRules = "--validation-rules";
+            const string ShortFlagValidationRules = "-v";
+            const string CustomValidationRules = "custom";
+
+            string choice;
+            string[] splitedArg = Array.Empty<string>();
+            if (args.Length > 0)
+            {
+                splitedArg = args[0].Split('=');
+            }
+
+            if (args.Length == 1 && splitedArg.Length >= 2 && splitedArg[0].Equals(FlagValidationRules, StringComparison.OrdinalIgnoreCase))
+            {
+                choice = splitedArg[1].ToLower(CultureInfo.InvariantCulture);
+            }
+            else if (args.Length >= 2 && args[0].Equals(ShortFlagValidationRules, StringComparison.OrdinalIgnoreCase))
+            {
+                choice = args[1].ToLower(CultureInfo.InvariantCulture);
+            }
+            else
+            {
+                choice = string.Empty;
+            }
+
+            fileCabinetService = choice switch
+            {
+                CustomValidationRules => new FileCabinetCustomService(),
+                _ => new FileCabinetDefaultService(),
+            };
         }
     }
 }
