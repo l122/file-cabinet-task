@@ -4,5 +4,165 @@
         <name>FileCabinetApp</name>
     </assembly>
     <members>
+        <member name="T:FileCabinetApp.FileCabinetRecord">
+            <summary>
+            Class that represents a record.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.Id">
+            <summary>
+            Gets or sets record id.
+            </summary>
+            /// <value>Employee's id.</value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.FirstName">
+            <summary>
+            Gets or sets employee's first name.
+            </summary>
+            <value>Employee's first name.</value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.LastName">
+            <summary>
+            Gets or sets employee's last name.
+            </summary>
+            <value>Employee's last name.</value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.DateOfBirth">
+            <summary>
+            Gets or sets employee's date of birth.
+            </summary>
+            <value>Employee's date of birth.</value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.WorkPlaceNumber">
+            <summary>
+            Gets or sets employee's work place number.
+            </summary>
+            <value>Employee's work place number.</value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.Salary">
+            <summary>
+            Gets or sets employee's salary.
+            </summary>
+            <value>Employee's salary.</value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetRecord.Department">
+            <summary>
+            Gets or sets employee's department letter.
+            </summary>
+            <value>Employee's department letter.</value>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecord.ToString">
+            <summary>
+            Overrides object's method <see cref="M:System.Object.ToString"/>.
+            </summary>
+            <returns>A <see cref="T:System.String"/> representation of the <see cref="T:FileCabinetApp.FileCabinetRecord"/> instance.</returns>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetService">
+            <summary>
+            Helper class that contains method implementations.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.CreateRecord(FileCabinetApp.FileCabinetService.RecordParameters)">
+            <summary>
+            Creates a new record.
+            </summary>
+            <param name="inputParameters">The <see cref="T:FileCabinetApp.FileCabinetService.RecordParameters"/> instance that represents the employee's data.</param>
+            <returns>The <see cref="T:System.Int32"/> instance of record's id.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.GetRecords">
+            <summary>
+            Returns all records.
+            </summary>
+            <returns>The <see cref="T:FileCabinetApp.FileCabinetRecord"/> array instance of all records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.GetStat">
+            <summary>
+            Returns the number of records.
+            </summary>
+            <returns>The <see cref="T:System.Int32"/> instance of total number of records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.EditRecord(System.Int32,FileCabinetApp.FileCabinetService.RecordParameters)">
+            <summary>
+            Edits a record.
+            </summary>
+            <param name="id">The <see cref="T:System.Int32"/> instance of record's id.</param>
+            <param name="inputParameters">The <see cref="T:FileCabinetApp.FileCabinetService.RecordParameters"/> instance of the input data.</param>
+            <exception cref="T:System.ArgumentException">
+            <paramref name="id"/> is less than 1 or greater than total number of records.
+            </exception>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FindByFirstName(System.String)">
+            <summary>
+            Searches for a record by first name.
+            </summary>
+            <param name="firstName">The <see cref="T:System.String"/> instance of the first name.</param>
+            <returns>The <see cref="T:FileCabinetApp.FileCabinetRecord"/> array instance of all matched records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FindByLastName(System.String)">
+            <summary>
+            Searches for a record by last name.
+            </summary>
+            <param name="lastName">The <see cref="T:System.String"/> instance of the last name.</param>
+            <returns>The <see cref="T:FileCabinetApp.FileCabinetRecord"/> array instance of all matched records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FindByDateOfBirth(System.String)">
+            <summary>
+            Searches for a record by date of birth.
+            </summary>
+            <param name="dateOfBirthString">The <see cref="T:System.String"/> instance of the date of birth.</param>
+            <returns>The <see cref="T:FileCabinetApp.FileCabinetRecord"/> array instance of all matched records.</returns>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetService.RecordParameters">
+            <summary>
+            Used to pass parameters between methods.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetService.RecordParameters.FirstName">
+            <summary>
+            Gets or sets the parameter 'First Name'.
+            </summary>
+            <value>First Name.</value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetService.RecordParameters.LastName">
+            <summary>
+            Gets or sets the parameter 'Last Name'.
+            </summary>
+            <value>Last Name.</value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetService.RecordParameters.DateOfBirth">
+            <summary>
+            Gets or sets the parameter 'Date of birth'.
+            </summary>
+            <value>Date of birth.</value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetService.RecordParameters.WorkPlaceNumber">
+            <summary>
+            Gets or sets the parameter 'Work Place Number'.
+            </summary>
+            <value>Work Place Number string.</value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetService.RecordParameters.Salary">
+            <summary>
+            Gets or sets the parameter 'Salary'.
+            </summary>
+            <value>Salary string.</value>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetService.RecordParameters.Department">
+            <summary>
+            Gets or sets the parameter 'Department'.
+            </summary>
+            <value>Department letter.</value>
+        </member>
+        <member name="T:FileCabinetApp.Program">
+            <summary>
+            The class that contains the Main method.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.Program.Main(System.String[])">
+            <summary>
+            The Main method class of the program.
+            </summary>
+            <param name="args">The <see cref="T:System.String"/> array instance of input arguments.</param>
+        </member>
     </members>
 </doc>

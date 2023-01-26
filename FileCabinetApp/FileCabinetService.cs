@@ -5,7 +5,7 @@ using System.Globalization;
 namespace FileCabinetApp
 {
     /// <summary>
-    /// Contains the Main method.
+    /// Helper class that contains method implementations.
     /// </summary>
     public class FileCabinetService
     {
@@ -18,22 +18,11 @@ namespace FileCabinetApp
         /// <summary>
         /// Creates a new record.
         /// </summary>
-        /// <param name="firstName">The <see cref="string"/> instance that represents the employee's first name.</param>
-        /// <param name="lastName">The <see cref="string"/> instance that represents the employee's last name.</param>
-        /// <param name="dateOfBirth">The <see cref="string"/> instance that represents the employee's date of birth.</param>
-        /// <param name="workPlaceNumber">The <see cref="string"/> instance that represents the employee's work place number.</param>
-        /// <param name="salary">The <see cref="string"/> instance that represents the employee's salary.</param>
-        /// <param name="department">The <see cref="string"/> instance that represents the employee's department. Should be one letter.</param>
+        /// <param name="inputParameters">The <see cref="RecordParameters"/> instance that represents the employee's data.</param>
         /// <returns>The <see cref="int"/> instance of record's id.</returns>
-        public int CreateRecord(
-            string? firstName,
-            string? lastName,
-            string? dateOfBirth,
-            string? workPlaceNumber,
-            string? salary,
-            string? department)
+        public int CreateRecord(RecordParameters inputParameters)
         {
-            var record = this.GetValidRecord(firstName, lastName, dateOfBirth, workPlaceNumber, salary, department);
+            var record = this.GetValidRecord(inputParameters);
 
             this.list.Add(record);
 
@@ -64,45 +53,33 @@ namespace FileCabinetApp
         /// Edits a record.
         /// </summary>
         /// <param name="id">The <see cref="int"/> instance of record's id.</param>
-        /// <param name="firstName">The nullable <see cref="string"/> instance of the first name.</param>
-        /// <param name="lastName">The nullable <see cref="string"/> instance of the last name.</param>
-        /// <param name="dateOfBirth">The nullable <see cref="string"/> instance of the date of birth.</param>
-        /// <param name="workPlaceNumber">The nullable <see cref="string"/> instance of the place number.</param>
-        /// <param name="salary">The nullable <see cref="string"/> instance of the salary.</param>
-        /// <param name="department">The nullable <see cref="string"/> instance of the department letter.</param>
+        /// <param name="inputParameters">The <see cref="RecordParameters"/> instance of the input data.</param>
         /// <exception cref="ArgumentException">
         /// <paramref name="id"/> is less than 1 or greater than total number of records.
         /// </exception>
-        public void EditRecord(
-            int id,
-            string? firstName,
-            string? lastName,
-            string? dateOfBirth,
-            string? workPlaceNumber,
-            string? salary,
-            string? department)
+        public void EditRecord(int id, RecordParameters inputParameters)
         {
             if (id < 1 || id > this.list.Count)
             {
                 throw new ArgumentException("id is not found.", nameof(id));
             }
 
-            var record = this.GetValidRecord(firstName, lastName, dateOfBirth, workPlaceNumber, salary, department);
+            var newRecord = this.GetValidRecord(inputParameters);
 
             this.RemoveRecordFromSearchDictionaries(id);
 
             // Update record
             int listId = id - 1;
-            this.list[listId].FirstName = record.FirstName;
-            this.list[listId].LastName = record.LastName;
-            this.list[listId].DateOfBirth = record.DateOfBirth;
-            this.list[listId].WorkPlaceNumber = record.WorkPlaceNumber;
-            this.list[listId].Salary = record.Salary;
-            this.list[listId].Department = record.Department;
+            this.list[listId].FirstName = newRecord.FirstName;
+            this.list[listId].LastName = newRecord.LastName;
+            this.list[listId].DateOfBirth = newRecord.DateOfBirth;
+            this.list[listId].WorkPlaceNumber = newRecord.WorkPlaceNumber;
+            this.list[listId].Salary = newRecord.Salary;
+            this.list[listId].Department = newRecord.Department;
 
             // Assign the correct id to the record, because the function 'GetValidRecord' returned a record with id = list.count
-            record.Id = id;
-            this.AddRecordToSearchDictionaries(record);
+            newRecord.Id = id;
+            this.AddRecordToSearchDictionaries(newRecord);
         }
 
         /// <summary>
@@ -155,103 +132,97 @@ namespace FileCabinetApp
             return Array.Empty<FileCabinetRecord>();
         }
 
-        private FileCabinetRecord GetValidRecord(
-            string? firstName,
-            string? lastName,
-            string? dateOfBirthString,
-            string? workPlaceNumberString,
-            string? salaryString,
-            string? departmentString)
+        private FileCabinetRecord GetValidRecord(RecordParameters data)
         {
-            if (string.IsNullOrWhiteSpace(firstName))
+            if (string.IsNullOrWhiteSpace(data.FirstName))
             {
-                throw new ArgumentException("First name cannot be empty or have only white spaces.", nameof(firstName));
+                throw new ArgumentException("First name cannot be empty or have only white spaces.", nameof(data));
             }
 
-            firstName = firstName.Trim();
-            if (firstName.Length < 2 || firstName.Length > 60)
+            data.FirstName = data.FirstName.Trim();
+            if (data.FirstName.Length < 2 || data.FirstName.Length > 60)
             {
-                throw new ArgumentException("First name has to have at least 2 and maximum 60 characters.", nameof(firstName));
+                throw new ArgumentException("First name has to have at least 2 and maximum 60 characters.", nameof(data));
             }
 
-            if (string.IsNullOrWhiteSpace(lastName))
+            if (string.IsNullOrWhiteSpace(data.LastName))
             {
-                throw new ArgumentException("Last name cannot be empty or have only white spaces.", nameof(lastName));
+                throw new ArgumentException("Last name cannot be empty or have only white spaces.", nameof(data));
             }
 
-            lastName = lastName.Trim();
-            if (lastName.Length < 2 || lastName.Length > 60)
+            data.LastName = data.LastName.Trim();
+            if (data.LastName.Length < 2 || data.LastName.Length > 60)
             {
-                throw new ArgumentException("Last name has to have at least 2 and maximum 60 characters.", nameof(lastName));
+                throw new ArgumentException("Last name has to have at least 2 and maximum 60 characters.", nameof(data));
             }
 
-            if (dateOfBirthString == null)
+            if (data.DateOfBirth == null)
             {
-                throw new ArgumentNullException(nameof(dateOfBirthString));
+                throw new ArgumentNullException(nameof(data));
             }
 
-            if (!DateTime.TryParse(dateOfBirthString, out DateTime dateOfBirth))
+            if (!DateTime.TryParse(data.DateOfBirth, out DateTime dateOfBirth))
             {
-                throw new ArgumentException("Date of birth is invalid.", nameof(dateOfBirthString));
+                throw new ArgumentException("Date of birth is invalid.", nameof(data));
             }
 
             if (DateTime.Compare(dateOfBirth, MinDate) < 0
                 || DateTime.Compare(dateOfBirth, DateTime.Today) > 0)
             {
-                throw new ArgumentException("Date of birth should be within 01-Jan-1950 and today.", nameof(dateOfBirthString));
+                throw new ArgumentException("Date of birth should be within 01-Jan-1950 and today.", nameof(data));
             }
 
-            if (workPlaceNumberString == null)
+            if (data.WorkPlaceNumber == null)
             {
-                throw new ArgumentNullException(nameof(workPlaceNumberString));
+                throw new ArgumentNullException(nameof(data));
             }
 
-            if (!short.TryParse(workPlaceNumberString, CultureInfo.InvariantCulture, out short workPlaceNumber))
+            if (!short.TryParse(data.WorkPlaceNumber, CultureInfo.InvariantCulture, out short workPlaceNumber))
             {
-                throw new ArgumentException("WorkPlaceNumber is not a valid number.", nameof(workPlaceNumberString));
+                throw new ArgumentException("WorkPlaceNumber is not a valid number.", nameof(data));
             }
 
             if (workPlaceNumber < 0 || DateTime.Compare(dateOfBirth.AddYears(workPlaceNumber), DateTime.Today) > 0)
             {
-                throw new ArgumentException("WorkPlaceNumber cannot be less than zero or be passed today.", nameof(workPlaceNumberString));
+                throw new ArgumentException("WorkPlaceNumber cannot be less than zero or be passed today.", nameof(data));
             }
 
-            if (salaryString == null)
+            if (data.Salary == null)
             {
-                throw new ArgumentNullException(nameof(salaryString));
+                throw new ArgumentNullException(nameof(data));
             }
 
-            if (!decimal.TryParse(salaryString, CultureInfo.InvariantCulture, out decimal salary))
+            if (!decimal.TryParse(data.Salary, CultureInfo.InvariantCulture, out decimal salary))
             {
-                throw new ArgumentException("salary is not a valid number.", nameof(salaryString));
+                throw new ArgumentException("salary is not a valid number.", nameof(data));
             }
 
             if (salary < 0)
             {
-                throw new ArgumentException("Saving cannot be less than zero.", nameof(salaryString));
+                throw new ArgumentException("Saving cannot be less than zero.", nameof(data));
             }
 
-            if (departmentString == null)
+            if (data.Department == null)
             {
-                throw new ArgumentNullException(nameof(departmentString));
+                throw new ArgumentNullException(nameof(data));
             }
 
-            if (departmentString.Length != 1)
+            if (data.Department.Length != 1)
             {
-                throw new ArgumentException("Department should have one character", nameof(departmentString));
+                throw new ArgumentException("Department should have one character", nameof(data));
             }
 
-            char department = departmentString[0];
+            char department = data.Department[0];
             if (!char.IsLetter(department))
             {
-                throw new ArgumentException("Not an English letter.", nameof(departmentString));
+                throw new ArgumentException("Not an English letter.", nameof(data));
             }
 
             return new FileCabinetRecord
             {
                 Id = this.list.Count + 1,
-                FirstName = firstName,
-                LastName = lastName,
+                FirstName = data.FirstName,
+                LastName = data.LastName,
                 DateOfBirth = dateOfBirth,
                 WorkPlaceNumber = workPlaceNumber,
                 Salary = salary,
@@ -321,6 +292,48 @@ namespace FileCabinetApp
             {
                 this.dateOfBirthDictionary.Remove(dateOfBirthString);
             }
+        }
+
+        /// <summary>
+        /// Used to pass parameters between methods.
+        /// </summary>
+        public class RecordParameters
+        {
+            /// <summary>
+            /// Gets or sets the parameter 'First Name'.
+            /// </summary>
+            /// <value>First Name.</value>
+            public string? FirstName { get; set; } = string.Empty;
+
+            /// <summary>
+            /// Gets or sets the parameter 'Last Name'.
+            /// </summary>
+            /// <value>Last Name.</value>
+            public string? LastName { get; set; } = string.Empty;
+
+            /// <summary>
+            /// Gets or sets the parameter 'Date of birth'.
+            /// </summary>
+            /// <value>Date of birth.</value>
+            public string? DateOfBirth { get; set; } = string.Empty;
+
+            /// <summary>
+            /// Gets or sets the parameter 'Work Place Number'.
+            /// </summary>
+            /// <value>Work Place Number string.</value>
+            public string? WorkPlaceNumber { get; set; } = string.Empty;
+
+            /// <summary>
+            /// Gets or sets the parameter 'Salary'.
+            /// </summary>
+            /// <value>Salary string.</value>
+            public string? Salary { get; set; } = string.Empty;
+
+            /// <summary>
+            /// Gets or sets the parameter 'Department'.
+            /// </summary>
+            /// <value>Department letter.</value>
+            public string? Department { get; set; } = string.Empty;
         }
     }
 }

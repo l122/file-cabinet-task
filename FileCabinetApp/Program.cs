@@ -130,19 +130,13 @@ namespace FileCabinetApp
             bool isDone = false;
             while (!isDone)
             {
-                GetData(
-                    out string? firstName,
-                    out string? lastName,
-                    out string? dateOfBirth,
-                    out string? workPlaceNumber,
-                    out string? salary,
-                    out string? department);
+                var recordParameters = GetData();
 
                 try
                 {
                     Console.WriteLine(
                         "Record #{0} is created.",
-                        Program.FileCabinetService.CreateRecord(firstName, lastName, dateOfBirth, workPlaceNumber, salary, department));
+                        FileCabinetService.CreateRecord(recordParameters));
                     isDone = true;
                 }
                 catch (ArgumentNullException e)
@@ -186,17 +180,11 @@ namespace FileCabinetApp
                 return;
             }
 
-            GetData(
-                out string? firstName,
-                out string? lastName,
-                out string? dateOfBirth,
-                out string? workPlaceNumber,
-                out string? salary,
-                out string? department);
+            FileCabinetService.RecordParameters inputData = GetData();
 
             try
             {
-                FileCabinetService.EditRecord(id, firstName, lastName, dateOfBirth, workPlaceNumber, salary, department);
+                FileCabinetService.EditRecord(id, inputData);
                 Console.WriteLine("Record #{0} is updated.", id);
             }
             catch (ArgumentException e)
@@ -253,26 +241,24 @@ namespace FileCabinetApp
             }
         }
 
-        private static void GetData(
-            out string? firstName,
-            out string? lastName,
-            out string? dateOfBirth,
-            out string? workPlaceNumber,
-            out string? salary,
-            out string? department)
+        private static FileCabinetService.RecordParameters GetData()
         {
+            var result = new FileCabinetService.RecordParameters();
+
             Console.Write("First name: ");
-            firstName = Console.ReadLine();
+            result.FirstName = Console.ReadLine();
             Console.Write("Last name: ");
-            lastName = Console.ReadLine();
+            result.LastName = Console.ReadLine();
             Console.Write("Date of birth: ");
-            dateOfBirth = Console.ReadLine();
+            result.DateOfBirth = Console.ReadLine();
             Console.Write("Work Place Number: ");
-            workPlaceNumber = Console.ReadLine();
+            result.WorkPlaceNumber = Console.ReadLine();
             Console.Write("Salary: ");
-            salary = Console.ReadLine();
+            result.Salary = Console.ReadLine();
             Console.Write("Department (one letter): ");
-            department = Console.ReadLine();
+            result.Department = Console.ReadLine();
+
+            return result;
         }
 
         private static void PrintRecords(FileCabinetRecord[] records)
