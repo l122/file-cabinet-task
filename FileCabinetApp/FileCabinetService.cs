@@ -4,6 +4,9 @@ using System.Globalization;
 
 namespace FileCabinetApp
 {
+    /// <summary>
+    /// Contains the Main method.
+    /// </summary>
     public class FileCabinetService
     {
         private static readonly DateTime MinDate = new (1950, 1, 1);
@@ -12,15 +15,25 @@ namespace FileCabinetApp
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new ();
         private readonly Dictionary<string, List<FileCabinetRecord>> dateOfBirthDictionary = new ();
 
+        /// <summary>
+        /// Creates a new record.
+        /// </summary>
+        /// <param name="firstName">The <see cref="string"/> instance that represents the employee's first name.</param>
+        /// <param name="lastName">The <see cref="string"/> instance that represents the employee's last name.</param>
+        /// <param name="dateOfBirth">The <see cref="string"/> instance that represents the employee's date of birth.</param>
+        /// <param name="workPlaceNumber">The <see cref="string"/> instance that represents the employee's work place number.</param>
+        /// <param name="salary">The <see cref="string"/> instance that represents the employee's salary.</param>
+        /// <param name="department">The <see cref="string"/> instance that represents the employee's department. Should be one letter.</param>
+        /// <returns>The <see cref="int"/> instance of record's id.</returns>
         public int CreateRecord(
             string? firstName,
             string? lastName,
-            string? dateOfBirthString,
-            string? ageString,
-            string? savingsString,
-            string? letterString)
+            string? dateOfBirth,
+            string? workPlaceNumber,
+            string? salary,
+            string? department)
         {
-            var record = this.GetValidRecord(firstName, lastName, dateOfBirthString, ageString, savingsString, letterString);
+            var record = this.GetValidRecord(firstName, lastName, dateOfBirth, workPlaceNumber, salary, department);
 
             this.list.Add(record);
 
@@ -29,31 +42,52 @@ namespace FileCabinetApp
             return record.Id;
         }
 
+        /// <summary>
+        /// Returns all records.
+        /// </summary>
+        /// <returns>The <see cref="FileCabinetRecord"/> array instance of all records.</returns>
         public FileCabinetRecord[] GetRecords()
         {
             return this.list.ToArray();
         }
 
+        /// <summary>
+        /// Returns the number of records.
+        /// </summary>
+        /// <returns>The <see cref="int"/> instance of total number of records.</returns>
         public int GetStat()
         {
             return this.list.Count;
         }
 
+        /// <summary>
+        /// Edits a record.
+        /// </summary>
+        /// <param name="id">The <see cref="int"/> instance of record's id.</param>
+        /// <param name="firstName">The nullable <see cref="string"/> instance of the first name.</param>
+        /// <param name="lastName">The nullable <see cref="string"/> instance of the last name.</param>
+        /// <param name="dateOfBirth">The nullable <see cref="string"/> instance of the date of birth.</param>
+        /// <param name="workPlaceNumber">The nullable <see cref="string"/> instance of the place number.</param>
+        /// <param name="salary">The nullable <see cref="string"/> instance of the salary.</param>
+        /// <param name="department">The nullable <see cref="string"/> instance of the department letter.</param>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="id"/> is less than 1 or greater than total number of records.
+        /// </exception>
         public void EditRecord(
             int id,
             string? firstName,
             string? lastName,
-            string? dateOfBirthString,
-            string? ageString,
-            string? savingsString,
-            string? letterString)
+            string? dateOfBirth,
+            string? workPlaceNumber,
+            string? salary,
+            string? department)
         {
             if (id < 1 || id > this.list.Count)
             {
                 throw new ArgumentException("id is not found.", nameof(id));
             }
 
-            var record = this.GetValidRecord(firstName, lastName, dateOfBirthString, ageString, savingsString, letterString);
+            var record = this.GetValidRecord(firstName, lastName, dateOfBirth, workPlaceNumber, salary, department);
 
             this.RemoveRecordFromSearchDictionaries(id);
 
@@ -66,11 +100,16 @@ namespace FileCabinetApp
             this.list[listId].Salary = record.Salary;
             this.list[listId].Department = record.Department;
 
-            // Assign correct id to record, because function 'GetValidRecord' returned a record with id = list.count
+            // Assign the correct id to the record, because the function 'GetValidRecord' returned a record with id = list.count
             record.Id = id;
             this.AddRecordToSearchDictionaries(record);
         }
 
+        /// <summary>
+        /// Searches for a record by first name.
+        /// </summary>
+        /// <param name="firstName">The <see cref="string"/> instance of the first name.</param>
+        /// <returns>The <see cref="FileCabinetRecord"/> array instance of all matched records.</returns>
         public FileCabinetRecord[] FindByFirstName(string firstName)
         {
             if (this.firstNameDictionary.TryGetValue(firstName.ToUpperInvariant(), out List<FileCabinetRecord>? result))
@@ -81,6 +120,11 @@ namespace FileCabinetApp
             return Array.Empty<FileCabinetRecord>();
         }
 
+        /// <summary>
+        /// Searches for a record by last name.
+        /// </summary>
+        /// <param name="lastName">The <see cref="string"/> instance of the last name.</param>
+        /// <returns>The <see cref="FileCabinetRecord"/> array instance of all matched records.</returns>
         public FileCabinetRecord[] FindByLastName(string lastName)
         {
             if (this.lastNameDictionary.TryGetValue(lastName.ToUpperInvariant(), out List<FileCabinetRecord>? result))
@@ -91,6 +135,11 @@ namespace FileCabinetApp
             return Array.Empty<FileCabinetRecord>();
         }
 
+        /// <summary>
+        /// Searches for a record by date of birth.
+        /// </summary>
+        /// <param name="dateOfBirthString">The <see cref="string"/> instance of the date of birth.</param>
+        /// <returns>The <see cref="FileCabinetRecord"/> array instance of all matched records.</returns>
         public FileCabinetRecord[] FindByDateOfBirth(string dateOfBirthString)
         {
             if (DateTime.TryParse(dateOfBirthString, out DateTime dateOfBirth))
@@ -110,9 +159,9 @@ namespace FileCabinetApp
             string? firstName,
             string? lastName,
             string? dateOfBirthString,
-            string? ageString,
-            string? savingsString,
-            string? letterString)
+            string? workPlaceNumberString,
+            string? salaryString,
+            string? departmentString)
         {
             if (string.IsNullOrWhiteSpace(firstName))
             {
@@ -152,50 +201,50 @@ namespace FileCabinetApp
                 throw new ArgumentException("Date of birth should be within 01-Jan-1950 and today.", nameof(dateOfBirthString));
             }
 
-            if (ageString == null)
+            if (workPlaceNumberString == null)
             {
-                throw new ArgumentNullException(nameof(ageString));
+                throw new ArgumentNullException(nameof(workPlaceNumberString));
             }
 
-            if (!short.TryParse(ageString, CultureInfo.InvariantCulture, out short workPlaceNumber))
+            if (!short.TryParse(workPlaceNumberString, CultureInfo.InvariantCulture, out short workPlaceNumber))
             {
-                throw new ArgumentException("WorkPlaceNumber is not a valid number.", nameof(ageString));
+                throw new ArgumentException("WorkPlaceNumber is not a valid number.", nameof(workPlaceNumberString));
             }
 
             if (workPlaceNumber < 0 || DateTime.Compare(dateOfBirth.AddYears(workPlaceNumber), DateTime.Today) > 0)
             {
-                throw new ArgumentException("WorkPlaceNumber cannot be less than zero or be passed today.", nameof(ageString));
+                throw new ArgumentException("WorkPlaceNumber cannot be less than zero or be passed today.", nameof(workPlaceNumberString));
             }
 
-            if (savingsString == null)
+            if (salaryString == null)
             {
-                throw new ArgumentNullException(nameof(savingsString));
+                throw new ArgumentNullException(nameof(salaryString));
             }
 
-            if (!decimal.TryParse(savingsString, CultureInfo.InvariantCulture, out decimal salary))
+            if (!decimal.TryParse(salaryString, CultureInfo.InvariantCulture, out decimal salary))
             {
-                throw new ArgumentException("salary is not a valid number.", nameof(savingsString));
+                throw new ArgumentException("salary is not a valid number.", nameof(salaryString));
             }
 
             if (salary < 0)
             {
-                throw new ArgumentException("Saving cannot be less than zero.", nameof(savingsString));
+                throw new ArgumentException("Saving cannot be less than zero.", nameof(salaryString));
             }
 
-            if (letterString == null)
+            if (departmentString == null)
             {
-                throw new ArgumentNullException(nameof(letterString));
+                throw new ArgumentNullException(nameof(departmentString));
             }
 
-            if (letterString.Length != 1)
+            if (departmentString.Length != 1)
             {
-                throw new ArgumentException("Department should have one character", nameof(letterString));
+                throw new ArgumentException("Department should have one character", nameof(departmentString));
             }
 
-            char department = letterString[0];
+            char department = departmentString[0];
             if (!char.IsLetter(department))
             {
-                throw new ArgumentException("Not an English letter.", nameof(letterString));
+                throw new ArgumentException("Not an English letter.", nameof(departmentString));
             }
 
             return new FileCabinetRecord

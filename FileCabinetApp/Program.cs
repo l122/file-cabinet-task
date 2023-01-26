@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Globalization;
 
+[assembly: CLSCompliant(true)]
+
 namespace FileCabinetApp
 {
+    /// <summary>
+    /// The class that contains the Main method.
+    /// </summary>
     public static class Program
     {
         private const string DeveloperName = "Oleg Shkadov";
@@ -36,6 +41,10 @@ namespace FileCabinetApp
 
         private static bool isRunning = true;
 
+        /// <summary>
+        /// The Main method class of the program.
+        /// </summary>
+        /// <param name="args">The <see cref="string"/> array instance of input arguments.</param>
         public static void Main(string[] args)
         {
             Console.WriteLine($"File Cabinet Application, developed by {Program.DeveloperName}");
@@ -138,17 +147,17 @@ namespace FileCabinetApp
                 }
                 catch (ArgumentNullException e)
                 {
-                    Console.WriteLine($"\nERROR: {0}", e.Message);
+                    Console.WriteLine($"{Environment.NewLine}ERROR: {e.Message}");
                     isDone = CheckIfEscPressed();
                 }
                 catch (ArgumentException e)
                 {
-                    Console.WriteLine($"\nERROR: {0}", e.Message);
+                    Console.WriteLine($"{Environment.NewLine}ERROR: {e.Message}");
                     isDone = CheckIfEscPressed();
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"\nERROR: {0}", e.Message);
+                    Console.WriteLine($"{Environment.NewLine}ERROR: {e.Message}");
                     isDone = CheckIfEscPressed();
                 }
             }
