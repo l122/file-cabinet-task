@@ -4,6 +4,39 @@
         <name>FileCabinetApp</name>
     </assembly>
     <members>
+        <member name="T:FileCabinetApp.FileCabinetCustomService">
+            <summary>
+            Helper class with default parameters.
+            </summary>
+        </member>
+        <member name="F:FileCabinetApp.FileCabinetCustomService.MinDate">
+            <summary>
+            A read-only static field that represents the earliesr acceptable date of birth.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetCustomService.ValidateParameters(FileCabinetApp.FileCabinetService.RecordParameters)">
+            <summary>
+            Validates input data and returns a new record instance.
+            </summary>
+            <param name="data">The <see cref="T:FileCabinetApp.FileCabinetService.RecordParameters"/> instance input data.</param>
+            <returns>A new record instance of type <see cref="T:FileCabinetApp.FileCabinetRecord"/>.</returns>
+            <exception cref="T:System.ArgumentException">If arguments are invalid.</exception>
+            <exception cref="T:System.ArgumentNullException">If arguments have <c>null</c> values.</exception>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetDefaultService">
+            <summary>
+            Helper class with default parameters.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetDefaultService.ValidateParameters(FileCabinetApp.FileCabinetService.RecordParameters)">
+            <summary>
+            Validates input data and returns a new record instance.
+            </summary>
+            <param name="data">The RecordParameters instance input data.</param>
+            <returns>A new record instance of type <see cref="T:FileCabinetApp.FileCabinetRecord"/>.</returns>
+            <exception cref="T:System.ArgumentException">If arguments are invalid.</exception>
+            <exception cref="T:System.ArgumentNullException">If arguments have <c>null</c> values.</exception>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
             Class that represents a record.
@@ -62,6 +95,17 @@
             Helper class that contains method implementations.
             </summary>
         </member>
+        <member name="F:FileCabinetApp.FileCabinetService.MinDate">
+            <summary>
+            A read-only static field that represents the earliesr acceptable date of birth.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetService.List">
+            <summary>
+            Gets collection of records.
+            </summary>
+            <value>Collection of records.</value>
+        </member>
         <member name="M:FileCabinetApp.FileCabinetService.CreateRecord(FileCabinetApp.FileCabinetService.RecordParameters)">
             <summary>
             Creates a new record.
@@ -111,6 +155,27 @@
             </summary>
             <param name="dateOfBirthString">The <see cref="T:System.String"/> instance of the date of birth.</param>
             <returns>The <see cref="T:FileCabinetApp.FileCabinetRecord"/> array instance of all matched records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.ValidateParameters(FileCabinetApp.FileCabinetService.RecordParameters)">
+            <summary>
+            Validates input data and returns a new record instance.
+            </summary>
+            <param name="data">The <see cref="T:FileCabinetApp.FileCabinetService.RecordParameters"/> instance input data.</param>
+            <returns>A new record instance of type <see cref="T:FileCabinetApp.FileCabinetRecord"/>.</returns>
+            <exception cref="T:System.ArgumentException">If arguments are invalid.</exception>
+            <exception cref="T:System.ArgumentNullException">If arguments have <c>null</c> values.</exception>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.AddRecordToSearchDictionaries(FileCabinetApp.FileCabinetRecord@)">
+            <summary>
+            Adds a record data to the search dictionaries.
+            </summary>
+            <param name="record">The <see cref="T:FileCabinetApp.FileCabinetRecord"/> instance.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.RemoveRecordFromSearchDictionaries(System.Int32)">
+            <summary>
+            Removes records that match id from all searching dictionaries.
+            </summary>
+            <param name="inputId">The <see cref="T:System.Int32"/> id input.</param>
         </member>
         <member name="T:FileCabinetApp.FileCabinetService.RecordParameters">
             <summary>

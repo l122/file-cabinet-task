@@ -16,7 +16,7 @@ namespace FileCabinetApp
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
 
-        private static readonly FileCabinetService FileCabinetService = new ();
+        private static readonly FileCabinetCustomService FileCabinetService = new ();
         private static readonly Tuple<string, Action<string>>[] Commands = new Tuple<string, Action<string>>[]
         {
             new Tuple<string, Action<string>>("help", PrintHelp),
