@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Globalization;
 
 [assembly: CLSCompliant(true)]
@@ -38,7 +39,7 @@ namespace FileCabinetApp
             new string[] { "find", "searches records", "The 'find <firstname, lastname, dateofbirth> <criterion>' command searches all records with <field> = <criterion>." },
         };
 
-        private static FileCabinetService fileCabinetService = new FileCabinetService(new DefaultValidator());
+        private static FileCabinetService fileCabinetService = new (new DefaultValidator());
         private static bool isRunning = true;
 
         /// <summary>
@@ -263,7 +264,7 @@ namespace FileCabinetApp
             return result;
         }
 
-        private static void PrintRecords(FileCabinetRecord[] records)
+        private static void PrintRecords(ReadOnlyCollection<FileCabinetRecord> records)
         {
             if (records == null)
             {

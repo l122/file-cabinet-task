@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 
 namespace FileCabinetApp
@@ -25,12 +26,6 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// Gets collection of records.
-        /// </summary>
-        /// <value>Collection of records.</value>
-        protected List<FileCabinetRecord> List { get => this.list; }
-
-        /// <summary>
         /// Creates a new record.
         /// </summary>
         /// <param name="parameters">The <see cref="RecordParameters"/> instance that represents the employee's data.</param>
@@ -52,10 +47,10 @@ namespace FileCabinetApp
         /// <summary>
         /// Returns all records.
         /// </summary>
-        /// <returns>The <see cref="FileCabinetRecord"/> array instance of all records.</returns>
-        public FileCabinetRecord[] GetRecords()
+        /// <returns>A read-only instance of all records.</returns>
+        public ReadOnlyCollection<FileCabinetRecord> GetRecords()
         {
-            return this.list.ToArray();
+            return new ReadOnlyCollection<FileCabinetRecord>(this.list);
         }
 
         /// <summary>
@@ -104,38 +99,38 @@ namespace FileCabinetApp
         /// Searches for a record by first name.
         /// </summary>
         /// <param name="firstName">The <see cref="string"/> instance of the first name.</param>
-        /// <returns>The <see cref="FileCabinetRecord"/> array instance of all matched records.</returns>
-        public FileCabinetRecord[] FindByFirstName(string firstName)
+        /// <returns>A read-only instance of all matched records.</returns>
+        public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
         {
             if (this.firstNameDictionary.TryGetValue(firstName.ToUpperInvariant(), out List<FileCabinetRecord>? result))
             {
-                return result.ToArray();
+                return new ReadOnlyCollection<FileCabinetRecord>(result);
             }
 
-            return Array.Empty<FileCabinetRecord>();
+            return new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
         }
 
         /// <summary>
         /// Searches for a record by last name.
         /// </summary>
         /// <param name="lastName">The <see cref="string"/> instance of the last name.</param>
-        /// <returns>The <see cref="FileCabinetRecord"/> array instance of all matched records.</returns>
-        public FileCabinetRecord[] FindByLastName(string lastName)
+        /// <returns>A read-only instance of all matched records.</returns>
+        public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
         {
             if (this.lastNameDictionary.TryGetValue(lastName.ToUpperInvariant(), out List<FileCabinetRecord>? result))
             {
-                return result.ToArray();
+                return new ReadOnlyCollection<FileCabinetRecord>(result);
             }
 
-            return Array.Empty<FileCabinetRecord>();
+            return new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
         }
 
         /// <summary>
         /// Searches for a record by date of birth.
         /// </summary>
         /// <param name="dateOfBirthString">The <see cref="string"/> instance of the date of birth.</param>
-        /// <returns>The <see cref="FileCabinetRecord"/> array instance of all matched records.</returns>
-        public FileCabinetRecord[] FindByDateOfBirth(string dateOfBirthString)
+        /// <returns>A read-only instance of all matched records.</returns>
+        public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirthString)
         {
             if (DateTime.TryParse(dateOfBirthString, out DateTime dateOfBirth))
             {
@@ -144,10 +139,10 @@ namespace FileCabinetApp
 
             if (this.dateOfBirthDictionary.TryGetValue(dateOfBirthString, out List<FileCabinetRecord>? result))
             {
-                return result.ToArray();
+                return new ReadOnlyCollection<FileCabinetRecord>(result);
             }
 
-            return Array.Empty<FileCabinetRecord>();
+            return new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
         }
 
         /// <summary>
