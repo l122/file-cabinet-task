@@ -130,43 +130,7 @@ namespace FileCabinetApp
 
         private static void Create(string parameters)
         {
-            bool isDone = false;
-            while (!isDone)
-            {
-                var recordParameters = GetData();
-
-                try
-                {
-                    Console.WriteLine(
-                        "Record #{0} is created.",
-                        fileCabinetService.CreateRecord(recordParameters));
-                    isDone = true;
-                }
-                catch (ArgumentNullException e)
-                {
-                    Console.WriteLine($"{Environment.NewLine}ERROR: {e.Message}");
-                    isDone = CheckIfEscPressed();
-                }
-                catch (ArgumentException e)
-                {
-                    Console.WriteLine($"{Environment.NewLine}ERROR: {e.Message}");
-                    isDone = CheckIfEscPressed();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine($"{Environment.NewLine}ERROR: {e.Message}");
-                    isDone = CheckIfEscPressed();
-                }
-            }
-        }
-
-        private static bool CheckIfEscPressed()
-        {
-            Console.Write("Press ESC to cancel entry or any other key to try again...");
-            var key = Console.ReadKey(true);
-            Console.WriteLine(Environment.NewLine);
-
-            return key.Key == ConsoleKey.Escape;
+            Console.WriteLine("Record #{0} is created.", fileCabinetService.CreateRecord());
         }
 
         private static void List(string parameters)
@@ -183,17 +147,9 @@ namespace FileCabinetApp
                 return;
             }
 
-            IFileCabinetService.RecordParameters inputData = GetData();
+            fileCabinetService.EditRecord(id);
 
-            try
-            {
-                fileCabinetService.EditRecord(id, inputData);
-                Console.WriteLine("Record #{0} is updated.", id);
-            }
-            catch (ArgumentException e)
-            {
-                Console.WriteLine(e.Message);
-            }
+            Console.WriteLine("Record #{0} is updated.", id);
         }
 
         private static void Find(string parameters)
@@ -242,26 +198,6 @@ namespace FileCabinetApp
             {
                 Console.WriteLine(e.Message);
             }
-        }
-
-        private static IFileCabinetService.RecordParameters GetData()
-        {
-            var result = new IFileCabinetService.RecordParameters();
-
-            Console.Write("First name: ");
-            result.FirstName = Console.ReadLine();
-            Console.Write("Last name: ");
-            result.LastName = Console.ReadLine();
-            Console.Write("Date of birth: ");
-            result.DateOfBirth = Console.ReadLine();
-            Console.Write("Work Place Number: ");
-            result.WorkPlaceNumber = Console.ReadLine();
-            Console.Write("Salary: ");
-            result.Salary = Console.ReadLine();
-            Console.Write("Department (one letter): ");
-            result.Department = Console.ReadLine();
-
-            return result;
         }
 
         private static void PrintRecords(ReadOnlyCollection<FileCabinetRecord> records)

@@ -9,28 +9,94 @@
             Custom Validator implementation.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.CustomValidator.ValidateParameters(FileCabinetApp.IFileCabinetService.RecordParameters)">
+        <member name="M:FileCabinetApp.CustomValidator.FirstNameValidator(System.String)">
             <summary>
-            Validates input data with custom rules and returns a new record instance.
+            Validates First Name.
             </summary>
-            <param name="data">The <see cref="T:FileCabinetApp.IFileCabinetService.RecordParameters"/> instance input data.</param>
-            <returns>A new record instance of type <see cref="T:FileCabinetApp.IFileCabinetService"/> with id = 0.</returns>
-            <exception cref="T:System.ArgumentException">If arguments are invalid.</exception>
-            <exception cref="T:System.ArgumentNullException">If arguments have <c>null</c> values.</exception>
+            <param name="value">The <see cref="T:System.String"/> instance value.</param>
+            <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+        </member>
+        <member name="M:FileCabinetApp.CustomValidator.LastNameValidator(System.String)">
+            <summary>
+            Validates Last Name.
+            </summary>
+            <param name="value">The <see cref="T:System.String"/> instance value.</param>
+            <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+        </member>
+        <member name="M:FileCabinetApp.CustomValidator.DateOfBirthValidator(System.DateTime)">
+            <summary>
+            Validates date of birth.
+            </summary>
+            <param name="value">The <see cref="T:System.DateTime"/> instance value.</param>
+            <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+        </member>
+        <member name="M:FileCabinetApp.CustomValidator.WorkPlaceValidator(System.Int16)">
+            <summary>
+            Validates place of work.
+            </summary>
+            <param name="value">The <see cref="T:System.Int16"/> instance value.</param>
+            <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+        </member>
+        <member name="M:FileCabinetApp.CustomValidator.SalaryValidator(System.Decimal)">
+            <summary>
+            Validates salary.
+            </summary>
+            <param name="value">The <see cref="T:System.Decimal"/> instance value.</param>
+            <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+        </member>
+        <member name="M:FileCabinetApp.CustomValidator.DepartmentValidator(System.Char)">
+            <summary>
+            Validates department letter.
+            </summary>
+            <param name="value">The <see cref="T:System.Char"/> instance value.</param>
+            <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
         </member>
         <member name="T:FileCabinetApp.DefaultValidator">
             <summary>
             Dafault Validator implementation.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.DefaultValidator.ValidateParameters(FileCabinetApp.IFileCabinetService.RecordParameters)">
+        <member name="M:FileCabinetApp.DefaultValidator.FirstNameValidator(System.String)">
             <summary>
-            Validates input data with default rules and returns a new record instance.
+            Validates First Name.
             </summary>
-            <param name="data">The <see cref="T:FileCabinetApp.IFileCabinetService.RecordParameters"/> instance input data.</param>
-            <returns>A new record instance of type <see cref="T:FileCabinetApp.FileCabinetRecord"/> with id = 0.</returns>
-            <exception cref="T:System.ArgumentException">If arguments are invalid.</exception>
-            <exception cref="T:System.ArgumentNullException">If arguments have <c>null</c> values.</exception>
+            <param name="value">The <see cref="T:System.String"/> instance value.</param>
+            <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+        </member>
+        <member name="M:FileCabinetApp.DefaultValidator.LastNameValidator(System.String)">
+            <summary>
+            Validates Last Name.
+            </summary>
+            <param name="value">The <see cref="T:System.String"/> instance value.</param>
+            <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+        </member>
+        <member name="M:FileCabinetApp.DefaultValidator.DateOfBirthValidator(System.DateTime)">
+            <summary>
+            Validates date of birth.
+            </summary>
+            <param name="value">The <see cref="T:System.DateTime"/> instance value.</param>
+            <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+        </member>
+        <member name="M:FileCabinetApp.DefaultValidator.WorkPlaceValidator(System.Int16)">
+            <summary>
+            Validates place of work.
+            </summary>
+            <param name="value">The <see cref="T:System.Int16"/> instance value.</param>
+            <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+        </member>
+        <member name="M:FileCabinetApp.DefaultValidator.SalaryValidator(System.Decimal)">
+            <summary>
+            Validates salary.
+            </summary>
+            <param name="value">The <see cref="T:System.Decimal"/> instance value.</param>
+            <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+        </member>
+        <member name="M:FileCabinetApp.DefaultValidator.DepartmentValidator(System.Char)">
+            <summary>
+            Validates department letter.
+            </summary>
+            <param name="value">The <see cref="T:System.Char"/> instance value.</param>
+            <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
         </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
@@ -96,11 +162,10 @@
             </summary>
             <param name="validator">The <see cref="T:FileCabinetApp.IRecordValidator"/> specialised instance.</param>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetService.CreateRecord(FileCabinetApp.IFileCabinetService.RecordParameters)">
+        <member name="M:FileCabinetApp.FileCabinetService.CreateRecord">
             <summary>
             Creates a new record.
             </summary>
-            <param name="parameters">The <see cref="T:FileCabinetApp.IFileCabinetService.RecordParameters"/> instance that represents the employee's data.</param>
             <returns>The <see cref="T:System.Int32"/> instance of record's id.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.GetRecords">
@@ -115,15 +180,11 @@
             </summary>
             <returns>The <see cref="T:System.Int32"/> instance of total number of records.</returns>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetService.EditRecord(System.Int32,FileCabinetApp.IFileCabinetService.RecordParameters)">
+        <member name="M:FileCabinetApp.FileCabinetService.EditRecord(System.Int32)">
             <summary>
             Edits a record.
             </summary>
             <param name="id">The <see cref="T:System.Int32"/> instance of record's id.</param>
-            <param name="parameters">The <see cref="T:FileCabinetApp.IFileCabinetService.RecordParameters"/> instance of the input data.</param>
-            <exception cref="T:System.ArgumentException">
-            <paramref name="id"/> is less than 1 or greater than total number of records.
-            </exception>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.FindByFirstName(System.String)">
             <summary>
@@ -146,6 +207,15 @@
             <param name="dateOfBirthString">The <see cref="T:System.String"/> instance of the date of birth.</param>
             <returns>A read-only instance of all matched records.</returns>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetService.ReadInput``1(System.Func{System.String,System.Tuple{System.Boolean,System.String,``0}},System.Func{``0,System.Tuple{System.Boolean,System.String}})">
+            <summary>
+            Reads input in a loop until the input data is acquired and validated.
+            </summary>
+            <typeparam name="T">The type to be read to.</typeparam>
+            <param name="converter">Converts a string into a needed type.</param>
+            <param name="validator">Validates input type with rules.</param>
+            <returns>The <c>T</c>-type instance of input data.</returns>
+        </member>
         <member name="M:FileCabinetApp.FileCabinetService.AddRecordToSearchDictionaries(FileCabinetApp.FileCabinetRecord@)">
             <summary>
             Adds a record data to the search dictionaries.
@@ -158,16 +228,21 @@
             </summary>
             <param name="inputId">The <see cref="T:System.Int32"/> id input.</param>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetService.GetInputData">
+            <summary>
+            Gets input data from console and creates a new record with id = 0.
+            </summary>
+            <returns>The <see cref="T:FileCabinetApp.FileCabinetRecord"/> instance with id = 0.</returns>
+        </member>
         <member name="T:FileCabinetApp.IFileCabinetService">
             <summary>
             Helper class that contains method implementations.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.IFileCabinetService.CreateRecord(FileCabinetApp.IFileCabinetService.RecordParameters)">
+        <member name="M:FileCabinetApp.IFileCabinetService.CreateRecord">
             <summary>
             Creates a new record.
             </summary>
-            <param name="parameters">The <see cref="T:FileCabinetApp.IFileCabinetService.RecordParameters"/> instance that represents the employee's data.</param>
             <returns>The <see cref="T:System.Int32"/> instance of record's id.</returns>
         </member>
         <member name="M:FileCabinetApp.IFileCabinetService.GetRecords">
@@ -182,15 +257,11 @@
             </summary>
             <returns>The <see cref="T:System.Int32"/> instance of total number of records.</returns>
         </member>
-        <member name="M:FileCabinetApp.IFileCabinetService.EditRecord(System.Int32,FileCabinetApp.IFileCabinetService.RecordParameters)">
+        <member name="M:FileCabinetApp.IFileCabinetService.EditRecord(System.Int32)">
             <summary>
             Edits a record.
             </summary>
             <param name="id">The <see cref="T:System.Int32"/> instance of record's id.</param>
-            <param name="parameters">The <see cref="T:FileCabinetApp.IFileCabinetService.RecordParameters"/> instance of the input data.</param>
-            <exception cref="T:System.ArgumentException">
-            <paramref name="id"/> is less than 1 or greater than total number of records.
-            </exception>
         </member>
         <member name="M:FileCabinetApp.IFileCabinetService.FindByFirstName(System.String)">
             <summary>
@@ -213,60 +284,52 @@
             <param name="dateOfBirthString">The <see cref="T:System.String"/> instance of the date of birth.</param>
             <returns>A read-only instance of all matched records.</returns>
         </member>
-        <member name="T:FileCabinetApp.IFileCabinetService.RecordParameters">
-            <summary>
-            Used to pass parameters between methods.
-            </summary>
-        </member>
-        <member name="P:FileCabinetApp.IFileCabinetService.RecordParameters.FirstName">
-            <summary>
-            Gets or sets the parameter 'First Name'.
-            </summary>
-            <value>First Name.</value>
-        </member>
-        <member name="P:FileCabinetApp.IFileCabinetService.RecordParameters.LastName">
-            <summary>
-            Gets or sets the parameter 'Last Name'.
-            </summary>
-            <value>Last Name.</value>
-        </member>
-        <member name="P:FileCabinetApp.IFileCabinetService.RecordParameters.DateOfBirth">
-            <summary>
-            Gets or sets the parameter 'Date of birth'.
-            </summary>
-            <value>Date of birth.</value>
-        </member>
-        <member name="P:FileCabinetApp.IFileCabinetService.RecordParameters.WorkPlaceNumber">
-            <summary>
-            Gets or sets the parameter 'Work Place Number'.
-            </summary>
-            <value>Work Place Number string.</value>
-        </member>
-        <member name="P:FileCabinetApp.IFileCabinetService.RecordParameters.Salary">
-            <summary>
-            Gets or sets the parameter 'Salary'.
-            </summary>
-            <value>Salary string.</value>
-        </member>
-        <member name="P:FileCabinetApp.IFileCabinetService.RecordParameters.Department">
-            <summary>
-            Gets or sets the parameter 'Department'.
-            </summary>
-            <value>Department letter.</value>
-        </member>
         <member name="T:FileCabinetApp.IRecordValidator">
             <summary>
             Strategy interface for choosing a validator object.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.IRecordValidator.ValidateParameters(FileCabinetApp.IFileCabinetService.RecordParameters)">
+        <member name="M:FileCabinetApp.IRecordValidator.FirstNameValidator(System.String)">
             <summary>
-            Validates input data and returns a new record instance.
+            Validates First Name.
             </summary>
-            <param name="data">The <see cref="T:FileCabinetApp.IFileCabinetService.RecordParameters"/> instance input data.</param>
-            <returns>A new record instance of type <see cref="T:FileCabinetApp.FileCabinetRecord"/> with id = 0.</returns>
-            <exception cref="T:System.ArgumentException">If arguments are invalid.</exception>
-            <exception cref="T:System.ArgumentNullException">If arguments have <c>null</c> values.</exception>
+            <param name="value">The <see cref="T:System.String"/> instance value.</param>
+            <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IRecordValidator.LastNameValidator(System.String)">
+            <summary>
+            Validates Last Name.
+            </summary>
+            <param name="value">The <see cref="T:System.String"/> instance value.</param>
+            <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IRecordValidator.DateOfBirthValidator(System.DateTime)">
+            <summary>
+            Validates date of birth.
+            </summary>
+            <param name="value">The <see cref="T:System.DateTime"/> instance value.</param>
+            <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IRecordValidator.WorkPlaceValidator(System.Int16)">
+            <summary>
+            Validates place of work.
+            </summary>
+            <param name="value">The <see cref="T:System.Int16"/> instance value.</param>
+            <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IRecordValidator.SalaryValidator(System.Decimal)">
+            <summary>
+            Validates salary.
+            </summary>
+            <param name="value">The <see cref="T:System.Decimal"/> instance value.</param>
+            <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IRecordValidator.DepartmentValidator(System.Char)">
+            <summary>
+            Validates department letter.
+            </summary>
+            <param name="value">The <see cref="T:System.Char"/> instance value.</param>
+            <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
         </member>
         <member name="T:FileCabinetApp.Program">
             <summary>

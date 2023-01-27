@@ -28,16 +28,15 @@ namespace FileCabinetApp
         /// <summary>
         /// Creates a new record.
         /// </summary>
-        /// <param name="parameters">The <see cref="IFileCabinetService.RecordParameters"/> instance that represents the employee's data.</param>
         /// <returns>The <see cref="int"/> instance of record's id.</returns>
-        public int CreateRecord(IFileCabinetService.RecordParameters parameters)
+        public int CreateRecord()
         {
-            var record = this.validator.ValidateParameters(parameters);
-
-            // update record's id, because default id = 0
-            record.Id = this.list.Count + 1;
+            var record = this.GetInputData();
 
             this.list.Add(record);
+
+            // Update record id, because the default id = 0
+            record.Id = this.list.Count;
 
             this.AddRecordToSearchDictionaries(record);
 
@@ -66,18 +65,9 @@ namespace FileCabinetApp
         /// Edits a record.
         /// </summary>
         /// <param name="id">The <see cref="int"/> instance of record's id.</param>
-        /// <param name="parameters">The <see cref="IFileCabinetService.RecordParameters"/> instance of the input data.</param>
-        /// <exception cref="ArgumentException">
-        /// <paramref name="id"/> is less than 1 or greater than total number of records.
-        /// </exception>
-        public void EditRecord(int id, IFileCabinetService.RecordParameters parameters)
+        public void EditRecord(int id)
         {
-            if (id < 1 || id > this.list.Count)
-            {
-                throw new ArgumentException("id is not found.", nameof(id));
-            }
-
-            var record = this.validator.ValidateParameters(parameters);
+            var record = this.GetInputData();
 
             this.RemoveRecordFromSearchDictionaries(id);
 
@@ -90,8 +80,9 @@ namespace FileCabinetApp
             this.list[listId].Salary = record.Salary;
             this.list[listId].Department = record.Department;
 
-            // Assign the correct id to the record, because the function 'ValidateParameters' returned a record with id = 0
+            // Assign the correct id to the record, because the default id = 0
             record.Id = id;
+
             this.AddRecordToSearchDictionaries(record);
         }
 
@@ -143,6 +134,42 @@ namespace FileCabinetApp
             }
 
             return new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
+        }
+
+        /// <summary>
+        /// Reads input in a loop until the input data is acquired and validated.
+        /// </summary>
+        /// <typeparam name="T">The type to be read to.</typeparam>
+        /// <param name="converter">Converts a string into a needed type.</param>
+        /// <param name="validator">Validates input type with rules.</param>
+        /// <returns>The <c>T</c>-type instance of input data.</returns>
+        private static T ReadInput<T>(Func<string?, Tuple<bool, string, T>> converter, Func<T, Tuple<bool, string>> validator)
+        {
+            do
+            {
+                T value;
+
+                var input = Console.ReadLine();
+                var conversionResult = converter(input);
+
+                if (!conversionResult.Item1)
+                {
+                    Console.WriteLine($"Conversion failed: {conversionResult.Item2}. Please, correct your input.");
+                    continue;
+                }
+
+                value = conversionResult.Item3;
+
+                var validationResult = validator(value);
+                if (!validationResult.Item1)
+                {
+                    Console.WriteLine($"Validation failed: {validationResult.Item2}. Please, correct your input.");
+                    continue;
+                }
+
+                return value;
+            }
+            while (true);
         }
 
         /// <summary>
@@ -215,6 +242,92 @@ namespace FileCabinetApp
             {
                 this.dateOfBirthDictionary.Remove(dateOfBirthString);
             }
+        }
+
+        /// <summary>
+        /// Gets input data from console and creates a new record with id = 0.
+        /// </summary>
+        /// <returns>The <see cref="FileCabinetRecord"/> instance with id = 0.</returns>
+        private FileCabinetRecord GetInputData()
+        {
+            Console.Write("First name: ");
+            string firstName = ReadInput(this.StringConverter, this.validator.FirstNameValidator);
+
+            Console.Write("Last name: ");
+            string lastName = ReadInput(this.StringConverter, this.validator.LastNameValidator);
+
+            Console.Write("Date of birth: ");
+            DateTime dateOfBirth = ReadInput(this.DateConverter, this.validator.DateOfBirthValidator);
+
+            Console.Write("Work Place Number: ");
+            short workPlaceNumber = ReadInput(this.ShortConverter, this.validator.WorkPlaceValidator);
+
+            Console.Write("Salary: ");
+            decimal salary = ReadInput(this.DecimalConverter, this.validator.SalaryValidator);
+
+            Console.Write("Department (one letter): ");
+            char department = ReadInput(this.CharConverter, this.validator.DepartmentValidator);
+
+            return new FileCabinetRecord()
+            {
+                Id = 0,
+                FirstName = firstName,
+                LastName = lastName,
+                DateOfBirth = dateOfBirth,
+                WorkPlaceNumber = workPlaceNumber,
+                Salary = salary,
+                Department = department,
+            };
+        }
+
+        private Tuple<bool, string, char> CharConverter(string? arg)
+        {
+            if (!char.TryParse(arg, out char result))
+            {
+                return Tuple.Create(false, $"{arg} should be a letter.", default(char));
+            }
+
+            return Tuple.Create(true, string.Empty, result);
+        }
+
+        private Tuple<bool, string, decimal> DecimalConverter(string? arg)
+        {
+            if (!decimal.TryParse(arg, CultureInfo.InvariantCulture, out decimal result))
+            {
+                return Tuple.Create(false, $"{arg} is not a valid decimal type.", result);
+            }
+
+            return Tuple.Create(true, string.Empty, result);
+        }
+
+        private Tuple<bool, string, short> ShortConverter(string? arg)
+        {
+            if (!short.TryParse(arg, CultureInfo.InvariantCulture, out short result))
+            {
+                return Tuple.Create(false, $"{arg} is not a valid short number.", result);
+            }
+
+            return Tuple.Create(true, string.Empty, result);
+        }
+
+        private Tuple<bool, string, DateTime> DateConverter(string? arg)
+        {
+            if (!DateTime.TryParse(arg, out DateTime dateOfBirth))
+            {
+                return Tuple.Create(false, $"{arg} is an invalid DateTime.", dateOfBirth);
+            }
+
+            return Tuple.Create(true, string.Empty, dateOfBirth);
+        }
+
+        private Tuple<bool, string, string> StringConverter(string? arg)
+        {
+            if (arg == null)
+            {
+                return Tuple.Create(false, "String cannot be empty.", string.Empty);
+            }
+
+            return Tuple.Create(true, string.Empty, arg);
         }
     }
 }

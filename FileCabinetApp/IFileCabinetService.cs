@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 
 namespace FileCabinetApp
 {
@@ -11,9 +10,8 @@ namespace FileCabinetApp
         /// <summary>
         /// Creates a new record.
         /// </summary>
-        /// <param name="parameters">The <see cref="RecordParameters"/> instance that represents the employee's data.</param>
         /// <returns>The <see cref="int"/> instance of record's id.</returns>
-        public int CreateRecord(RecordParameters parameters);
+        public int CreateRecord();
 
         /// <summary>
         /// Returns all records.
@@ -31,11 +29,7 @@ namespace FileCabinetApp
         /// Edits a record.
         /// </summary>
         /// <param name="id">The <see cref="int"/> instance of record's id.</param>
-        /// <param name="parameters">The <see cref="RecordParameters"/> instance of the input data.</param>
-        /// <exception cref="ArgumentException">
-        /// <paramref name="id"/> is less than 1 or greater than total number of records.
-        /// </exception>
-        public void EditRecord(int id, RecordParameters parameters);
+        public void EditRecord(int id);
 
         /// <summary>
         /// Searches for a record by first name.
@@ -57,47 +51,5 @@ namespace FileCabinetApp
         /// <param name="dateOfBirthString">The <see cref="string"/> instance of the date of birth.</param>
         /// <returns>A read-only instance of all matched records.</returns>
         public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirthString);
-
-        /// <summary>
-        /// Used to pass parameters between methods.
-        /// </summary>
-        public class RecordParameters
-        {
-            /// <summary>
-            /// Gets or sets the parameter 'First Name'.
-            /// </summary>
-            /// <value>First Name.</value>
-            public string? FirstName { get; set; } = string.Empty;
-
-            /// <summary>
-            /// Gets or sets the parameter 'Last Name'.
-            /// </summary>
-            /// <value>Last Name.</value>
-            public string? LastName { get; set; } = string.Empty;
-
-            /// <summary>
-            /// Gets or sets the parameter 'Date of birth'.
-            /// </summary>
-            /// <value>Date of birth.</value>
-            public string? DateOfBirth { get; set; } = string.Empty;
-
-            /// <summary>
-            /// Gets or sets the parameter 'Work Place Number'.
-            /// </summary>
-            /// <value>Work Place Number string.</value>
-            public string? WorkPlaceNumber { get; set; } = string.Empty;
-
-            /// <summary>
-            /// Gets or sets the parameter 'Salary'.
-            /// </summary>
-            /// <value>Salary string.</value>
-            public string? Salary { get; set; } = string.Empty;
-
-            /// <summary>
-            /// Gets or sets the parameter 'Department'.
-            /// </summary>
-            /// <value>Department letter.</value>
-            public string? Department { get; set; } = string.Empty;
-        }
     }
 }

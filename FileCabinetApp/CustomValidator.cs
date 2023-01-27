@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Globalization;
-using static FileCabinetApp.FileCabinetService;
 
 namespace FileCabinetApp
 {
@@ -12,108 +10,106 @@ namespace FileCabinetApp
         private static readonly DateTime MinDate = new (1900, 1, 1);
 
         /// <summary>
-        /// Validates input data with custom rules and returns a new record instance.
+        /// Validates First Name.
         /// </summary>
-        /// <param name="data">The <see cref="IFileCabinetService.RecordParameters"/> instance input data.</param>
-        /// <returns>A new record instance of type <see cref="IFileCabinetService"/> with id = 0.</returns>
-        /// <exception cref="ArgumentException">If arguments are invalid.</exception>
-        /// <exception cref="ArgumentNullException">If arguments have <c>null</c> values.</exception>
-        public FileCabinetRecord ValidateParameters(IFileCabinetService.RecordParameters data)
+        /// <param name="value">The <see cref="string"/> instance value.</param>
+        /// <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+        public Tuple<bool, string> FirstNameValidator(string value)
         {
-            if (string.IsNullOrWhiteSpace(data.FirstName))
+            if (string.IsNullOrWhiteSpace(value))
             {
-                throw new ArgumentException("First name cannot be empty or have only white spaces.", nameof(data));
+                return Tuple.Create(false, "First Name is not provided.");
             }
 
-            data.FirstName = data.FirstName.Trim();
-            if (data.FirstName.Length < 1 || data.FirstName.Length > 30)
+            value = value.Trim();
+            if (value.Length < 1 || value.Length > 30)
             {
-                throw new ArgumentException("First name has to have at least 1 and maximum 30 characters.", nameof(data));
+                return Tuple.Create(false, "First name has to have at least 1 and maximum 30 characters.");
             }
 
-            if (string.IsNullOrWhiteSpace(data.LastName))
+            return Tuple.Create(true, string.Empty);
+        }
+
+        /// <summary>
+        /// Validates Last Name.
+        /// </summary>
+        /// <param name="value">The <see cref="string"/> instance value.</param>
+        /// <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+        public Tuple<bool, string> LastNameValidator(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
             {
-                throw new ArgumentException("Last name cannot be empty or have only white spaces.", nameof(data));
+                return Tuple.Create(false, "Last Name is not provided.");
             }
 
-            data.LastName = data.LastName.Trim();
-            if (data.LastName.Length < 1 || data.LastName.Length > 30)
+            value = value.Trim();
+            if (value.Length < 1 || value.Length > 30)
             {
-                throw new ArgumentException("Last name has to have at least 1 and maximum 30 characters.", nameof(data));
+                return Tuple.Create(false, "Last name has to have at least 1 and maximum 30 characters.");
             }
 
-            if (data.DateOfBirth == null)
+            return Tuple.Create(true, string.Empty);
+        }
+
+        /// <summary>
+        /// Validates date of birth.
+        /// </summary>
+        /// <param name="value">The <see cref="DateTime"/> instance value.</param>
+        /// <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+        public Tuple<bool, string> DateOfBirthValidator(DateTime value)
+        {
+            if (DateTime.Compare(value, MinDate) < 0
+                || DateTime.Compare(value, DateTime.Today) > 0)
             {
-                throw new ArgumentNullException(nameof(data));
+                return Tuple.Create(false, "Date of birth should be within 01-Jan-1900 and today.");
             }
 
-            if (!DateTime.TryParse(data.DateOfBirth, out DateTime dateOfBirth))
+            return Tuple.Create(true, string.Empty);
+        }
+
+        /// <summary>
+        /// Validates place of work.
+        /// </summary>
+        /// <param name="value">The <see cref="short"/> instance value.</param>
+        /// <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+        public Tuple<bool, string> WorkPlaceValidator(short value)
+        {
+            if (value < 0)
             {
-                throw new ArgumentException("Date of birth is invalid.", nameof(data));
+                return Tuple.Create(false, "WorkPlaceNumber cannot be less than zero");
             }
 
-            if (DateTime.Compare(dateOfBirth, MinDate) < 0
-                || DateTime.Compare(dateOfBirth, DateTime.Today) > 0)
+            return Tuple.Create(true, string.Empty);
+        }
+
+        /// <summary>
+        /// Validates salary.
+        /// </summary>
+        /// <param name="value">The <see cref="decimal"/> instance value.</param>
+        /// <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+        public Tuple<bool, string> SalaryValidator(decimal value)
+        {
+            if (value < 0)
             {
-                throw new ArgumentException("Date of birth should be within 01-Jan-1900 and today.", nameof(data));
+                return Tuple.Create(false, "Salary cannot be less than zero.");
             }
 
-            if (data.WorkPlaceNumber == null)
+            return Tuple.Create(true, string.Empty);
+        }
+
+        /// <summary>
+        /// Validates department letter.
+        /// </summary>
+        /// <param name="value">The <see cref="char"/> instance value.</param>
+        /// <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+        public Tuple<bool, string> DepartmentValidator(char value)
+        {
+            if (!char.IsLetter(value))
             {
-                throw new ArgumentNullException(nameof(data));
+                return Tuple.Create(false, "Not an English letter.");
             }
 
-            if (!short.TryParse(data.WorkPlaceNumber, CultureInfo.InvariantCulture, out short workPlaceNumber))
-            {
-                throw new ArgumentException("WorkPlaceNumber is not a valid number.", nameof(data));
-            }
-
-            if (workPlaceNumber < 0 || DateTime.Compare(dateOfBirth.AddYears(workPlaceNumber), DateTime.Today) > 0)
-            {
-                throw new ArgumentException("WorkPlaceNumber cannot be less than zero or be passed today.", nameof(data));
-            }
-
-            if (data.Salary == null)
-            {
-                throw new ArgumentNullException(nameof(data));
-            }
-
-            if (!decimal.TryParse(data.Salary, CultureInfo.InvariantCulture, out decimal salary))
-            {
-                throw new ArgumentException("salary is not a valid number.", nameof(data));
-            }
-
-            if (salary < 0)
-            {
-                throw new ArgumentException("Saving cannot be less than zero.", nameof(data));
-            }
-
-            if (data.Department == null)
-            {
-                throw new ArgumentNullException(nameof(data));
-            }
-
-            if (data.Department.Length != 1)
-            {
-                throw new ArgumentException("Department should have one character", nameof(data));
-            }
-
-            char department = data.Department[0];
-            if (!char.IsLetter(department))
-            {
-                throw new ArgumentException("Not an English letter.", nameof(data));
-            }
-
-            return new FileCabinetRecord
-            {
-                Id = 0,
-                FirstName = data.FirstName,
-                LastName = data.LastName,
-                DateOfBirth = dateOfBirth,
-                WorkPlaceNumber = workPlaceNumber,
-                Salary = salary,
-                Department = department,
-            };
+            return Tuple.Create(true, string.Empty);
         }
     }
 }
