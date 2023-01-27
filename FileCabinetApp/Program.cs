@@ -183,7 +183,7 @@ namespace FileCabinetApp
                 return;
             }
 
-            FileCabinetService.RecordParameters inputData = GetData();
+            IFileCabinetService.RecordParameters inputData = GetData();
 
             try
             {
@@ -244,9 +244,9 @@ namespace FileCabinetApp
             }
         }
 
-        private static FileCabinetService.RecordParameters GetData()
+        private static IFileCabinetService.RecordParameters GetData()
         {
-            var result = new FileCabinetService.RecordParameters();
+            var result = new IFileCabinetService.RecordParameters();
 
             Console.Write("First name: ");
             result.FirstName = Console.ReadLine();

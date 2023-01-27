@@ -8,7 +8,7 @@ namespace FileCabinetApp
     /// <summary>
     /// Helper class that contains method implementations.
     /// </summary>
-    public class FileCabinetService
+    public class FileCabinetService : IFileCabinetService
     {
         private readonly List<FileCabinetRecord> list = new ();
         private readonly IRecordValidator validator;
@@ -28,9 +28,9 @@ namespace FileCabinetApp
         /// <summary>
         /// Creates a new record.
         /// </summary>
-        /// <param name="parameters">The <see cref="RecordParameters"/> instance that represents the employee's data.</param>
+        /// <param name="parameters">The <see cref="IFileCabinetService.RecordParameters"/> instance that represents the employee's data.</param>
         /// <returns>The <see cref="int"/> instance of record's id.</returns>
-        public int CreateRecord(RecordParameters parameters)
+        public int CreateRecord(IFileCabinetService.RecordParameters parameters)
         {
             var record = this.validator.ValidateParameters(parameters);
 
@@ -66,11 +66,11 @@ namespace FileCabinetApp
         /// Edits a record.
         /// </summary>
         /// <param name="id">The <see cref="int"/> instance of record's id.</param>
-        /// <param name="parameters">The <see cref="RecordParameters"/> instance of the input data.</param>
+        /// <param name="parameters">The <see cref="IFileCabinetService.RecordParameters"/> instance of the input data.</param>
         /// <exception cref="ArgumentException">
         /// <paramref name="id"/> is less than 1 or greater than total number of records.
         /// </exception>
-        public void EditRecord(int id, RecordParameters parameters)
+        public void EditRecord(int id, IFileCabinetService.RecordParameters parameters)
         {
             if (id < 1 || id > this.list.Count)
             {
@@ -215,48 +215,6 @@ namespace FileCabinetApp
             {
                 this.dateOfBirthDictionary.Remove(dateOfBirthString);
             }
-        }
-
-        /// <summary>
-        /// Used to pass parameters between methods.
-        /// </summary>
-        public class RecordParameters
-        {
-            /// <summary>
-            /// Gets or sets the parameter 'First Name'.
-            /// </summary>
-            /// <value>First Name.</value>
-            public string? FirstName { get; set; } = string.Empty;
-
-            /// <summary>
-            /// Gets or sets the parameter 'Last Name'.
-            /// </summary>
-            /// <value>Last Name.</value>
-            public string? LastName { get; set; } = string.Empty;
-
-            /// <summary>
-            /// Gets or sets the parameter 'Date of birth'.
-            /// </summary>
-            /// <value>Date of birth.</value>
-            public string? DateOfBirth { get; set; } = string.Empty;
-
-            /// <summary>
-            /// Gets or sets the parameter 'Work Place Number'.
-            /// </summary>
-            /// <value>Work Place Number string.</value>
-            public string? WorkPlaceNumber { get; set; } = string.Empty;
-
-            /// <summary>
-            /// Gets or sets the parameter 'Salary'.
-            /// </summary>
-            /// <value>Salary string.</value>
-            public string? Salary { get; set; } = string.Empty;
-
-            /// <summary>
-            /// Gets or sets the parameter 'Department'.
-            /// </summary>
-            /// <value>Department letter.</value>
-            public string? Department { get; set; } = string.Empty;
         }
     }
 }
