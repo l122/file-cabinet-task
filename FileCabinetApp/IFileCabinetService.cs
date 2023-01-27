@@ -1,0 +1,55 @@
+﻿using System.Collections.ObjectModel;
+
+namespace FileCabinetApp
+{
+    /// <summary>
+    /// Helper class that contains method implementations.
+    /// </summary>
+    public interface IFileCabinetService
+    {
+        /// <summary>
+        /// Creates a new record.
+        /// </summary>
+        /// <returns>The <see cref="int"/> instance of record's id.</returns>
+        public int CreateRecord();
+
+        /// <summary>
+        /// Returns all records.
+        /// </summary>
+        /// <returns>A read-only instance of all records.</returns>
+        public ReadOnlyCollection<FileCabinetRecord> GetRecords();
+
+        /// <summary>
+        /// Returns the number of records.
+        /// </summary>
+        /// <returns>The <see cref="int"/> instance of total number of records.</returns>
+        public int GetStat();
+
+        /// <summary>
+        /// Edits a record.
+        /// </summary>
+        /// <param name="id">The <see cref="int"/> instance of record's id.</param>
+        public void EditRecord(int id);
+
+        /// <summary>
+        /// Searches for a record by first name.
+        /// </summary>
+        /// <param name="firstName">The <see cref="string"/> instance of the first name.</param>
+        /// <returns>A read-only instance of all matched records.</returns>
+        public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName);
+
+        /// <summary>
+        /// Searches for a record by last name.
+        /// </summary>
+        /// <param name="lastName">The <see cref="string"/> instance of the last name.</param>
+        /// <returns>A read-only instance of all matched records.</returns>
+        public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName);
+
+        /// <summary>
+        /// Searches for a record by date of birth.
+        /// </summary>
+        /// <param name="dateOfBirthString">The <see cref="string"/> instance of the date of birth.</param>
+        /// <returns>A read-only instance of all matched records.</returns>
+        public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirthString);
+    }
+}

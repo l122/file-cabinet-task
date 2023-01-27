@@ -1,10 +1,14 @@
 ﻿using System;
-using System.Diagnostics.Metrics;
+using System.Collections.ObjectModel;
 using System.Globalization;
-using Microsoft.VisualBasic;
+
+[assembly: CLSCompliant(true)]
 
 namespace FileCabinetApp
 {
+    /// <summary>
+    /// The class that contains the Main method.
+    /// </summary>
     public static class Program
     {
         private const string DeveloperName = "Oleg Shkadov";
@@ -13,10 +17,7 @@ namespace FileCabinetApp
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
 
-        private static FileCabinetService fileCabinetService = new ();
-        private static bool isRunning = true;
-
-        private static Tuple<string, Action<string>>[] commands = new Tuple<string, Action<string>>[]
+        private static readonly Tuple<string, Action<string>>[] Commands = new Tuple<string, Action<string>>[]
         {
             new Tuple<string, Action<string>>("help", PrintHelp),
             new Tuple<string, Action<string>>("exit", Exit),
@@ -27,7 +28,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("find", Find),
         };
 
-        private static string[][] helpMessages = new string[][]
+        private static readonly string[][] HelpMessages = new string[][]
         {
             new string[] { "help", "prints the help screen", "The 'help' command prints the help screen." },
             new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
@@ -35,14 +36,23 @@ namespace FileCabinetApp
             new string[] { "create", "creates a new record", "The 'create' command creates a new record." },
             new string[] { "list", "prints all records", "The 'list' command prints all records." },
             new string[] { "edit", "edits a record", "The 'edit #id' command edits record #id." },
-            new string[] { "find", "searches records", "The 'find <field> <criterion>' command searches all records with <field> = <criterion>." },
+            new string[] { "find", "searches records", "The 'find <firstname, lastname, dateofbirth> <criterion>' command searches all records with <field> = <criterion>." },
         };
 
+        private static FileCabinetService fileCabinetService = new (new DefaultValidator());
+        private static bool isRunning = true;
+
+        /// <summary>
+        /// The Main method class of the program.
+        /// </summary>
+        /// <param name="args">The <see cref="string"/> array instance of input arguments.</param>
         public static void Main(string[] args)
         {
             Console.WriteLine($"File Cabinet Application, developed by {Program.DeveloperName}");
             Console.WriteLine(Program.HintMessage);
             Console.WriteLine();
+
+            SetFileCabinetServiceInstance(args);
 
             do
             {
@@ -58,12 +68,12 @@ namespace FileCabinetApp
                     continue;
                 }
 
-                var index = Array.FindIndex(commands, 0, commands.Length, i => i.Item1.Equals(command, StringComparison.OrdinalIgnoreCase));
+                var index = Array.FindIndex(Commands, 0, Commands.Length, i => i.Item1.Equals(command, StringComparison.OrdinalIgnoreCase));
                 if (index >= 0)
                 {
                     const int parametersIndex = 1;
                     var parameters = inputs.Length > 1 ? inputs[parametersIndex] : string.Empty;
-                    commands[index].Item2(parameters);
+                    Commands[index].Item2(parameters);
                 }
                 else
                 {
@@ -83,10 +93,10 @@ namespace FileCabinetApp
         {
             if (!string.IsNullOrEmpty(parameters))
             {
-                var index = Array.FindIndex(helpMessages, 0, helpMessages.Length, i => string.Equals(i[Program.CommandHelpIndex], parameters, StringComparison.OrdinalIgnoreCase));
+                var index = Array.FindIndex(HelpMessages, 0, HelpMessages.Length, i => string.Equals(i[Program.CommandHelpIndex], parameters, StringComparison.OrdinalIgnoreCase));
                 if (index >= 0)
                 {
-                    Console.WriteLine(helpMessages[index][Program.ExplanationHelpIndex]);
+                    Console.WriteLine(HelpMessages[index][Program.ExplanationHelpIndex]);
                 }
                 else
                 {
@@ -97,7 +107,7 @@ namespace FileCabinetApp
             {
                 Console.WriteLine("Available commands:");
 
-                foreach (var helpMessage in helpMessages)
+                foreach (var helpMessage in HelpMessages)
                 {
                     Console.WriteLine("\t{0}\t- {1}", helpMessage[Program.CommandHelpIndex], helpMessage[Program.DescriptionHelpIndex]);
                 }
@@ -120,49 +130,7 @@ namespace FileCabinetApp
 
         private static void Create(string parameters)
         {
-            bool isDone = false;
-            while (!isDone)
-            {
-                GetData(
-                    out string? firstName,
-                    out string? lastName,
-                    out string? dateOfBirth,
-                    out string? age,
-                    out string? savings,
-                    out string? letter);
-
-                try
-                {
-                    Console.WriteLine(
-                        "Record #{0} is created.",
-                        Program.fileCabinetService.CreateRecord(firstName, lastName, dateOfBirth, age, savings, letter));
-                    isDone = true;
-                }
-                catch (ArgumentNullException e)
-                {
-                    Console.WriteLine("\nERROR: " + e.Message);
-                    isDone = CheckIfEscPressed();
-                }
-                catch (ArgumentException e)
-                {
-                    Console.WriteLine("\nERROR: " + e.Message);
-                    isDone = CheckIfEscPressed();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("\n" + e.Message);
-                    isDone = CheckIfEscPressed();
-                }
-            }
-
-            bool CheckIfEscPressed()
-            {
-                Console.Write("Press ESC to cancel entry or any other key to try again...");
-                var key = Console.ReadKey(true);
-                Console.WriteLine(Environment.NewLine);
-
-                return key.Key == ConsoleKey.Escape;
-            }
+            Console.WriteLine("Record #{0} is created.", fileCabinetService.CreateRecord());
         }
 
         private static void List(string parameters)
@@ -179,23 +147,9 @@ namespace FileCabinetApp
                 return;
             }
 
-            GetData(
-                out string? firstName,
-                out string? lastName,
-                out string? dateOfBirth,
-                out string? age,
-                out string? savings,
-                out string? letter);
+            fileCabinetService.EditRecord(id);
 
-            try
-            {
-                fileCabinetService.EditRecord(id, firstName, lastName, dateOfBirth, age, savings, letter);
-                Console.WriteLine("Record #{0} is updated.", id);
-            }
-            catch (ArgumentException e)
-            {
-                Console.WriteLine(e.Message);
-            }
+            Console.WriteLine("Record #{0} is updated.", id);
         }
 
         private static void Find(string parameters)
@@ -208,7 +162,7 @@ namespace FileCabinetApp
             if (input.Length != 2)
             {
                 Console.WriteLine("Invalid parameters.");
-                Console.WriteLine("Use syntax 'find <field> <criterion>'");
+                Console.WriteLine("Use syntax 'find <firstname, lastname, dateofbirth> <criterion>'");
                 return;
             }
 
@@ -232,7 +186,7 @@ namespace FileCabinetApp
 
                     default:
                         Console.WriteLine("Invalid parameters.");
-                        Console.WriteLine("Use syntax 'find <field> <criterion>'");
+                        Console.WriteLine("Use syntax 'find <firstname, lastname, dateofbirth> <criterion>'");
                         break;
                 }
             }
@@ -246,29 +200,7 @@ namespace FileCabinetApp
             }
         }
 
-        private static void GetData(
-            out string? firstName,
-            out string? lastName,
-            out string? dateOfBirth,
-            out string? age,
-            out string? savings,
-            out string? letter)
-        {
-            Console.Write("First name: ");
-            firstName = Console.ReadLine();
-            Console.Write("Last name: ");
-            lastName = Console.ReadLine();
-            Console.Write("Date of birth: ");
-            dateOfBirth = Console.ReadLine();
-            Console.Write("Age: ");
-            age = Console.ReadLine();
-            Console.Write("Savings: ");
-            savings = Console.ReadLine();
-            Console.Write("Favorite English letter: ");
-            letter = Console.ReadLine();
-        }
-
-        private static void PrintRecords(FileCabinetRecord[] records)
+        private static void PrintRecords(ReadOnlyCollection<FileCabinetRecord> records)
         {
             if (records == null)
             {
@@ -279,6 +211,44 @@ namespace FileCabinetApp
             {
                 Console.WriteLine(record.ToString());
             }
+        }
+
+        /// <summary>
+        /// Creates and sets a <see cref="FileCabinetService"/> instance with the type, depending on input args.
+        /// </summary>
+        /// <param name="args">The <see cref="string"/> array instance of input arguments.</param>
+        /// <exception cref="ArgumentException">Invalid validation rule flag.</exception>
+        private static void SetFileCabinetServiceInstance(string[] args)
+        {
+            const string FlagValidationRules = "--validation-rules";
+            const string ShortFlagValidationRules = "-v";
+            const string CustomValidationRules = "custom";
+
+            string choice;
+            string[] splitedArg = Array.Empty<string>();
+            if (args.Length > 0)
+            {
+                splitedArg = args[0].Split('=');
+            }
+
+            if (args.Length == 1 && splitedArg.Length >= 2 && splitedArg[0].Equals(FlagValidationRules, StringComparison.OrdinalIgnoreCase))
+            {
+                choice = splitedArg[1].ToLower(CultureInfo.InvariantCulture);
+            }
+            else if (args.Length >= 2 && args[0].Equals(ShortFlagValidationRules, StringComparison.OrdinalIgnoreCase))
+            {
+                choice = args[1].ToLower(CultureInfo.InvariantCulture);
+            }
+            else
+            {
+                choice = string.Empty;
+            }
+
+            fileCabinetService = choice switch
+            {
+                CustomValidationRules => new FileCabinetService(new CustomValidator()),
+                _ => new FileCabinetService(new DefaultValidator()),
+            };
         }
     }
 }
