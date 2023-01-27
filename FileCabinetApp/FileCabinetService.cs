@@ -10,9 +10,19 @@ namespace FileCabinetApp
     public abstract class FileCabinetService
     {
         private readonly List<FileCabinetRecord> list = new ();
+        private readonly IRecordValidator validator;
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new ();
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new ();
         private readonly Dictionary<string, List<FileCabinetRecord>> dateOfBirthDictionary = new ();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FileCabinetService"/> class.
+        /// </summary>
+        /// <param name="validator">The <see cref="IRecordValidator"/> specialised instance.</param>
+        protected FileCabinetService(IRecordValidator validator)
+        {
+            this.validator = validator;
+        }
 
         /// <summary>
         /// Gets collection of records.
@@ -27,9 +37,9 @@ namespace FileCabinetApp
         /// <returns>The <see cref="int"/> instance of record's id.</returns>
         public int CreateRecord(RecordParameters parameters)
         {
-            var record = this.CreateValidator().ValidateParameters(parameters);
+            var record = this.validator.ValidateParameters(parameters);
 
-            // update record's id, because it's 0 by default
+            // update record's id, because default id = 0
             record.Id = this.list.Count + 1;
 
             this.list.Add(record);
@@ -72,7 +82,7 @@ namespace FileCabinetApp
                 throw new ArgumentException("id is not found.", nameof(id));
             }
 
-            var record = this.CreateValidator().ValidateParameters(parameters);
+            var record = this.validator.ValidateParameters(parameters);
 
             this.RemoveRecordFromSearchDictionaries(id);
 
@@ -139,12 +149,6 @@ namespace FileCabinetApp
 
             return Array.Empty<FileCabinetRecord>();
         }
-
-        /// <summary>
-        /// Delegates the creation of validator to inheriting classes.
-        /// </summary>
-        /// <returns>The <see cref="IRecordValidator"/> concrete implementation instance.</returns>
-        public abstract IRecordValidator CreateValidator();
 
         /// <summary>
         /// Adds a record data to the search dictionaries.

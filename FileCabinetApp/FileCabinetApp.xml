@@ -14,7 +14,7 @@
             Validates input data with custom rules and returns a new record instance.
             </summary>
             <param name="data">The <see cref="T:FileCabinetApp.FileCabinetService.RecordParameters"/> instance input data.</param>
-            <returns>A new record instance of type <see cref="T:FileCabinetApp.FileCabinetRecord"/>.</returns>
+            <returns>A new record instance of type <see cref="T:FileCabinetApp.FileCabinetRecord"/> with id = 0.</returns>
             <exception cref="T:System.ArgumentException">If arguments are invalid.</exception>
             <exception cref="T:System.ArgumentNullException">If arguments have <c>null</c> values.</exception>
         </member>
@@ -28,7 +28,7 @@
             Validates input data with default rules and returns a new record instance.
             </summary>
             <param name="data">The <see cref="T:FileCabinetApp.FileCabinetService.RecordParameters"/> instance input data.</param>
-            <returns>A new record instance of type <see cref="T:FileCabinetApp.FileCabinetRecord"/>.</returns>
+            <returns>A new record instance of type <see cref="T:FileCabinetApp.FileCabinetRecord"/> with id = 0.</returns>
             <exception cref="T:System.ArgumentException">If arguments are invalid.</exception>
             <exception cref="T:System.ArgumentNullException">If arguments have <c>null</c> values.</exception>
         </member>
@@ -38,11 +38,10 @@
             Inherits <see cref="T:FileCabinetApp.FileCabinetService"/>.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetCustomService.CreateValidator">
+        <member name="M:FileCabinetApp.FileCabinetCustomService.#ctor">
             <summary>
-            Creates an object of IRecordValidator with customv strategy.
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetCustomService"/> class.
             </summary>
-            <returns><see cref="T:FileCabinetApp.CustomValidator"/> instance.</returns>
         </member>
         <member name="T:FileCabinetApp.FileCabinetDefaultService">
             <summary>
@@ -50,11 +49,10 @@
             Inherits <see cref="T:FileCabinetApp.FileCabinetService"/>.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetDefaultService.CreateValidator">
+        <member name="M:FileCabinetApp.FileCabinetDefaultService.#ctor">
             <summary>
-            Creates an object of IRecordValidator with default strategy.
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetDefaultService"/> class.
             </summary>
-            <returns><see cref="T:FileCabinetApp.DefaultValidator"/> instance.</returns>
         </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
@@ -114,6 +112,12 @@
             Helper class that contains method implementations.
             </summary>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetService.#ctor(FileCabinetApp.IRecordValidator)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetService"/> class.
+            </summary>
+            <param name="validator">The <see cref="T:FileCabinetApp.IRecordValidator"/> specialised instance.</param>
+        </member>
         <member name="P:FileCabinetApp.FileCabinetService.List">
             <summary>
             Gets collection of records.
@@ -170,12 +174,6 @@
             <param name="dateOfBirthString">The <see cref="T:System.String"/> instance of the date of birth.</param>
             <returns>The <see cref="T:FileCabinetApp.FileCabinetRecord"/> array instance of all matched records.</returns>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetService.CreateValidator">
-            <summary>
-            Delegates the creation of validator to inheriting classes.
-            </summary>
-            <returns>The <see cref="T:FileCabinetApp.IRecordValidator"/> concrete implementation instance.</returns>
-        </member>
         <member name="M:FileCabinetApp.FileCabinetService.AddRecordToSearchDictionaries(FileCabinetApp.FileCabinetRecord@)">
             <summary>
             Adds a record data to the search dictionaries.
@@ -231,7 +229,7 @@
         </member>
         <member name="T:FileCabinetApp.IRecordValidator">
             <summary>
-            Strategy interface for choosing a validator object
+            Strategy interface for choosing a validator object.
             </summary>
         </member>
         <member name="M:FileCabinetApp.IRecordValidator.ValidateParameters(FileCabinetApp.FileCabinetService.RecordParameters)">
@@ -239,7 +237,7 @@
             Validates input data and returns a new record instance.
             </summary>
             <param name="data">The <see cref="T:FileCabinetApp.FileCabinetService.RecordParameters"/> instance input data.</param>
-            <returns>A new record instance of type <see cref="T:FileCabinetApp.FileCabinetRecord"/>.</returns>
+            <returns>A new record instance of type <see cref="T:FileCabinetApp.FileCabinetRecord"/> with id = 0.</returns>
             <exception cref="T:System.ArgumentException">If arguments are invalid.</exception>
             <exception cref="T:System.ArgumentNullException">If arguments have <c>null</c> values.</exception>
         </member>

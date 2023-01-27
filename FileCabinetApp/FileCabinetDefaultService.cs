@@ -10,12 +10,11 @@ namespace FileCabinetApp
     public class FileCabinetDefaultService : FileCabinetService
     {
         /// <summary>
-        /// Creates an object of IRecordValidator with default strategy.
+        /// Initializes a new instance of the <see cref="FileCabinetDefaultService"/> class.
         /// </summary>
-        /// <returns><see cref="DefaultValidator"/> instance.</returns>
-        public override IRecordValidator CreateValidator()
+        public FileCabinetDefaultService()
+            : base(new DefaultValidator())
         {
-            return new DefaultValidator();
         }
     }
 }
