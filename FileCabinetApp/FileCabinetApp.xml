@@ -32,28 +32,6 @@
             <exception cref="T:System.ArgumentException">If arguments are invalid.</exception>
             <exception cref="T:System.ArgumentNullException">If arguments have <c>null</c> values.</exception>
         </member>
-        <member name="T:FileCabinetApp.FileCabinetCustomService">
-            <summary>
-            Helper class with default parameters.
-            Inherits <see cref="T:FileCabinetApp.FileCabinetService"/>.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetCustomService.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetCustomService"/> class.
-            </summary>
-        </member>
-        <member name="T:FileCabinetApp.FileCabinetDefaultService">
-            <summary>
-            Helper class with default parameters.
-            Inherits <see cref="T:FileCabinetApp.FileCabinetService"/>.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetDefaultService.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetDefaultService"/> class.
-            </summary>
-        </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
             Class that represents a record.

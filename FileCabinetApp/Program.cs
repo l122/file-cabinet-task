@@ -38,7 +38,7 @@ namespace FileCabinetApp
             new string[] { "find", "searches records", "The 'find <firstname, lastname, dateofbirth> <criterion>' command searches all records with <field> = <criterion>." },
         };
 
-        private static FileCabinetService fileCabinetService = new FileCabinetDefaultService();
+        private static FileCabinetService fileCabinetService = new FileCabinetService(new DefaultValidator());
         private static bool isRunning = true;
 
         /// <summary>
@@ -309,8 +309,8 @@ namespace FileCabinetApp
 
             fileCabinetService = choice switch
             {
-                CustomValidationRules => new FileCabinetCustomService(),
-                _ => new FileCabinetDefaultService(),
+                CustomValidationRules => new FileCabinetService(new CustomValidator()),
+                _ => new FileCabinetService(new DefaultValidator()),
             };
         }
     }

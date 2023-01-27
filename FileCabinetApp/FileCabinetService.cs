@@ -7,7 +7,7 @@ namespace FileCabinetApp
     /// <summary>
     /// Helper class that contains method implementations.
     /// </summary>
-    public abstract class FileCabinetService
+    public class FileCabinetService
     {
         private readonly List<FileCabinetRecord> list = new ();
         private readonly IRecordValidator validator;
@@ -19,7 +19,7 @@ namespace FileCabinetApp
         /// Initializes a new instance of the <see cref="FileCabinetService"/> class.
         /// </summary>
         /// <param name="validator">The <see cref="IRecordValidator"/> specialised instance.</param>
-        protected FileCabinetService(IRecordValidator validator)
+        public FileCabinetService(IRecordValidator validator)
         {
             this.validator = validator;
         }
