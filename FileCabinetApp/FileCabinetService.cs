@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using static FileCabinetApp.FileCabinetService;
 
 namespace FileCabinetApp
 {
@@ -10,10 +9,6 @@ namespace FileCabinetApp
     /// </summary>
     public abstract class FileCabinetService
     {
-        /// <summary>
-        /// A read-only static field that represents the earliesr acceptable date of birth.
-        /// </summary>
-        protected static readonly DateTime MinDate = new (1950, 1, 1);
         private readonly List<FileCabinetRecord> list = new ();
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary = new ();
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary = new ();
@@ -28,11 +23,14 @@ namespace FileCabinetApp
         /// <summary>
         /// Creates a new record.
         /// </summary>
-        /// <param name="inputParameters">The <see cref="RecordParameters"/> instance that represents the employee's data.</param>
+        /// <param name="parameters">The <see cref="RecordParameters"/> instance that represents the employee's data.</param>
         /// <returns>The <see cref="int"/> instance of record's id.</returns>
-        public int CreateRecord(RecordParameters inputParameters)
+        public int CreateRecord(RecordParameters parameters)
         {
-            var record = this.ValidateParameters(inputParameters);
+            var record = this.CreateValidator().ValidateParameters(parameters);
+
+            // update record's id, because it's 0 by default
+            record.Id = this.list.Count + 1;
 
             this.list.Add(record);
 
@@ -63,33 +61,33 @@ namespace FileCabinetApp
         /// Edits a record.
         /// </summary>
         /// <param name="id">The <see cref="int"/> instance of record's id.</param>
-        /// <param name="inputParameters">The <see cref="RecordParameters"/> instance of the input data.</param>
+        /// <param name="parameters">The <see cref="RecordParameters"/> instance of the input data.</param>
         /// <exception cref="ArgumentException">
         /// <paramref name="id"/> is less than 1 or greater than total number of records.
         /// </exception>
-        public void EditRecord(int id, RecordParameters inputParameters)
+        public void EditRecord(int id, RecordParameters parameters)
         {
             if (id < 1 || id > this.list.Count)
             {
                 throw new ArgumentException("id is not found.", nameof(id));
             }
 
-            var newRecord = this.ValidateParameters(inputParameters);
+            var record = this.CreateValidator().ValidateParameters(parameters);
 
             this.RemoveRecordFromSearchDictionaries(id);
 
             // Update record
             int listId = id - 1;
-            this.list[listId].FirstName = newRecord.FirstName;
-            this.list[listId].LastName = newRecord.LastName;
-            this.list[listId].DateOfBirth = newRecord.DateOfBirth;
-            this.list[listId].WorkPlaceNumber = newRecord.WorkPlaceNumber;
-            this.list[listId].Salary = newRecord.Salary;
-            this.list[listId].Department = newRecord.Department;
+            this.list[listId].FirstName = record.FirstName;
+            this.list[listId].LastName = record.LastName;
+            this.list[listId].DateOfBirth = record.DateOfBirth;
+            this.list[listId].WorkPlaceNumber = record.WorkPlaceNumber;
+            this.list[listId].Salary = record.Salary;
+            this.list[listId].Department = record.Department;
 
-            // Assign the correct id to the record, because the function 'ValidateParameters' returned a record with id = list.count
-            newRecord.Id = id;
-            this.AddRecordToSearchDictionaries(newRecord);
+            // Assign the correct id to the record, because the function 'ValidateParameters' returned a record with id = 0
+            record.Id = id;
+            this.AddRecordToSearchDictionaries(record);
         }
 
         /// <summary>
@@ -143,13 +141,10 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// Validates input data and returns a new record instance.
+        /// Delegates the creation of validator to inheriting classes.
         /// </summary>
-        /// <param name="data">The <see cref="RecordParameters"/> instance input data.</param>
-        /// <returns>A new record instance of type <see cref="FileCabinetRecord"/>.</returns>
-        /// <exception cref="ArgumentException">If arguments are invalid.</exception>
-        /// <exception cref="ArgumentNullException">If arguments have <c>null</c> values.</exception>
-        public abstract FileCabinetRecord ValidateParameters(RecordParameters data);
+        /// <returns>The <see cref="IRecordValidator"/> concrete implementation instance.</returns>
+        public abstract IRecordValidator CreateValidator();
 
         /// <summary>
         /// Adds a record data to the search dictionaries.
