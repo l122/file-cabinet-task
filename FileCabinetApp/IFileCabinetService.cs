@@ -51,5 +51,11 @@ namespace FileCabinetApp
         /// <param name="dateOfBirthString">The <see cref="string"/> instance of the date of birth.</param>
         /// <returns>A read-only instance of all matched records.</returns>
         public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirthString);
+
+        /// <summary>
+        /// Creates an instance of <see cref="IFileCabinetServiceSnapshot"/>.
+        /// </summary>
+        /// <returns>An <see cref="IFileCabinetServiceSnapshot"/> instance.</returns>
+        public IFileCabinetServiceSnapshot MakeSnapshot();
     }
 }

@@ -137,6 +137,15 @@ namespace FileCabinetApp
         }
 
         /// <summary>
+        /// Creates an instance of <see cref="IFileCabinetServiceSnapshot"/>.
+        /// </summary>
+        /// <returns>An <see cref="IFileCabinetServiceSnapshot"/> instance.</returns>
+        public IFileCabinetServiceSnapshot MakeSnapshot()
+        {
+            return new FileCabinetServiceShanpshot(this.list.ToArray());
+        }
+
+        /// <summary>
         /// Reads input in a loop until the input data is acquired and validated.
         /// </summary>
         /// <typeparam name="T">The type to be read to.</typeparam>
