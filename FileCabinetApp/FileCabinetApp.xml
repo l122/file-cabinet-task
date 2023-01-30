@@ -151,6 +151,40 @@
             </summary>
             <returns>A <see cref="T:System.String"/> representation of the <see cref="T:FileCabinetApp.FileCabinetRecord"/> instance.</returns>
         </member>
+        <member name="T:FileCabinetApp.FileCabinetRecordCsvWriter">
+            <summary>
+            CSV Writer Class.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordCsvWriter.#ctor(System.IO.TextWriter)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetRecordCsvWriter"/> class.
+            </summary>
+            <param name="tw">The <see cref="T:System.IO.TextWriter"/> instance.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordCsvWriter.Write(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Wirtes a <see cref="T:FileCabinetApp.FileCabinetRecord"/> object to a CSV file.
+            </summary>
+            <param name="record">The <see cref="T:FileCabinetApp.FileCabinetRecord"/> instance.</param>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetRecordXmlWriter">
+            <summary>
+            File Cabinet XML Writer Class.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordXmlWriter.#ctor(System.IO.TextWriter)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetRecordXmlWriter"/> class.
+            </summary>
+            <param name="textWriter">The <see cref="T:System.IO.TextWriter"/> instance.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordXmlWriter.Write(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Wirtes a <see cref="T:FileCabinetApp.FileCabinetRecord"/> object to an XML file.
+            </summary>
+            <param name="record">The <see cref="T:FileCabinetApp.FileCabinetRecord"/> instance.</param>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetService">
             <summary>
             Helper class that contains method implementations.
@@ -207,6 +241,12 @@
             <param name="dateOfBirthString">The <see cref="T:System.String"/> instance of the date of birth.</param>
             <returns>A read-only instance of all matched records.</returns>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetService.MakeSnapshot">
+            <summary>
+            Creates an instance of <see cref="T:FileCabinetApp.IFileCabinetServiceSnapshot"/>.
+            </summary>
+            <returns>An <see cref="T:FileCabinetApp.IFileCabinetServiceSnapshot"/> instance.</returns>
+        </member>
         <member name="M:FileCabinetApp.FileCabinetService.ReadInput``1(System.Func{System.String,System.Tuple{System.Boolean,System.String,``0}},System.Func{``0,System.Tuple{System.Boolean,System.String}})">
             <summary>
             Reads input in a loop until the input data is acquired and validated.
@@ -233,6 +273,29 @@
             Gets input data from console and creates a new record with id = 0.
             </summary>
             <returns>The <see cref="T:FileCabinetApp.FileCabinetRecord"/> instance with id = 0.</returns>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetServiceShanpshot">
+            <summary>
+            File Cabinet Service Snapshot class.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetServiceShanpshot.#ctor(FileCabinetApp.FileCabinetRecord[])">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetServiceShanpshot"/> class.
+            </summary>
+            <param name="param">The <see cref="T:FileCabinetApp.FileCabinetRecord"/> array instance.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetServiceShanpshot.SaveToCsv(System.IO.StreamWriter)">
+            <summary>
+            Saves a snapshot to a csv file.
+            </summary>
+            <param name="sw">A <see cref="T:System.IO.StreamWriter"/> instance.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetServiceShanpshot.SaveToXml(System.IO.StreamWriter)">
+            <summary>
+            Saves a snapshot to an xml file.
+            </summary>
+            <param name="sw">A <see cref="T:System.IO.StreamWriter"/> instance.</param>
         </member>
         <member name="T:FileCabinetApp.IFileCabinetService">
             <summary>
@@ -283,6 +346,29 @@
             </summary>
             <param name="dateOfBirthString">The <see cref="T:System.String"/> instance of the date of birth.</param>
             <returns>A read-only instance of all matched records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.MakeSnapshot">
+            <summary>
+            Creates an instance of <see cref="T:FileCabinetApp.IFileCabinetServiceSnapshot"/>.
+            </summary>
+            <returns>An <see cref="T:FileCabinetApp.IFileCabinetServiceSnapshot"/> instance.</returns>
+        </member>
+        <member name="T:FileCabinetApp.IFileCabinetServiceSnapshot">
+            <summary>
+            File Cabinet Service Snapshot interface.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetServiceSnapshot.SaveToCsv(System.IO.StreamWriter)">
+            <summary>
+            Saves a snapshot to a csv file.
+            </summary>
+            <param name="sw">A <see cref="T:System.IO.StreamWriter"/> instance.</param>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetServiceSnapshot.SaveToXml(System.IO.StreamWriter)">
+            <summary>
+            Saves a snapshot to an xml file.
+            </summary>
+            <param name="sw">A <see cref="T:System.IO.StreamWriter"/> instance.</param>
         </member>
         <member name="T:FileCabinetApp.IRecordValidator">
             <summary>

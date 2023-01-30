@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.IO;
 
 [assembly: CLSCompliant(true)]
 
@@ -26,6 +27,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("list", List),
             new Tuple<string, Action<string>>("edit", Edit),
             new Tuple<string, Action<string>>("find", Find),
+            new Tuple<string, Action<string>>("export", Export),
         };
 
         private static readonly string[][] HelpMessages = new string[][]
@@ -37,6 +39,7 @@ namespace FileCabinetApp
             new string[] { "list", "prints all records", "The 'list' command prints all records." },
             new string[] { "edit", "edits a record", "The 'edit #id' command edits record #id." },
             new string[] { "find", "searches records", "The 'find <firstname, lastname, dateofbirth> <criterion>' command searches all records with <field> = <criterion>." },
+            new string[] { "export", "exports records to csv or xml", "The 'export <csv, xml> <file_name>' command exports records to a csv or xml file" },
         };
 
         private static FileCabinetService fileCabinetService = new (new DefaultValidator());
@@ -81,6 +84,72 @@ namespace FileCabinetApp
                 }
             }
             while (isRunning);
+        }
+
+        private static void Export(string parameters)
+        {
+            const string csvParameter = "csv";
+            const string xmlParameter = "xml";
+            const string yes = "Y";
+
+            var input = parameters.Split(" ");
+            if (input.Length != 2)
+            {
+                Console.WriteLine("Invalid parameters.");
+                Console.WriteLine("Use syntax 'export <csv, xml> <file_name>'");
+                return;
+            }
+
+            // Create / open file
+            string file = input[1];
+            if (File.Exists(file))
+            {
+                Console.Write("File alredy exists. Rewrite '{0}'? [Y/n] ", file);
+                var response = Console.ReadLine();
+                if (!string.Equals(response, yes, StringComparison.OrdinalIgnoreCase))
+                {
+                    return;
+                }
+            }
+
+            StreamWriter? sw = null;
+            try
+            {
+                //// Create stream writer
+                sw = File.CreateText(file);
+
+                //// Make Snapshot
+                var snapshot = fileCabinetService.MakeSnapshot();
+
+                string parameter = input[0];
+                switch (parameter)
+                {
+                    case csvParameter:
+                        snapshot.SaveToCsv(sw);
+                        break;
+                    case xmlParameter:
+                        snapshot.SaveToXml(sw);
+                        break;
+                    default:
+                        Console.WriteLine("Invalid parameters.");
+                        break;
+                }
+
+                //// Close stream writer
+                sw.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Export failed: can't open file {0}.", file);
+                Console.WriteLine(e.Message);
+            }
+            finally
+            {
+                if (sw != null)
+                {
+                    sw.Close();
+                }
+            }
         }
 
         private static void PrintMissedCommandInfo(string command)
