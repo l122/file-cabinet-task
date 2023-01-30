@@ -168,6 +168,23 @@
             </summary>
             <param name="record">The <see cref="T:FileCabinetApp.FileCabinetRecord"/> instance.</param>
         </member>
+        <member name="T:FileCabinetApp.FileCabinetRecordXmlWriter">
+            <summary>
+            File Cabinet XML Writer Class.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordXmlWriter.#ctor(System.IO.TextWriter)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetRecordXmlWriter"/> class.
+            </summary>
+            <param name="textWriter">The <see cref="T:System.IO.TextWriter"/> instance.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordXmlWriter.Write(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Wirtes a <see cref="T:FileCabinetApp.FileCabinetRecord"/> object to an XML file.
+            </summary>
+            <param name="record">The <see cref="T:FileCabinetApp.FileCabinetRecord"/> instance.</param>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetService">
             <summary>
             Helper class that contains method implementations.
@@ -274,6 +291,12 @@
             </summary>
             <param name="sw">A <see cref="T:System.IO.StreamWriter"/> instance.</param>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetServiceShanpshot.SaveToXml(System.IO.StreamWriter)">
+            <summary>
+            Saves a snapshot to an xml file.
+            </summary>
+            <param name="sw">A <see cref="T:System.IO.StreamWriter"/> instance.</param>
+        </member>
         <member name="T:FileCabinetApp.IFileCabinetService">
             <summary>
             Helper class that contains method implementations.
@@ -338,6 +361,12 @@
         <member name="M:FileCabinetApp.IFileCabinetServiceSnapshot.SaveToCsv(System.IO.StreamWriter)">
             <summary>
             Saves a snapshot to a csv file.
+            </summary>
+            <param name="sw">A <see cref="T:System.IO.StreamWriter"/> instance.</param>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetServiceSnapshot.SaveToXml(System.IO.StreamWriter)">
+            <summary>
+            Saves a snapshot to an xml file.
             </summary>
             <param name="sw">A <see cref="T:System.IO.StreamWriter"/> instance.</param>
         </member>

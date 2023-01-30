@@ -12,5 +12,11 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="sw">A <see cref="StreamWriter"/> instance.</param>
         public void SaveToCsv(StreamWriter sw);
+
+        /// <summary>
+        /// Saves a snapshot to an xml file.
+        /// </summary>
+        /// <param name="sw">A <see cref="StreamWriter"/> instance.</param>
+        public void SaveToXml(StreamWriter sw);
     }
 }

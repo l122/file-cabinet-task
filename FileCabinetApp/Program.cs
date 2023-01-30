@@ -88,6 +88,8 @@ namespace FileCabinetApp
 
         private static void Export(string parameters)
         {
+            const string csvParameter = "csv";
+            const string xmlParameter = "xml";
             const string yes = "Y";
 
             var input = parameters.Split(" ");
@@ -119,8 +121,19 @@ namespace FileCabinetApp
                 //// Make Snapshot
                 var snapshot = fileCabinetService.MakeSnapshot();
 
-                //// Save to CSV file
-                snapshot.SaveToCsv(sw);
+                string parameter = input[0];
+                switch (parameter)
+                {
+                    case csvParameter:
+                        snapshot.SaveToCsv(sw);
+                        break;
+                    case xmlParameter:
+                        snapshot.SaveToXml(sw);
+                        break;
+                    default:
+                        Console.WriteLine("Invalid parameters.");
+                        break;
+                }
 
                 //// Close stream writer
                 sw.Close();

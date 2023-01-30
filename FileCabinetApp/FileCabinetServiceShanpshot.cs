@@ -30,5 +30,19 @@ namespace FileCabinetApp
                 writer.Write(record);
             }
         }
+
+        /// <summary>
+        /// Saves a snapshot to an xml file.
+        /// </summary>
+        /// <param name="sw">A <see cref="StreamWriter"/> instance.</param>
+        public void SaveToXml(StreamWriter sw)
+        {
+            var writer = new FileCabinetRecordXmlWriter(sw);
+
+            foreach (var record in this.records)
+            {
+                writer.Write(record);
+            }
+        }
     }
 }
