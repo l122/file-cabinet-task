@@ -8,17 +8,34 @@ namespace FileCabinetApp
     /// <summary>
     /// File Cabinet XML Writer Class.
     /// </summary>
-    internal class FileCabinetRecordXmlWriter
+    public class FileCabinetRecordXmlWriter : IDisposable
     {
         private readonly XmlWriter xmlWriter;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileCabinetRecordXmlWriter"/> class.
+        /// Writes the starting line in the xml document.
         /// </summary>
         /// <param name="textWriter">The <see cref="TextWriter"/> instance.</param>
         public FileCabinetRecordXmlWriter(TextWriter textWriter)
         {
-            this.xmlWriter = XmlWriter.Create(textWriter);
+            XmlWriterSettings settings = new XmlWriterSettings();
+            settings.Indent = true;
+            settings.WriteEndDocumentOnClose = true;
+
+            this.xmlWriter = XmlWriter.Create(textWriter, settings);
+            this.xmlWriter.WriteStartDocument();
+            this.xmlWriter.WriteStartElement("records");
+            this.xmlWriter.Flush();
+        }
+
+        /// <summary>
+        /// Releases resourses.
+        /// </summary>
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
@@ -27,8 +44,6 @@ namespace FileCabinetApp
         /// <param name="record">The <see cref="FileCabinetRecord"/> instance.</param>
         public void Write(FileCabinetRecord record)
         {
-            this.xmlWriter.WriteStartDocument();
-            this.xmlWriter.WriteStartElement("records");
             this.xmlWriter.WriteStartElement("record");
             this.xmlWriter.WriteAttributeString("id", $"{record.Id}");
             this.xmlWriter.WriteStartElement("name");
@@ -40,8 +55,18 @@ namespace FileCabinetApp
             this.xmlWriter.WriteElementString("Salary", $"{record.Salary}");
             this.xmlWriter.WriteElementString("Department", $"{record.Department}");
             this.xmlWriter.WriteEndElement();
-            this.xmlWriter.WriteEndDocument();
             this.xmlWriter.Flush();
+        }
+
+        /// <summary>
+        /// Releases resourses.
+        /// </summary>
+        /// <param name="disposing">The <see cref="bool"/> instance parameter.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            this.xmlWriter.WriteEndElement();
+            this.xmlWriter.WriteEndDocument();
+            this.xmlWriter.Close();
         }
     }
 }

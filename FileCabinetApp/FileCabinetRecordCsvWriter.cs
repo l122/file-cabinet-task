@@ -34,7 +34,7 @@ namespace FileCabinetApp
         /// <param name="record">The <see cref="FileCabinetRecord"/> instance.</param>
         public void Write(FileCabinetRecord record)
         {
-            this.textWriter.Write(record.ToString().Replace(", ", ",", System.StringComparison.OrdinalIgnoreCase));
+            this.textWriter.WriteLine(record.ToString().Replace(", ", ",", System.StringComparison.OrdinalIgnoreCase));
         }
     }
 }

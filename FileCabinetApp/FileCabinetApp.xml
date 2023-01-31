@@ -176,14 +176,26 @@
         <member name="M:FileCabinetApp.FileCabinetRecordXmlWriter.#ctor(System.IO.TextWriter)">
             <summary>
             Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetRecordXmlWriter"/> class.
+            Writes the starting line in the xml document.
             </summary>
             <param name="textWriter">The <see cref="T:System.IO.TextWriter"/> instance.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordXmlWriter.Dispose">
+            <summary>
+            Releases resourses.
+            </summary>
         </member>
         <member name="M:FileCabinetApp.FileCabinetRecordXmlWriter.Write(FileCabinetApp.FileCabinetRecord)">
             <summary>
             Wirtes a <see cref="T:FileCabinetApp.FileCabinetRecord"/> object to an XML file.
             </summary>
             <param name="record">The <see cref="T:FileCabinetApp.FileCabinetRecord"/> instance.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordXmlWriter.Dispose(System.Boolean)">
+            <summary>
+            Releases resourses.
+            </summary>
+            <param name="disposing">The <see cref="T:System.Boolean"/> instance parameter.</param>
         </member>
         <member name="T:FileCabinetApp.FileCabinetService">
             <summary>

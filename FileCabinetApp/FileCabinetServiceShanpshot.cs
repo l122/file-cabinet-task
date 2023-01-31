@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Xml;
 
 namespace FileCabinetApp
 {
@@ -37,11 +38,12 @@ namespace FileCabinetApp
         /// <param name="sw">A <see cref="StreamWriter"/> instance.</param>
         public void SaveToXml(StreamWriter sw)
         {
-            var writer = new FileCabinetRecordXmlWriter(sw);
-
-            foreach (var record in this.records)
+            using (var writer = new FileCabinetRecordXmlWriter(sw))
             {
-                writer.Write(record);
+                foreach (var record in this.records)
+                {
+                    writer.Write(record);
+                }
             }
         }
     }
