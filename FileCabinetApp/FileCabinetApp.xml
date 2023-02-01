@@ -447,5 +447,11 @@
             <param name="args">The <see cref="T:System.String"/> array instance of input arguments.</param>
             <exception cref="T:System.ArgumentException">Invalid validation rule flag.</exception>
         </member>
+        <member name="M:FileCabinetApp.Program.Init(System.String[])">
+            <summary>
+            Sets initial values according to application parameters.
+            </summary>
+            <param name="args">The <see cref="T:System.String"/> array instance input parameters.</param>
+        </member>
     </members>
 </doc>

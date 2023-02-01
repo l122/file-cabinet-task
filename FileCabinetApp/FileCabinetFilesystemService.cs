@@ -6,9 +6,9 @@ namespace FileCabinetApp
 {
     internal class FileCabinetFilesystemService : IFileCabinetService
     {
-        private readonly FileStream fileStream;
+        private readonly IRecordValidator fileStream;
 
-        public FileCabinetFilesystemService(FileStream fileStream)
+        public FileCabinetFilesystemService(IRecordValidator fileStream)
         {
             this.fileStream = fileStream;
         }

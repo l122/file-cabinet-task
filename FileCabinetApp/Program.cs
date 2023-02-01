@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
@@ -17,6 +18,9 @@ namespace FileCabinetApp
         private const int CommandHelpIndex = 0;
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
+
+        private static readonly string[] ValidationRulesFlags = { "--validation-rules", "-v" };
+        private static readonly string[] StorageFlags = { "--storage", "-s" };
 
         private static readonly Tuple<string, Action<string>>[] Commands = new Tuple<string, Action<string>>[]
         {
@@ -42,7 +46,20 @@ namespace FileCabinetApp
             new string[] { "export", "exports records to csv or xml", "The 'export <csv, xml> <file_name>' command exports records to a csv or xml file" },
         };
 
-        private static FileCabinetMemoryService fileCabinetService = new (new DefaultValidator());
+        private static readonly Tuple<string, Func<IRecordValidator>>[] Validators = new Tuple<string, Func<IRecordValidator>>[]
+        {
+            new Tuple<string, Func<IRecordValidator>>("default", GetDefaultValidatorObject),
+            new Tuple<string, Func<IRecordValidator>>("custom", GetCustomValidatorObject),
+        };
+
+        private static readonly Tuple<string, Func<IRecordValidator, IFileCabinetService>>[] MemorySystems = new Tuple<string, Func<IRecordValidator, IFileCabinetService>>[]
+        {
+            new Tuple<string, Func<IRecordValidator, IFileCabinetService>>("memory", GetFileCabinetMemoryServiceObject),
+            new Tuple<string, Func<IRecordValidator, IFileCabinetService>>("file", GetFileCabinetFilesystemServiceObject),
+        };
+
+        private static IFileCabinetService fileCabinetService = new FileCabinetMemoryService(new DefaultValidator());
+
         private static bool isRunning = true;
 
         /// <summary>
@@ -55,7 +72,7 @@ namespace FileCabinetApp
             Console.WriteLine(Program.HintMessage);
             Console.WriteLine();
 
-            SetFileCabinetServiceInstance(args);
+            Init(args);
 
             do
             {
@@ -318,6 +335,90 @@ namespace FileCabinetApp
                 CustomValidationRules => new FileCabinetMemoryService(new CustomValidator()),
                 _ => new FileCabinetMemoryService(new DefaultValidator()),
             };
+        }
+
+        /// <summary>
+        /// Sets initial values according to application parameters.
+        /// </summary>
+        /// <param name="args">The <see cref="string"/> array instance input parameters.</param>
+        private static void Init(string[] args)
+        {
+            var parsedArgsDictionary = ParseArgs(args);
+
+            int validatorIndex = 0;
+            foreach (var flag in ValidationRulesFlags)
+            {
+                var value = string.Empty;
+                if (parsedArgsDictionary.TryGetValue(flag, out value))
+                {
+                    validatorIndex = Array.FindIndex(Validators, 0, Validators.Length, p => p.Item1.Equals(value, StringComparison.OrdinalIgnoreCase));
+                    if (validatorIndex == -1)
+                    {
+                        validatorIndex = 0;
+                    }
+                }
+            }
+
+            var validator = Validators[validatorIndex].Item2();
+
+            int memoryIndex = 0;
+            foreach (var flag in StorageFlags)
+            {
+                var value = string.Empty;
+                if (parsedArgsDictionary.TryGetValue(flag, out value))
+                {
+                    memoryIndex = Array.FindIndex(MemorySystems, 0, MemorySystems.Length, p => p.Item1.Equals(value, StringComparison.OrdinalIgnoreCase));
+                    if (memoryIndex == -1)
+                    {
+                        memoryIndex = 0;
+                    }
+                }
+            }
+
+            fileCabinetService = MemorySystems[memoryIndex].Item2(validator);
+        }
+
+        private static IFileCabinetService GetFileCabinetFilesystemServiceObject(IRecordValidator validator)
+        {
+            return new FileCabinetFilesystemService(validator);
+        }
+
+        private static IFileCabinetService GetFileCabinetMemoryServiceObject(IRecordValidator validator)
+        {
+            return new FileCabinetMemoryService(validator);
+        }
+
+        private static IRecordValidator GetCustomValidatorObject()
+        {
+            return new CustomValidator();
+        }
+
+        private static IRecordValidator GetDefaultValidatorObject()
+        {
+            return new DefaultValidator();
+        }
+
+        private static Dictionary<string, string> ParseArgs(string[] args)
+        {
+            Dictionary<string, string> result = new ();
+            int i = 0;
+            while (i < args.Length)
+            {
+                var splitedArg = args[i].Split("=");
+                if (splitedArg.Length == 2)
+                {
+                    result.Add(splitedArg[0].ToLower(CultureInfo.InvariantCulture), splitedArg[1].ToLower(CultureInfo.InvariantCulture));
+                }
+                else if (splitedArg.Length == 1 && i + 1 < args.Length)
+                {
+                    result.Add(args[i].ToLower(CultureInfo.InvariantCulture), args[i + 1].ToLower(CultureInfo.InvariantCulture));
+                    i++;
+                }
+
+                i++;
+            }
+
+            return result;
         }
     }
 }
