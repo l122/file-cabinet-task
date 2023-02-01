@@ -98,6 +98,95 @@
             <param name="value">The <see cref="T:System.Char"/> instance value.</param>
             <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
         </member>
+        <member name="T:FileCabinetApp.FileCabinetMemoryService">
+            <summary>
+            Helper class that contains method implementations.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.#ctor(FileCabinetApp.IRecordValidator)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetMemoryService"/> class.
+            </summary>
+            <param name="validator">The <see cref="T:FileCabinetApp.IRecordValidator"/> specialised instance.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.CreateRecord">
+            <summary>
+            Creates a new record.
+            </summary>
+            <returns>The <see cref="T:System.Int32"/> instance of record's id.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.GetRecords">
+            <summary>
+            Returns all records.
+            </summary>
+            <returns>A read-only instance of all records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.GetStat">
+            <summary>
+            Returns the number of records.
+            </summary>
+            <returns>The <see cref="T:System.Int32"/> instance of total number of records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.EditRecord(System.Int32)">
+            <summary>
+            Edits a record.
+            </summary>
+            <param name="id">The <see cref="T:System.Int32"/> instance of record's id.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.FindByFirstName(System.String)">
+            <summary>
+            Searches for a record by first name.
+            </summary>
+            <param name="firstName">The <see cref="T:System.String"/> instance of the first name.</param>
+            <returns>A read-only instance of all matched records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.FindByLastName(System.String)">
+            <summary>
+            Searches for a record by last name.
+            </summary>
+            <param name="lastName">The <see cref="T:System.String"/> instance of the last name.</param>
+            <returns>A read-only instance of all matched records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.FindByDateOfBirth(System.String)">
+            <summary>
+            Searches for a record by date of birth.
+            </summary>
+            <param name="dateOfBirthString">The <see cref="T:System.String"/> instance of the date of birth.</param>
+            <returns>A read-only instance of all matched records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.MakeSnapshot">
+            <summary>
+            Creates an instance of <see cref="T:FileCabinetApp.IFileCabinetServiceSnapshot"/>.
+            </summary>
+            <returns>An <see cref="T:FileCabinetApp.IFileCabinetServiceSnapshot"/> instance.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.ReadInput``1(System.Func{System.String,System.Tuple{System.Boolean,System.String,``0}},System.Func{``0,System.Tuple{System.Boolean,System.String}})">
+            <summary>
+            Reads input in a loop until the input data is acquired and validated.
+            </summary>
+            <typeparam name="T">The type to be read to.</typeparam>
+            <param name="converter">Converts a string into a needed type.</param>
+            <param name="validator">Validates input type with rules.</param>
+            <returns>The <c>T</c>-type instance of input data.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.AddRecordToSearchDictionaries(FileCabinetApp.FileCabinetRecord@)">
+            <summary>
+            Adds a record data to the search dictionaries.
+            </summary>
+            <param name="record">The <see cref="T:FileCabinetApp.FileCabinetRecord"/> instance.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.RemoveRecordFromSearchDictionaries(System.Int32)">
+            <summary>
+            Removes records that match id from all searching dictionaries.
+            </summary>
+            <param name="inputId">The <see cref="T:System.Int32"/> id input.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.GetInputData">
+            <summary>
+            Gets input data from console and creates a new record with id = 0.
+            </summary>
+            <returns>The <see cref="T:FileCabinetApp.FileCabinetRecord"/> instance with id = 0.</returns>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
             Class that represents a record.
@@ -196,95 +285,6 @@
             Releases resourses.
             </summary>
             <param name="disposing">The <see cref="T:System.Boolean"/> instance parameter.</param>
-        </member>
-        <member name="T:FileCabinetApp.FileCabinetService">
-            <summary>
-            Helper class that contains method implementations.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.#ctor(FileCabinetApp.IRecordValidator)">
-            <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetService"/> class.
-            </summary>
-            <param name="validator">The <see cref="T:FileCabinetApp.IRecordValidator"/> specialised instance.</param>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.CreateRecord">
-            <summary>
-            Creates a new record.
-            </summary>
-            <returns>The <see cref="T:System.Int32"/> instance of record's id.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.GetRecords">
-            <summary>
-            Returns all records.
-            </summary>
-            <returns>A read-only instance of all records.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.GetStat">
-            <summary>
-            Returns the number of records.
-            </summary>
-            <returns>The <see cref="T:System.Int32"/> instance of total number of records.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.EditRecord(System.Int32)">
-            <summary>
-            Edits a record.
-            </summary>
-            <param name="id">The <see cref="T:System.Int32"/> instance of record's id.</param>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.FindByFirstName(System.String)">
-            <summary>
-            Searches for a record by first name.
-            </summary>
-            <param name="firstName">The <see cref="T:System.String"/> instance of the first name.</param>
-            <returns>A read-only instance of all matched records.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.FindByLastName(System.String)">
-            <summary>
-            Searches for a record by last name.
-            </summary>
-            <param name="lastName">The <see cref="T:System.String"/> instance of the last name.</param>
-            <returns>A read-only instance of all matched records.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.FindByDateOfBirth(System.String)">
-            <summary>
-            Searches for a record by date of birth.
-            </summary>
-            <param name="dateOfBirthString">The <see cref="T:System.String"/> instance of the date of birth.</param>
-            <returns>A read-only instance of all matched records.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.MakeSnapshot">
-            <summary>
-            Creates an instance of <see cref="T:FileCabinetApp.IFileCabinetServiceSnapshot"/>.
-            </summary>
-            <returns>An <see cref="T:FileCabinetApp.IFileCabinetServiceSnapshot"/> instance.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.ReadInput``1(System.Func{System.String,System.Tuple{System.Boolean,System.String,``0}},System.Func{``0,System.Tuple{System.Boolean,System.String}})">
-            <summary>
-            Reads input in a loop until the input data is acquired and validated.
-            </summary>
-            <typeparam name="T">The type to be read to.</typeparam>
-            <param name="converter">Converts a string into a needed type.</param>
-            <param name="validator">Validates input type with rules.</param>
-            <returns>The <c>T</c>-type instance of input data.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.AddRecordToSearchDictionaries(FileCabinetApp.FileCabinetRecord@)">
-            <summary>
-            Adds a record data to the search dictionaries.
-            </summary>
-            <param name="record">The <see cref="T:FileCabinetApp.FileCabinetRecord"/> instance.</param>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.RemoveRecordFromSearchDictionaries(System.Int32)">
-            <summary>
-            Removes records that match id from all searching dictionaries.
-            </summary>
-            <param name="inputId">The <see cref="T:System.Int32"/> id input.</param>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.GetInputData">
-            <summary>
-            Gets input data from console and creates a new record with id = 0.
-            </summary>
-            <returns>The <see cref="T:FileCabinetApp.FileCabinetRecord"/> instance with id = 0.</returns>
         </member>
         <member name="T:FileCabinetApp.FileCabinetServiceShanpshot">
             <summary>
@@ -442,7 +442,7 @@
         </member>
         <member name="M:FileCabinetApp.Program.SetFileCabinetServiceInstance(System.String[])">
             <summary>
-            Creates and sets a <see cref="T:FileCabinetApp.FileCabinetService"/> instance with the type, depending on input args.
+            Creates and sets a <see cref="T:FileCabinetApp.FileCabinetMemoryService"/> instance with the type, depending on input args.
             </summary>
             <param name="args">The <see cref="T:System.String"/> array instance of input arguments.</param>
             <exception cref="T:System.ArgumentException">Invalid validation rule flag.</exception>

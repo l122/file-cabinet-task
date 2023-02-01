@@ -42,7 +42,7 @@ namespace FileCabinetApp
             new string[] { "export", "exports records to csv or xml", "The 'export <csv, xml> <file_name>' command exports records to a csv or xml file" },
         };
 
-        private static FileCabinetService fileCabinetService = new (new DefaultValidator());
+        private static FileCabinetMemoryService fileCabinetService = new (new DefaultValidator());
         private static bool isRunning = true;
 
         /// <summary>
@@ -283,7 +283,7 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// Creates and sets a <see cref="FileCabinetService"/> instance with the type, depending on input args.
+        /// Creates and sets a <see cref="FileCabinetMemoryService"/> instance with the type, depending on input args.
         /// </summary>
         /// <param name="args">The <see cref="string"/> array instance of input arguments.</param>
         /// <exception cref="ArgumentException">Invalid validation rule flag.</exception>
@@ -315,8 +315,8 @@ namespace FileCabinetApp
 
             fileCabinetService = choice switch
             {
-                CustomValidationRules => new FileCabinetService(new CustomValidator()),
-                _ => new FileCabinetService(new DefaultValidator()),
+                CustomValidationRules => new FileCabinetMemoryService(new CustomValidator()),
+                _ => new FileCabinetMemoryService(new DefaultValidator()),
             };
         }
     }
