@@ -7,20 +7,19 @@ namespace FileCabinetApp
     /// <summary>
     /// Helper class for storing data in a binary file.
     /// </summary>
-    internal class FileCabinetFilesystemService : IFileCabinetService, IDisposable
+    public class FileCabinetFilesystemService : FileCabinetService, IFileCabinetService, IDisposable
     {
         private const string FileName = "cabinet-records.db";
-
+        private const int RecordSize = 278;
         private readonly FileStream fileStream;
-        private readonly IRecordValidator validator;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileCabinetFilesystemService"/> class.
         /// </summary>
         /// <param name="validator">The <see cref="IRecordValidator"/> specialised instance.</param>
         public FileCabinetFilesystemService(IRecordValidator validator)
+            : base(validator)
         {
-            this.validator = validator;
             this.fileStream = File.Open(FileName, FileMode.OpenOrCreate, FileAccess.ReadWrite);
         }
 
@@ -30,7 +29,14 @@ namespace FileCabinetApp
         /// <returns>The <see cref="int"/> instance of record's id.</returns>
         public int CreateRecord()
         {
-            throw new NotImplementedException();
+            var record = this.GetInputData();
+
+            // Update record id, because the default id = 0
+            record.Id = this.GetStat() + 1;
+
+            this.WriteToFile(record);
+
+            return record.Id;
         }
 
         /// <summary>
@@ -48,7 +54,7 @@ namespace FileCabinetApp
         /// <returns>The <see cref="int"/> instance of total number of records.</returns>
         public int GetStat()
         {
-            throw new NotImplementedException();
+            return (int)(this.fileStream.Length / RecordSize);
         }
 
         /// <summary>
@@ -118,6 +124,22 @@ namespace FileCabinetApp
             {
                 this.fileStream.Dispose();
             }
+        }
+
+        /// <summary>
+        /// Writes the <see cref="FileCabinetRecord"/> instance to a binary file.
+        /// </summary>
+        /// <param name="record">A <see cref="FileCabinetRecord"/> instance.</param>
+        private void WriteToFile(FileCabinetRecord record)
+        {
+            // Set current position to the end of the file
+            var endOfFile = this.fileStream.Length;
+            this.fileStream.Seek(endOfFile, SeekOrigin.Begin);
+
+            // Write each field of record
+
+
+            this.fileStream.Flush();
         }
     }
 }
