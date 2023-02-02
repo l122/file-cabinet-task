@@ -6,7 +6,7 @@ using System.Globalization;
 namespace FileCabinetApp
 {
     /// <summary>
-    /// Helper class that contains method implementations.
+    /// Helper class for storing data in a memory.
     /// </summary>
     public class FileCabinetMemoryService : IFileCabinetService
     {

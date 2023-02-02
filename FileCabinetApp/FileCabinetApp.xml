@@ -453,5 +453,12 @@
             </summary>
             <param name="args">The <see cref="T:System.String"/> array instance input parameters.</param>
         </member>
+        <member name="M:FileCabinetApp.Program.ParseArgs(System.String[])">
+            <summary>
+            Parses input arguments input a <see cref="T:System.Collections.Generic.Dictionary`2"/>.
+            </summary>
+            <param name="args">The <see cref="T:System.String"/> array instance.</param>
+            <returns>The <see cref="T:System.Collections.Generic.Dictionary`2"/> object.</returns>
+        </member>
     </members>
 </doc>

@@ -30,15 +30,6 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// Releases resourses.
-        /// </summary>
-        public void Dispose()
-        {
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
         /// Wirtes a <see cref="FileCabinetRecord"/> object to an XML file.
         /// </summary>
         /// <param name="record">The <see cref="FileCabinetRecord"/> instance.</param>
@@ -56,6 +47,15 @@ namespace FileCabinetApp
             this.xmlWriter.WriteElementString("Department", $"{record.Department}");
             this.xmlWriter.WriteEndElement();
             this.xmlWriter.Flush();
+        }
+
+        /// <summary>
+        /// Releases resourses.
+        /// </summary>
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
