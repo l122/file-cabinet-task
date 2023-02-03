@@ -176,6 +176,7 @@
             Writes the <see cref="T:FileCabinetApp.FileCabinetRecord"/> instance to a binary file.
             </summary>
             <param name="record">A <see cref="T:FileCabinetApp.FileCabinetRecord"/> instance.</param>
+            <returns>true if success, false otherwise.</returns>
         </member>
         <member name="T:FileCabinetApp.FileCabinetMemoryService">
             <summary>

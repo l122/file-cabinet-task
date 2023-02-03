@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Text;
 
 namespace FileCabinetApp
 {
@@ -11,6 +13,7 @@ namespace FileCabinetApp
     {
         private const string FileName = "cabinet-records.db";
         private const int RecordSize = 278;
+        private const int StringBufferSize = 120;
         private readonly FileStream fileStream;
 
         /// <summary>
@@ -21,6 +24,12 @@ namespace FileCabinetApp
             : base(validator)
         {
             this.fileStream = File.Open(FileName, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+        }
+
+        private enum Status : short
+        {
+            NotDeleted,
+            Deleted,
         }
 
         /// <summary>
@@ -34,9 +43,12 @@ namespace FileCabinetApp
             // Update record id, because the default id = 0
             record.Id = this.GetStat() + 1;
 
-            this.WriteToFile(record);
+            if (this.WriteToFile(record))
+            {
+                return record.Id;
+            }
 
-            return record.Id;
+            return -1;
         }
 
         /// <summary>
@@ -62,36 +74,6 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="id">The <see cref="int"/> instance of record's id.</param>
         public void EditRecord(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Searches for a record by first name.
-        /// </summary>
-        /// <param name="firstName">The <see cref="string"/> instance of the first name.</param>
-        /// <returns>A read-only instance of all matched records.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Searches for a record by last name.
-        /// </summary>
-        /// <param name="lastName">The <see cref="string"/> instance of the last name.</param>
-        /// <returns>A read-only instance of all matched records.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Searches for a record by date of birth.
-        /// </summary>
-        /// <param name="dateOfBirthString">The <see cref="string"/> instance of the date of birth.</param>
-        /// <returns>A read-only instance of all matched records.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirthString)
         {
             throw new NotImplementedException();
         }
@@ -130,16 +112,105 @@ namespace FileCabinetApp
         /// Writes the <see cref="FileCabinetRecord"/> instance to a binary file.
         /// </summary>
         /// <param name="record">A <see cref="FileCabinetRecord"/> instance.</param>
-        private void WriteToFile(FileCabinetRecord record)
+        /// <returns>true if success, false otherwise.</returns>
+        private bool WriteToFile(FileCabinetRecord record)
         {
-            // Set current position to the end of the file
-            var endOfFile = this.fileStream.Length;
-            this.fileStream.Seek(endOfFile, SeekOrigin.Begin);
+            byte[] buffer = new byte[RecordSize];
+            int offset = 0;
 
-            // Write each field of record
+            this.fileStream.Seek(this.fileStream.Length, SeekOrigin.Begin);
+            var initialPosition = this.fileStream.Position;
 
+            // Copy status to buffer
+            CopyToBuffer(BitConverter.GetBytes((short)Status.NotDeleted), buffer, ref offset);
 
-            this.fileStream.Flush();
+            // Copy ID
+            CopyToBuffer(BitConverter.GetBytes(record.Id), buffer, ref offset);
+
+            // Append empty spaces to First and Last names,
+            // so that their sizes would be exactly 120 bytes
+            int appendedSpaces = StringBufferSize - record.FirstName.Length;
+            string alignedString = new string(' ', appendedSpaces) + record.FirstName;
+
+            // Copy First Name
+            CopyToBuffer(Encoding.UTF8.GetBytes(alignedString), buffer, ref offset);
+
+            appendedSpaces = StringBufferSize - record.LastName.Length;
+            alignedString = new string(' ', appendedSpaces) + record.LastName;
+
+            // Copy Last Name
+            CopyToBuffer(Encoding.UTF8.GetBytes(alignedString), buffer, ref offset);
+
+            // Copy Birth Year
+            CopyToBuffer(BitConverter.GetBytes(record.DateOfBirth.Year), buffer, ref offset);
+
+            // Copy Birth Month
+            CopyToBuffer(BitConverter.GetBytes(record.DateOfBirth.Month), buffer, ref offset);
+
+            // Copy Birth Day
+            CopyToBuffer(BitConverter.GetBytes(record.DateOfBirth.Day), buffer, ref offset);
+
+            // Copy Work Place Number
+            CopyToBuffer(BitConverter.GetBytes(record.WorkPlaceNumber), buffer, ref offset);
+
+            // Copy Salary
+            CopyIntToBuffer(decimal.GetBits(record.Salary), buffer, ref offset);
+
+            // Copy Department
+            CopyToBuffer(BitConverter.GetBytes(record.Department), buffer, ref offset);
+
+            // Write buffer to the end of file
+            try
+            {
+                this.fileStream.Write(buffer, 0, buffer.Length);
+                this.fileStream.Flush();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error in writing data to {0} : {1}", FileName, e.ToString());
+                return false;
+            }
+
+            // Read and verify written data
+            this.fileStream.Position = initialPosition;
+            try
+            {
+                for (int i = 0; i < buffer.Length; i++)
+                {
+                    if (buffer[i] != this.fileStream.ReadByte())
+                    {
+                        // If written data is not verified, than mark it for deletion
+                        this.fileStream.Position = initialPosition;
+                        this.fileStream.Write(BitConverter.GetBytes((short)Status.Deleted), 0, sizeof(short));
+                        this.fileStream.Flush();
+                        Console.WriteLine("The record is written incorrectly and is deleted. Try creating the record again.");
+                        return false;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error in verifying data in: {0}", e.ToString());
+                return false;
+            }
+
+            // Copies byte[] into a byte[] at specified position
+            void CopyToBuffer(in byte[] data, byte[] buffer, ref int offset)
+            {
+                BitArray bitArray = new (data);
+                bitArray.CopyTo(buffer, offset);
+                offset += bitArray.Count / 8;
+            }
+
+            // Copies int[] into a byte[] at specified position
+            void CopyIntToBuffer(in int[] data, byte[] buffer, ref int offset)
+            {
+                BitArray bitArray = new (data);
+                bitArray.CopyTo(buffer, offset);
+                offset += bitArray.Count / 8;
+            }
+
+            return true;
         }
     }
 }

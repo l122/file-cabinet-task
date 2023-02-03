@@ -216,7 +216,15 @@ namespace FileCabinetApp
 
         private static void Create(string parameters)
         {
-            Console.WriteLine("Record #{0} is created.", fileCabinetService.CreateRecord());
+            var id = fileCabinetService.CreateRecord();
+            if (id > 0)
+            {
+                Console.WriteLine("Record #{0} is created.", id);
+            }
+            else
+            {
+                Console.WriteLine("Record is not created.");
+            }
         }
 
         private static void List(string parameters)
