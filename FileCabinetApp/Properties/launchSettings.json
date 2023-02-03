@@ -2,7 +2,7 @@
   "profiles": {
     "FileCabinetApp": {
       "commandName": "Project",
-      "commandLineArgs": "--Validation-rules=custom -S file"
+      "commandLineArgs": "-s file"
     }
   }
 }

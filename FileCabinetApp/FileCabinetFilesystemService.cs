@@ -143,7 +143,30 @@ namespace FileCabinetApp
         /// <returns>The <see cref="int"/> instance of total number of records.</returns>
         public int GetStat()
         {
-            return (int)(this.fileStream.Length / RecordSize);
+            byte[] buffer = new byte[2];
+            int counter = 0;
+
+            // Loop over file and count the records with the status "NotDelete"
+            for (long i = 0; i < this.fileStream.Length; i += RecordSize)
+            {
+                this.fileStream.Position = i;
+                try
+                {
+                    this.fileStream.Read(buffer, 0, buffer.Length);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Error in reading data in {0} : {1}", FileName, e.ToString());
+                }
+
+                var status = BitConverter.ToInt16(buffer, 0);
+                if (status == (short)Status.NotDeleted)
+                {
+                    counter++;
+                }
+            }
+
+            return counter;
         }
 
         /// <summary>
