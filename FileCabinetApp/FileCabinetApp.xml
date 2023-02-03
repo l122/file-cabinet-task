@@ -133,27 +133,6 @@
             </summary>
             <param name="id">The <see cref="T:System.Int32"/> instance of record's id.</param>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetFilesystemService.FindByFirstName(System.String)">
-            <summary>
-            Searches for a record by first name.
-            </summary>
-            <param name="firstName">The <see cref="T:System.String"/> instance of the first name.</param>
-            <returns>A read-only instance of all matched records.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetFilesystemService.FindByLastName(System.String)">
-            <summary>
-            Searches for a record by last name.
-            </summary>
-            <param name="lastName">The <see cref="T:System.String"/> instance of the last name.</param>
-            <returns>A read-only instance of all matched records.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetFilesystemService.FindByDateOfBirth(System.String)">
-            <summary>
-            Searches for a record by date of birth.
-            </summary>
-            <param name="dateOfBirthString">The <see cref="T:System.String"/> instance of the date of birth.</param>
-            <returns>A read-only instance of all matched records.</returns>
-        </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.MakeSnapshot">
             <summary>
             Creates an instance of <see cref="T:FileCabinetApp.IFileCabinetServiceSnapshot"/>.

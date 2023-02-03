@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
@@ -57,7 +58,83 @@ namespace FileCabinetApp
         /// <returns>A read-only instance of all records.</returns>
         public ReadOnlyCollection<FileCabinetRecord> GetRecords()
         {
-            throw new NotImplementedException();
+            List<FileCabinetRecord> records = new ();
+            byte[] buffer = new byte[RecordSize];
+            this.fileStream.Position = 0;
+
+            while (this.fileStream.Position < this.fileStream.Length)
+            {
+                int offset = 0;
+                try
+                {
+                    this.fileStream.Read(buffer, 0, buffer.Length);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Error in reading data in {0} : {1}", FileName, e.ToString());
+                }
+
+                // Skip parsing the record if it's marked for deletion
+                var status = BitConverter.ToInt16(buffer, offset);
+                offset += sizeof(short);
+                if (status == (short)Status.Deleted)
+                {
+                    continue;
+                }
+
+                FileCabinetRecord record = new ();
+
+                // Parse Id
+                record.Id = BitConverter.ToInt32(buffer, offset);
+                offset += sizeof(int);
+
+                // Parse First Name
+                record.FirstName = Encoding.UTF8.GetString(buffer, offset, StringBufferSize).Trim();
+                offset += StringBufferSize;
+
+                // Parse Last Name
+                record.LastName = Encoding.UTF8.GetString(buffer, offset, StringBufferSize).Trim();
+                offset += StringBufferSize;
+
+                // Parse Birth Year
+                var year = BitConverter.ToInt32(buffer, offset);
+                offset += sizeof(int);
+
+                // Parse Birth Month
+                var month = BitConverter.ToInt32(buffer, offset);
+                offset += sizeof(int);
+
+                // Parse Birth Day
+                var day = BitConverter.ToInt32(buffer, offset);
+                offset += sizeof(int);
+
+                // Parse Date Of Birth
+                record.DateOfBirth = new DateTime(year, month, day);
+
+                // Parse Work Place Number
+                record.WorkPlaceNumber = BitConverter.ToInt16(buffer, offset);
+                offset += sizeof(short);
+
+                // Parse Salary
+                int[] parts = new int[4];
+                for (int i = 0; i < parts.Length; i++)
+                {
+                    parts[i] = BitConverter.ToInt32(buffer, offset);
+                    offset += sizeof(int);
+                }
+
+                bool sign = (parts[3] & 0x80000000) != 0;
+
+                byte scale = (byte)((parts[3] >> 16) & 0x7F);
+                record.Salary = new decimal(parts[0], parts[1], parts[2], sign, scale);
+
+                // Parse Department
+                record.Department = BitConverter.ToChar(buffer, offset);
+
+                records.Add(record);
+            }
+
+            return new ReadOnlyCollection<FileCabinetRecord>(records);
         }
 
         /// <summary>
