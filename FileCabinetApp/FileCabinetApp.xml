@@ -150,7 +150,7 @@
             </summary>
             <param name="disposing">The <see cref="T:System.Boolean"/> instance parameter.</param>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetFilesystemService.WriteToFile(FileCabinetApp.FileCabinetRecord)">
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.WriteToFile(FileCabinetApp.FileCabinetRecord,System.Int64)">
             <summary>
             Writes the <see cref="T:FileCabinetApp.FileCabinetRecord"/> instance to a binary file.
             </summary>

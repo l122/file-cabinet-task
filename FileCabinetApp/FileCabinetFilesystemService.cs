@@ -44,7 +44,7 @@ namespace FileCabinetApp
             // Update record id, because the default id = 0
             record.Id = this.GetStat() + 1;
 
-            if (this.WriteToFile(record))
+            if (this.WriteToFile(record, this.fileStream.Length))
             {
                 return record.Id;
             }
@@ -175,7 +175,45 @@ namespace FileCabinetApp
         /// <param name="id">The <see cref="int"/> instance of record's id.</param>
         public void EditRecord(int id)
         {
-            throw new NotImplementedException();
+            byte[] bufferStatus = new byte[2];
+            byte[] bufferId = new byte[4];
+
+            // Loop over file and count the records with the status "NotDelete"
+            for (long i = 0; i < this.fileStream.Length; i += RecordSize)
+            {
+                this.fileStream.Position = i;
+                try
+                {
+                    this.fileStream.Read(bufferStatus, 0, bufferStatus.Length);
+                    this.fileStream.Read(bufferId, 0, bufferId.Length);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Error in reading data in {0} : {1}", FileName, e.ToString());
+                }
+
+                var status = BitConverter.ToInt16(bufferStatus, 0);
+                if (status == (short)Status.NotDeleted && id == BitConverter.ToInt16(bufferId, 0))
+                {
+                    var record = this.GetInputData();
+
+                    // Assign the correct id to the record, because the default id = 0
+                    record.Id = id;
+
+                    if (this.WriteToFile(record, i))
+                    {
+                        Console.WriteLine("Record #{0} is updated.", id);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Record is not updated.");
+                    }
+
+                    return;
+                }
+            }
+
+            Console.WriteLine("#{0} record is not found.", id);
         }
 
         /// <summary>
@@ -213,12 +251,12 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="record">A <see cref="FileCabinetRecord"/> instance.</param>
         /// <returns>true if success, false otherwise.</returns>
-        private bool WriteToFile(FileCabinetRecord record)
+        private bool WriteToFile(FileCabinetRecord record, long position)
         {
             byte[] buffer = new byte[RecordSize];
             int offset = 0;
 
-            this.fileStream.Seek(this.fileStream.Length, SeekOrigin.Begin);
+            this.fileStream.Position = position;
             var initialPosition = this.fileStream.Position;
 
             // Copy status to buffer

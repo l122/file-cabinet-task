@@ -242,8 +242,6 @@ namespace FileCabinetApp
             }
 
             fileCabinetService.EditRecord(id);
-
-            Console.WriteLine("Record #{0} is updated.", id);
         }
 
         private static void Find(string parameters)

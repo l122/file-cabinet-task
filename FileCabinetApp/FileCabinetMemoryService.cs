@@ -81,6 +81,7 @@ namespace FileCabinetApp
             record.Id = id;
 
             this.AddRecordToSearchDictionaries(record);
+            Console.WriteLine("Record #{0} is updated.", id);
         }
 
         /// <summary>
