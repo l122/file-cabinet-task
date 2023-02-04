@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
@@ -17,6 +18,21 @@ namespace FileCabinetApp
         private const int CommandHelpIndex = 0;
         private const int DescriptionHelpIndex = 1;
         private const int ExplanationHelpIndex = 2;
+
+        private static readonly string[] ValidationRulesFlags = { "--validation-rules", "-v" };
+        private static readonly string[] StorageFlags = { "--storage", "-s" };
+
+        private static readonly Tuple<string, Func<IRecordValidator>>[] Validators = new Tuple<string, Func<IRecordValidator>>[]
+        {
+            new Tuple<string, Func<IRecordValidator>>("default", GetDefaultValidatorObject),
+            new Tuple<string, Func<IRecordValidator>>("custom", GetCustomValidatorObject),
+        };
+
+        private static readonly Tuple<string, Func<IRecordValidator, IFileCabinetService>>[] MemorySystems = new Tuple<string, Func<IRecordValidator, IFileCabinetService>>[]
+        {
+            new Tuple<string, Func<IRecordValidator, IFileCabinetService>>("memory", GetFileCabinetMemoryServiceObject),
+            new Tuple<string, Func<IRecordValidator, IFileCabinetService>>("file", GetFileCabinetFilesystemServiceObject),
+        };
 
         private static readonly Tuple<string, Action<string>>[] Commands = new Tuple<string, Action<string>>[]
         {
@@ -42,7 +58,8 @@ namespace FileCabinetApp
             new string[] { "export", "exports records to csv or xml", "The 'export <csv, xml> <file_name>' command exports records to a csv or xml file" },
         };
 
-        private static FileCabinetService fileCabinetService = new (new DefaultValidator());
+        private static IFileCabinetService fileCabinetService = new FileCabinetMemoryService(new DefaultValidator());
+
         private static bool isRunning = true;
 
         /// <summary>
@@ -51,11 +68,11 @@ namespace FileCabinetApp
         /// <param name="args">The <see cref="string"/> array instance of input arguments.</param>
         public static void Main(string[] args)
         {
+            Init(args);
+
             Console.WriteLine($"File Cabinet Application, developed by {Program.DeveloperName}");
             Console.WriteLine(Program.HintMessage);
             Console.WriteLine();
-
-            SetFileCabinetServiceInstance(args);
 
             do
             {
@@ -199,7 +216,15 @@ namespace FileCabinetApp
 
         private static void Create(string parameters)
         {
-            Console.WriteLine("Record #{0} is created.", fileCabinetService.CreateRecord());
+            var id = fileCabinetService.CreateRecord();
+            if (id > 0)
+            {
+                Console.WriteLine("Record #{0} is created.", id);
+            }
+            else
+            {
+                Console.WriteLine("Record is not created.");
+            }
         }
 
         private static void List(string parameters)
@@ -209,16 +234,13 @@ namespace FileCabinetApp
 
         private static void Edit(string parameters)
         {
-            var recordsCount = Program.fileCabinetService.GetStat();
-            if (!int.TryParse(parameters, out int id) || id < 1 || id > recordsCount)
+            if (!int.TryParse(parameters, out int id))
             {
-                Console.WriteLine("#{0} record is not found.", id);
+                Console.WriteLine("Incorrect id parameter: {0}", parameters);
                 return;
             }
 
             fileCabinetService.EditRecord(id);
-
-            Console.WriteLine("Record #{0} is updated.", id);
         }
 
         private static void Find(string parameters)
@@ -283,41 +305,92 @@ namespace FileCabinetApp
         }
 
         /// <summary>
-        /// Creates and sets a <see cref="FileCabinetService"/> instance with the type, depending on input args.
+        /// Sets initial values according to application parameters.
         /// </summary>
-        /// <param name="args">The <see cref="string"/> array instance of input arguments.</param>
-        /// <exception cref="ArgumentException">Invalid validation rule flag.</exception>
-        private static void SetFileCabinetServiceInstance(string[] args)
+        /// <param name="args">The <see cref="string"/> array instance input parameters.</param>
+        private static void Init(string[] args)
         {
-            const string FlagValidationRules = "--validation-rules";
-            const string ShortFlagValidationRules = "-v";
-            const string CustomValidationRules = "custom";
+            var parsedArgsDictionary = ParseArgs(args);
 
-            string choice;
-            string[] splitedArg = Array.Empty<string>();
-            if (args.Length > 0)
+            int validatorIndex = 0;
+            foreach (var flag in ValidationRulesFlags)
             {
-                splitedArg = args[0].Split('=');
-            }
-
-            if (args.Length == 1 && splitedArg.Length >= 2 && splitedArg[0].Equals(FlagValidationRules, StringComparison.OrdinalIgnoreCase))
-            {
-                choice = splitedArg[1].ToLower(CultureInfo.InvariantCulture);
-            }
-            else if (args.Length >= 2 && args[0].Equals(ShortFlagValidationRules, StringComparison.OrdinalIgnoreCase))
-            {
-                choice = args[1].ToLower(CultureInfo.InvariantCulture);
-            }
-            else
-            {
-                choice = string.Empty;
+                var value = string.Empty;
+                if (parsedArgsDictionary.TryGetValue(flag, out value))
+                {
+                    validatorIndex = Array.FindIndex(Validators, 0, Validators.Length, p => p.Item1.Equals(value, StringComparison.OrdinalIgnoreCase));
+                    if (validatorIndex == -1)
+                    {
+                        validatorIndex = 0;
+                    }
+                }
             }
 
-            fileCabinetService = choice switch
+            var validator = Validators[validatorIndex].Item2();
+
+            int memoryIndex = 0;
+            foreach (var flag in StorageFlags)
             {
-                CustomValidationRules => new FileCabinetService(new CustomValidator()),
-                _ => new FileCabinetService(new DefaultValidator()),
-            };
+                var value = string.Empty;
+                if (parsedArgsDictionary.TryGetValue(flag, out value))
+                {
+                    memoryIndex = Array.FindIndex(MemorySystems, 0, MemorySystems.Length, p => p.Item1.Equals(value, StringComparison.OrdinalIgnoreCase));
+                    if (memoryIndex == -1)
+                    {
+                        memoryIndex = 0;
+                    }
+                }
+            }
+
+            fileCabinetService = MemorySystems[memoryIndex].Item2(validator);
+        }
+
+        private static IFileCabinetService GetFileCabinetFilesystemServiceObject(IRecordValidator validator)
+        {
+            return new FileCabinetFilesystemService(validator);
+        }
+
+        private static IFileCabinetService GetFileCabinetMemoryServiceObject(IRecordValidator validator)
+        {
+            return new FileCabinetMemoryService(validator);
+        }
+
+        private static IRecordValidator GetCustomValidatorObject()
+        {
+            return new CustomValidator();
+        }
+
+        private static IRecordValidator GetDefaultValidatorObject()
+        {
+            return new DefaultValidator();
+        }
+
+        /// <summary>
+        /// Parses input arguments input a <see cref="Dictionary{TKey, TValue}"/>.
+        /// </summary>
+        /// <param name="args">The <see cref="string"/> array instance.</param>
+        /// <returns>The <see cref="Dictionary{TKey, TValue}"/> object.</returns>
+        private static Dictionary<string, string> ParseArgs(string[] args)
+        {
+            Dictionary<string, string> result = new ();
+            int i = 0;
+            while (i < args.Length)
+            {
+                var splitedArg = args[i].Split("=");
+                if (splitedArg.Length == 2)
+                {
+                    result.Add(splitedArg[0].ToLower(CultureInfo.InvariantCulture), splitedArg[1].ToLower(CultureInfo.InvariantCulture));
+                }
+                else if (splitedArg.Length == 1 && i + 1 < args.Length)
+                {
+                    result.Add(args[i].ToLower(CultureInfo.InvariantCulture), args[i + 1].ToLower(CultureInfo.InvariantCulture));
+                    i++;
+                }
+
+                i++;
+            }
+
+            return result;
         }
     }
 }
