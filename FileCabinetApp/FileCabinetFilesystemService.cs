@@ -159,36 +159,15 @@ namespace FileCabinetApp
         /// <returns>A read-only instance of all matched records.</returns>
         public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
         {
-            const int Offset = 6;
-            byte[] bufferStatus = new byte[2];
-            byte[] bufferFirstName = new byte[120];
             List<FileCabinetRecord> result = new ();
 
             // Loop over file and count the records with the status "NotDelete"
             for (long i = 0; i < this.fileStream.Length; i += RecordSize)
             {
-                this.fileStream.Position = i;
-                try
+                var record = this.ReadRecord(i);
+                if (record != null && record.FirstName.Equals(firstName.Trim(), StringComparison.OrdinalIgnoreCase))
                 {
-                    this.fileStream.Read(bufferStatus, 0, bufferStatus.Length);
-                    this.fileStream.Position = i + Offset;
-                    this.fileStream.Read(bufferFirstName, 0, bufferFirstName.Length);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Error in reading data in {0} : {1}", FileName, e.ToString());
-                    return new ReadOnlyCollection<FileCabinetRecord>(result);
-                }
-
-                var status = BitConverter.ToInt16(bufferStatus, 0);
-                if (status == (short)Status.NotDeleted
-                    && firstName.Equals(Encoding.UTF8.GetString(bufferFirstName, 0, bufferFirstName.Length).Trim(), StringComparison.OrdinalIgnoreCase))
-                {
-                    var record = this.ReadRecord(i);
-                    if (record != null)
-                    {
-                        result.Add(record);
-                    }
+                    result.Add(record);
                 }
             }
 
@@ -202,36 +181,15 @@ namespace FileCabinetApp
         /// <returns>A read-only instance of all matched records.</returns>
         public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
         {
-            const int Offset = 126;
-            byte[] bufferStatus = new byte[2];
-            byte[] bufferFirstName = new byte[120];
             List<FileCabinetRecord> result = new ();
 
             // Loop over file and count the records with the status "NotDelete"
             for (long i = 0; i < this.fileStream.Length; i += RecordSize)
             {
-                this.fileStream.Position = i;
-                try
+                var record = this.ReadRecord(i);
+                if (record != null && record.LastName.Equals(lastName.Trim(), StringComparison.OrdinalIgnoreCase))
                 {
-                    this.fileStream.Read(bufferStatus, 0, bufferStatus.Length);
-                    this.fileStream.Position = i + Offset;
-                    this.fileStream.Read(bufferFirstName, 0, bufferFirstName.Length);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Error in reading data in {0} : {1}", FileName, e.ToString());
-                    return new ReadOnlyCollection<FileCabinetRecord>(result);
-                }
-
-                var status = BitConverter.ToInt16(bufferStatus, 0);
-                if (status == (short)Status.NotDeleted
-                    && lastName.Equals(Encoding.UTF8.GetString(bufferFirstName, 0, bufferFirstName.Length).Trim(), StringComparison.OrdinalIgnoreCase))
-                {
-                    var record = this.ReadRecord(i);
-                    if (record != null)
-                    {
-                        result.Add(record);
-                    }
+                    result.Add(record);
                 }
             }
 
@@ -245,7 +203,27 @@ namespace FileCabinetApp
         /// <returns>A read-only instance of all matched records.</returns>
         public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirthString)
         {
-            throw new NotImplementedException();
+            List<FileCabinetRecord> result = new ();
+            DateTime? date;
+            var conversionResult = DateConverter(dateOfBirthString);
+            if (!conversionResult.Item1)
+            {
+                Console.WriteLine($"Conversion failed: {conversionResult.Item2}. Please, correct your input.");
+            }
+
+            date = conversionResult.Item3;
+
+            // Loop over file and count the records with the status "NotDelete"
+            for (long i = 0; i < this.fileStream.Length; i += RecordSize)
+            {
+                var record = this.ReadRecord(i);
+                if (record != null && date.Equals(record.DateOfBirth))
+                {
+                    result.Add(record);
+                }
+            }
+
+            return new ReadOnlyCollection<FileCabinetRecord>(result);
         }
 
         /// <summary>
