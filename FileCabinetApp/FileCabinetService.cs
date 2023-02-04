@@ -15,9 +15,6 @@ namespace FileCabinetApp
         /// The <see cref="IRecordValidator"/> specialized instance.
         /// </summary>
         private readonly IRecordValidator validator;
-        private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary;
-        private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary;
-        private readonly Dictionary<string, List<FileCabinetRecord>> dateOfBirthDictionary;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileCabinetService"/> class.
@@ -26,9 +23,6 @@ namespace FileCabinetApp
         protected FileCabinetService(IRecordValidator value)
         {
             this.validator = value;
-            this.firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
-            this.lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
-            this.dateOfBirthDictionary = new Dictionary<string, List<FileCabinetRecord>>();
         }
 
         /// <summary>
@@ -176,126 +170,6 @@ namespace FileCabinetApp
                 Salary = salary,
                 Department = department,
             };
-        }
-
-        /// <summary>
-        /// Searches for a record by first name.
-        /// </summary>
-        /// <param name="firstName">The <see cref="string"/> instance of the first name.</param>
-        /// <returns>A read-only instance of all matched records.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
-        {
-            if (this.firstNameDictionary.TryGetValue(firstName.ToUpperInvariant(), out List<FileCabinetRecord>? result))
-            {
-                return new ReadOnlyCollection<FileCabinetRecord>(result);
-            }
-
-            return new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
-        }
-
-        /// <summary>
-        /// Searches for a record by last name.
-        /// </summary>
-        /// <param name="lastName">The <see cref="string"/> instance of the last name.</param>
-        /// <returns>A read-only instance of all matched records.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
-        {
-            if (this.lastNameDictionary.TryGetValue(lastName.ToUpperInvariant(), out List<FileCabinetRecord>? result))
-            {
-                return new ReadOnlyCollection<FileCabinetRecord>(result);
-            }
-
-            return new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
-        }
-
-        /// <summary>
-        /// Searches for a record by date of birth.
-        /// </summary>
-        /// <param name="dateOfBirthString">The <see cref="string"/> instance of the date of birth.</param>
-        /// <returns>A read-only instance of all matched records.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirthString)
-        {
-            if (DateTime.TryParse(dateOfBirthString, out DateTime dateOfBirth))
-            {
-                dateOfBirthString = dateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture);
-            }
-
-            if (this.dateOfBirthDictionary.TryGetValue(dateOfBirthString, out List<FileCabinetRecord>? result))
-            {
-                return new ReadOnlyCollection<FileCabinetRecord>(result);
-            }
-
-            return new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
-        }
-
-        /// <summary>
-        /// Adds a record data to the search dictionaries.
-        /// </summary>
-        /// <param name="record">The <see cref="FileCabinetRecord"/> instance.</param>
-        protected void AddRecordToSearchDictionaries(in FileCabinetRecord record)
-        {
-            // Add record to firstNameDictionary
-            if (this.firstNameDictionary.TryGetValue(record.FirstName.ToUpperInvariant(), out var value))
-            {
-                value.Add(record);
-            }
-            else
-            {
-                this.firstNameDictionary.Add(record.FirstName.ToUpperInvariant(), new List<FileCabinetRecord> { record });
-            }
-
-            // Add record to lastNameDictionary
-            if (this.lastNameDictionary.TryGetValue(record.LastName.ToUpperInvariant(), out value))
-            {
-                value.Add(record);
-            }
-            else
-            {
-                this.lastNameDictionary.Add(record.LastName.ToUpperInvariant(), new List<FileCabinetRecord> { record });
-            }
-
-            // Add record to dateOfBirthDictionary
-            string dateOfBirthString = record.DateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture);
-            if (this.dateOfBirthDictionary.TryGetValue(dateOfBirthString, out value))
-            {
-                value.Add(record);
-            }
-            else
-            {
-                this.dateOfBirthDictionary.Add(dateOfBirthString, new List<FileCabinetRecord> { record });
-            }
-        }
-
-        /// <summary>
-        /// Removes records that match id from all searching dictionaries.
-        /// </summary>
-        /// <param name="record">The <see cref="FileCabinetRecord"/> id input.</param>
-        protected void RemoveRecordFromSearchDictionaries(FileCabinetRecord record)
-        {
-            // Update firstNameDictionary
-            var recordList = this.firstNameDictionary[record.FirstName.ToUpperInvariant()];
-            recordList.RemoveAll(p => p.Id == record.Id);
-            if (recordList.Count == 0)
-            {
-                this.firstNameDictionary.Remove(record.FirstName.ToUpperInvariant());
-            }
-
-            // Update lastNameDictionary
-            recordList = this.lastNameDictionary[record.LastName.ToUpperInvariant()];
-            recordList.RemoveAll(p => p.Id == record.Id);
-            if (recordList.Count == 0)
-            {
-                this.lastNameDictionary.Remove(record.LastName.ToUpperInvariant());
-            }
-
-            // Update dateOfBirthDictionary
-            string dateOfBirthString = record.DateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture);
-            recordList = this.dateOfBirthDictionary[dateOfBirthString];
-            recordList.RemoveAll(p => p.Id == record.Id);
-            if (recordList.Count == 0)
-            {
-                this.dateOfBirthDictionary.Remove(dateOfBirthString);
-            }
         }
     }
 }

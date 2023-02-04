@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -41,8 +42,8 @@ namespace FileCabinetApp
         {
             var record = this.GetInputData();
 
-            // Update record id, because the default id = 0
-            record.Id = this.GetStat() + 1;
+            // Assign id
+            record.Id = this.GetLastId() + 1;
 
             if (this.WriteToFile(record, this.fileStream.Length))
             {
@@ -59,79 +60,17 @@ namespace FileCabinetApp
         public ReadOnlyCollection<FileCabinetRecord> GetRecords()
         {
             List<FileCabinetRecord> records = new ();
-            byte[] buffer = new byte[RecordSize];
-            this.fileStream.Position = 0;
+            long position = 0;
 
-            while (this.fileStream.Position < this.fileStream.Length)
+            while (position < this.fileStream.Length)
             {
-                int offset = 0;
-                try
+                var record = this.ReadRecord(position);
+                if (record != null)
                 {
-                    this.fileStream.Read(buffer, 0, buffer.Length);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Error in reading data in {0} : {1}", FileName, e.ToString());
+                    records.Add(record);
                 }
 
-                // Skip parsing the record if it's marked for deletion
-                var status = BitConverter.ToInt16(buffer, offset);
-                offset += sizeof(short);
-                if (status == (short)Status.Deleted)
-                {
-                    continue;
-                }
-
-                FileCabinetRecord record = new ();
-
-                // Parse Id
-                record.Id = BitConverter.ToInt32(buffer, offset);
-                offset += sizeof(int);
-
-                // Parse First Name
-                record.FirstName = Encoding.UTF8.GetString(buffer, offset, StringBufferSize).Trim();
-                offset += StringBufferSize;
-
-                // Parse Last Name
-                record.LastName = Encoding.UTF8.GetString(buffer, offset, StringBufferSize).Trim();
-                offset += StringBufferSize;
-
-                // Parse Birth Year
-                var year = BitConverter.ToInt32(buffer, offset);
-                offset += sizeof(int);
-
-                // Parse Birth Month
-                var month = BitConverter.ToInt32(buffer, offset);
-                offset += sizeof(int);
-
-                // Parse Birth Day
-                var day = BitConverter.ToInt32(buffer, offset);
-                offset += sizeof(int);
-
-                // Parse Date Of Birth
-                record.DateOfBirth = new DateTime(year, month, day);
-
-                // Parse Work Place Number
-                record.WorkPlaceNumber = BitConverter.ToInt16(buffer, offset);
-                offset += sizeof(short);
-
-                // Parse Salary
-                int[] parts = new int[4];
-                for (int i = 0; i < parts.Length; i++)
-                {
-                    parts[i] = BitConverter.ToInt32(buffer, offset);
-                    offset += sizeof(int);
-                }
-
-                bool sign = (parts[3] & 0x80000000) != 0;
-
-                byte scale = (byte)((parts[3] >> 16) & 0x7F);
-                record.Salary = new decimal(parts[0], parts[1], parts[2], sign, scale);
-
-                // Parse Department
-                record.Department = BitConverter.ToChar(buffer, offset);
-
-                records.Add(record);
+                position += RecordSize;
             }
 
             return new ReadOnlyCollection<FileCabinetRecord>(records);
@@ -175,45 +114,24 @@ namespace FileCabinetApp
         /// <param name="id">The <see cref="int"/> instance of record's id.</param>
         public void EditRecord(int id)
         {
-            byte[] bufferStatus = new byte[2];
-            byte[] bufferId = new byte[4];
-
-            // Loop over file and count the records with the status "NotDelete"
-            for (long i = 0; i < this.fileStream.Length; i += RecordSize)
+            var pos = this.FindById(id);
+            if (pos == -1)
             {
-                this.fileStream.Position = i;
-                try
-                {
-                    this.fileStream.Read(bufferStatus, 0, bufferStatus.Length);
-                    this.fileStream.Read(bufferId, 0, bufferId.Length);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Error in reading data in {0} : {1}", FileName, e.ToString());
-                }
-
-                var status = BitConverter.ToInt16(bufferStatus, 0);
-                if (status == (short)Status.NotDeleted && id == BitConverter.ToInt16(bufferId, 0))
-                {
-                    var record = this.GetInputData();
-
-                    // Assign the correct id to the record, because the default id = 0
-                    record.Id = id;
-
-                    if (this.WriteToFile(record, i))
-                    {
-                        Console.WriteLine("Record #{0} is updated.", id);
-                    }
-                    else
-                    {
-                        Console.WriteLine("Record is not updated.");
-                    }
-
-                    return;
-                }
+                Console.WriteLine("#{0} record is not found.", id);
+                return;
             }
 
-            Console.WriteLine("#{0} record is not found.", id);
+            var record = this.GetInputData();
+            record.Id = id;
+
+            if (this.WriteToFile(record, pos))
+            {
+                Console.WriteLine("Record #{0} is updated.", id);
+            }
+            else
+            {
+                Console.WriteLine("Record is not updated.");
+            }
         }
 
         /// <summary>
@@ -232,6 +150,69 @@ namespace FileCabinetApp
         {
             this.Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Searches for a record by first name.
+        /// </summary>
+        /// <param name="firstName">The <see cref="string"/> instance of the first name.</param>
+        /// <returns>A read-only instance of all matched records.</returns>
+        public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
+        {
+            const int Offset = 6;
+            byte[] bufferStatus = new byte[2];
+            byte[] bufferFirstName = new byte[120];
+            List<FileCabinetRecord> result = new ();
+
+            // Loop over file and count the records with the status "NotDelete"
+            for (long i = 0; i < this.fileStream.Length; i += RecordSize)
+            {
+                this.fileStream.Position = i;
+                try
+                {
+                    this.fileStream.Read(bufferStatus, 0, bufferStatus.Length);
+                    this.fileStream.Position = i + Offset;
+                    this.fileStream.Read(bufferFirstName, 0, bufferFirstName.Length);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Error in reading data in {0} : {1}", FileName, e.ToString());
+                    return new ReadOnlyCollection<FileCabinetRecord>(result);
+                }
+
+                var status = BitConverter.ToInt16(bufferStatus, 0);
+                if (status == (short)Status.NotDeleted
+                    && firstName.Equals(Encoding.UTF8.GetString(bufferFirstName, 0, bufferFirstName.Length).Trim(), StringComparison.OrdinalIgnoreCase))
+                {
+                    var record = this.ReadRecord(i);
+                    if (record != null)
+                    {
+                        result.Add(record);
+                    }
+                }
+            }
+
+            return new ReadOnlyCollection<FileCabinetRecord>(result);
+        }
+
+        /// <summary>
+        /// Searches for a record by last name.
+        /// </summary>
+        /// <param name="lastName">The <see cref="string"/> instance of the last name.</param>
+        /// <returns>A read-only instance of all matched records.</returns>
+        public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Searches for a record by date of birth.
+        /// </summary>
+        /// <param name="dateOfBirthString">The <see cref="string"/> instance of the date of birth.</param>
+        /// <returns>A read-only instance of all matched records.</returns>
+        public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirthString)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -349,6 +330,152 @@ namespace FileCabinetApp
             }
 
             return true;
+        }
+
+        private long FindById(int id)
+        {
+            byte[] bufferStatus = new byte[2];
+            byte[] bufferId = new byte[4];
+
+            // Loop over file and count the records with the status "NotDelete"
+            for (long i = 0; i < this.fileStream.Length; i += RecordSize)
+            {
+                this.fileStream.Position = i;
+                try
+                {
+                    this.fileStream.Read(bufferStatus, 0, bufferStatus.Length);
+                    this.fileStream.Read(bufferId, 0, bufferId.Length);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Error in reading data in {0} : {1}", FileName, e.ToString());
+                    return -1;
+                }
+
+                var status = BitConverter.ToInt16(bufferStatus, 0);
+                if (status == (short)Status.NotDeleted && id == BitConverter.ToInt16(bufferId, 0))
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        /// <summary>
+        /// Return the id of the last non-deleted record.
+        /// </summary>
+        /// <returns>The <see cref="int"/> instance of id.</returns>
+        private int GetLastId()
+        {
+            int id = 0;
+            byte[] bufferStatus = new byte[2];
+            byte[] bufferId = new byte[4];
+
+            // Loop over file and count the records with the status "NotDelete"
+            for (long i = this.fileStream.Length - RecordSize; i > 0; i -= RecordSize)
+            {
+                this.fileStream.Position = i;
+                try
+                {
+                    this.fileStream.Read(bufferStatus, 0, bufferStatus.Length);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Error in reading data in {0} : {1}", FileName, e.ToString());
+                    return -1;
+                }
+
+                var status = BitConverter.ToInt16(bufferStatus, 0);
+                if (status == (short)Status.NotDeleted)
+                {
+                    this.fileStream.Read(bufferId, 0, bufferId.Length);
+                    id = BitConverter.ToInt16(bufferId, 0);
+                    break;
+                }
+            }
+
+            return id;
+        }
+
+        /// <summary>
+        /// Reads a record from the binary file at current position.
+        /// </summary>
+        /// <returns>A Nullable <see cref="FileCabinetRecord"/> instance.</returns>
+        private FileCabinetRecord? ReadRecord(long position)
+        {
+            byte[] buffer = new byte[RecordSize];
+            this.fileStream.Position = position;
+            FileCabinetRecord record = new ();
+
+            try
+            {
+                this.fileStream.Read(buffer, 0, buffer.Length);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error in reading data in {0} : {1}", FileName, e.ToString());
+                return null;
+            }
+
+            int offset = 0;
+
+            // Return if the record is marked for deletion
+            var status = BitConverter.ToInt16(buffer, offset);
+            offset += sizeof(short);
+            if (status == (short)Status.Deleted)
+            {
+                return null;
+            }
+
+            // Parse Id
+            record.Id = BitConverter.ToInt32(buffer, offset);
+            offset += sizeof(int);
+
+            // Parse First Name
+            record.FirstName = Encoding.UTF8.GetString(buffer, offset, StringBufferSize).Trim();
+            offset += StringBufferSize;
+
+            // Parse Last Name
+            record.LastName = Encoding.UTF8.GetString(buffer, offset, StringBufferSize).Trim();
+            offset += StringBufferSize;
+
+            // Parse Birth Year
+            var year = BitConverter.ToInt32(buffer, offset);
+            offset += sizeof(int);
+
+            // Parse Birth Month
+            var month = BitConverter.ToInt32(buffer, offset);
+            offset += sizeof(int);
+
+            // Parse Birth Day
+            var day = BitConverter.ToInt32(buffer, offset);
+            offset += sizeof(int);
+
+            // Parse Date Of Birth
+            record.DateOfBirth = new DateTime(year, month, day);
+
+            // Parse Work Place Number
+            record.WorkPlaceNumber = BitConverter.ToInt16(buffer, offset);
+            offset += sizeof(short);
+
+            // Parse Salary
+            int[] parts = new int[4];
+            for (int i = 0; i < parts.Length; i++)
+            {
+                parts[i] = BitConverter.ToInt32(buffer, offset);
+                offset += sizeof(int);
+            }
+
+            bool sign = (parts[3] & 0x80000000) != 0;
+
+            byte scale = (byte)((parts[3] >> 16) & 0x7F);
+            record.Salary = new decimal(parts[0], parts[1], parts[2], sign, scale);
+
+            // Parse Department
+            record.Department = BitConverter.ToChar(buffer, offset);
+
+            return record;
         }
     }
 }

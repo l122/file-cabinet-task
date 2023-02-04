@@ -144,6 +144,27 @@
             Releases resourses.
             </summary>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.FindByFirstName(System.String)">
+            <summary>
+            Searches for a record by first name.
+            </summary>
+            <param name="firstName">The <see cref="T:System.String"/> instance of the first name.</param>
+            <returns>A read-only instance of all matched records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.FindByLastName(System.String)">
+            <summary>
+            Searches for a record by last name.
+            </summary>
+            <param name="lastName">The <see cref="T:System.String"/> instance of the last name.</param>
+            <returns>A read-only instance of all matched records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.FindByDateOfBirth(System.String)">
+            <summary>
+            Searches for a record by date of birth.
+            </summary>
+            <param name="dateOfBirthString">The <see cref="T:System.String"/> instance of the date of birth.</param>
+            <returns>A read-only instance of all matched records.</returns>
+        </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.Dispose(System.Boolean)">
             <summary>
             Releases resourses.
@@ -156,6 +177,18 @@
             </summary>
             <param name="record">A <see cref="T:FileCabinetApp.FileCabinetRecord"/> instance.</param>
             <returns>true if success, false otherwise.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.GetLastId">
+            <summary>
+            Return the id of the last non-deleted record.
+            </summary>
+            <returns>The <see cref="T:System.Int32"/> instance of id.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.ReadRecord(System.Int64)">
+            <summary>
+            Reads a record from the binary file at current position.
+            </summary>
+            <returns>A Nullable <see cref="T:FileCabinetApp.FileCabinetRecord"/> instance.</returns>
         </member>
         <member name="T:FileCabinetApp.FileCabinetMemoryService">
             <summary>
@@ -197,6 +230,39 @@
             Creates an instance of <see cref="T:FileCabinetApp.IFileCabinetServiceSnapshot"/>.
             </summary>
             <returns>An <see cref="T:FileCabinetApp.IFileCabinetServiceSnapshot"/> instance.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.FindByFirstName(System.String)">
+            <summary>
+            Searches for a record by first name.
+            </summary>
+            <param name="firstName">The <see cref="T:System.String"/> instance of the first name.</param>
+            <returns>A read-only instance of all matched records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.FindByLastName(System.String)">
+            <summary>
+            Searches for a record by last name.
+            </summary>
+            <param name="lastName">The <see cref="T:System.String"/> instance of the last name.</param>
+            <returns>A read-only instance of all matched records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.FindByDateOfBirth(System.String)">
+            <summary>
+            Searches for a record by date of birth.
+            </summary>
+            <param name="dateOfBirthString">The <see cref="T:System.String"/> instance of the date of birth.</param>
+            <returns>A read-only instance of all matched records.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.AddRecordToSearchDictionaries(FileCabinetApp.FileCabinetRecord@)">
+            <summary>
+            Adds a record data to the search dictionaries.
+            </summary>
+            <param name="record">The <see cref="T:FileCabinetApp.FileCabinetRecord"/> instance.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.RemoveRecordFromSearchDictionaries(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Removes records that match id from all searching dictionaries.
+            </summary>
+            <param name="record">The <see cref="T:FileCabinetApp.FileCabinetRecord"/> id input.</param>
         </member>
         <member name="T:FileCabinetApp.FileCabinetRecord">
             <summary>
@@ -363,39 +429,6 @@
             Gets input data from console and creates a new record with id = 0.
             </summary>
             <returns>The <see cref="T:FileCabinetApp.FileCabinetRecord"/> instance with id = 0.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.FindByFirstName(System.String)">
-            <summary>
-            Searches for a record by first name.
-            </summary>
-            <param name="firstName">The <see cref="T:System.String"/> instance of the first name.</param>
-            <returns>A read-only instance of all matched records.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.FindByLastName(System.String)">
-            <summary>
-            Searches for a record by last name.
-            </summary>
-            <param name="lastName">The <see cref="T:System.String"/> instance of the last name.</param>
-            <returns>A read-only instance of all matched records.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.FindByDateOfBirth(System.String)">
-            <summary>
-            Searches for a record by date of birth.
-            </summary>
-            <param name="dateOfBirthString">The <see cref="T:System.String"/> instance of the date of birth.</param>
-            <returns>A read-only instance of all matched records.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.AddRecordToSearchDictionaries(FileCabinetApp.FileCabinetRecord@)">
-            <summary>
-            Adds a record data to the search dictionaries.
-            </summary>
-            <param name="record">The <see cref="T:FileCabinetApp.FileCabinetRecord"/> instance.</param>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.RemoveRecordFromSearchDictionaries(FileCabinetApp.FileCabinetRecord)">
-            <summary>
-            Removes records that match id from all searching dictionaries.
-            </summary>
-            <param name="record">The <see cref="T:FileCabinetApp.FileCabinetRecord"/> id input.</param>
         </member>
         <member name="T:FileCabinetApp.FileCabinetServiceShanpshot">
             <summary>

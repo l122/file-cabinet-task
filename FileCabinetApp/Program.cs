@@ -234,10 +234,9 @@ namespace FileCabinetApp
 
         private static void Edit(string parameters)
         {
-            var recordsCount = Program.fileCabinetService.GetStat();
-            if (!int.TryParse(parameters, out int id) || id < 1 || id > recordsCount)
+            if (!int.TryParse(parameters, out int id))
             {
-                Console.WriteLine("#{0} record is not found.", id);
+                Console.WriteLine("Incorrect id parameter: {0}", parameters);
                 return;
             }
 
