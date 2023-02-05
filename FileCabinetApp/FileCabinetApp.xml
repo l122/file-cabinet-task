@@ -9,94 +9,76 @@
             Custom Validator implementation.
             </summary>
         </member>
+        <member name="P:FileCabinetApp.CustomValidator.FirstNameMinLength">
+            <inheritdoc/>
+        </member>
+        <member name="P:FileCabinetApp.CustomValidator.FirstNameMaxLength">
+            <inheritdoc/>
+        </member>
+        <member name="P:FileCabinetApp.CustomValidator.LastNameMinLength">
+            <inheritdoc/>
+        </member>
+        <member name="P:FileCabinetApp.CustomValidator.LastNameMaxLength">
+            <inheritdoc/>
+        </member>
+        <member name="P:FileCabinetApp.CustomValidator.MinDate">
+            <inheritdoc/>
+        </member>
         <member name="M:FileCabinetApp.CustomValidator.FirstNameValidator(System.String)">
-            <summary>
-            Validates First Name.
-            </summary>
-            <param name="value">The <see cref="T:System.String"/> instance value.</param>
-            <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+            <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.CustomValidator.LastNameValidator(System.String)">
-            <summary>
-            Validates Last Name.
-            </summary>
-            <param name="value">The <see cref="T:System.String"/> instance value.</param>
-            <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+            <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.CustomValidator.DateOfBirthValidator(System.DateTime)">
-            <summary>
-            Validates date of birth.
-            </summary>
-            <param name="value">The <see cref="T:System.DateTime"/> instance value.</param>
-            <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+            <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.CustomValidator.WorkPlaceValidator(System.Int16)">
-            <summary>
-            Validates place of work.
-            </summary>
-            <param name="value">The <see cref="T:System.Int16"/> instance value.</param>
-            <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+            <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.CustomValidator.SalaryValidator(System.Decimal)">
-            <summary>
-            Validates salary.
-            </summary>
-            <param name="value">The <see cref="T:System.Decimal"/> instance value.</param>
-            <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+            <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.CustomValidator.DepartmentValidator(System.Char)">
-            <summary>
-            Validates department letter.
-            </summary>
-            <param name="value">The <see cref="T:System.Char"/> instance value.</param>
-            <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+            <inheritdoc/>
         </member>
         <member name="T:FileCabinetApp.DefaultValidator">
             <summary>
             Dafault Validator implementation.
             </summary>
         </member>
+        <member name="P:FileCabinetApp.DefaultValidator.FirstNameMinLength">
+            <inheritdoc/>
+        </member>
+        <member name="P:FileCabinetApp.DefaultValidator.FirstNameMaxLength">
+            <inheritdoc/>
+        </member>
+        <member name="P:FileCabinetApp.DefaultValidator.LastNameMinLength">
+            <inheritdoc/>
+        </member>
+        <member name="P:FileCabinetApp.DefaultValidator.LastNameMaxLength">
+            <inheritdoc/>
+        </member>
+        <member name="P:FileCabinetApp.DefaultValidator.MinDate">
+            <inheritdoc/>
+        </member>
         <member name="M:FileCabinetApp.DefaultValidator.FirstNameValidator(System.String)">
-            <summary>
-            Validates First Name.
-            </summary>
-            <param name="value">The <see cref="T:System.String"/> instance value.</param>
-            <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+            <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.DefaultValidator.LastNameValidator(System.String)">
-            <summary>
-            Validates Last Name.
-            </summary>
-            <param name="value">The <see cref="T:System.String"/> instance value.</param>
-            <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+            <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.DefaultValidator.DateOfBirthValidator(System.DateTime)">
-            <summary>
-            Validates date of birth.
-            </summary>
-            <param name="value">The <see cref="T:System.DateTime"/> instance value.</param>
-            <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+            <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.DefaultValidator.WorkPlaceValidator(System.Int16)">
-            <summary>
-            Validates place of work.
-            </summary>
-            <param name="value">The <see cref="T:System.Int16"/> instance value.</param>
-            <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+            <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.DefaultValidator.SalaryValidator(System.Decimal)">
-            <summary>
-            Validates salary.
-            </summary>
-            <param name="value">The <see cref="T:System.Decimal"/> instance value.</param>
-            <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+            <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.DefaultValidator.DepartmentValidator(System.Char)">
-            <summary>
-            Validates department letter.
-            </summary>
-            <param name="value">The <see cref="T:System.Char"/> instance value.</param>
-            <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+            <inheritdoc/>
         </member>
         <member name="T:FileCabinetApp.FileCabinetFilesystemService">
             <summary>
@@ -530,6 +512,46 @@
             <summary>
             Strategy interface for choosing a validator object.
             </summary>
+        </member>
+        <member name="P:FileCabinetApp.IRecordValidator.FirstNameMinLength">
+            <summary>
+            Gets the minimum length of the First Name.
+            </summary>
+            /// <value>
+            The minimum length of the First Name.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.IRecordValidator.FirstNameMaxLength">
+            <summary>
+            Gets the maximum length of the First Name.
+            </summary>
+            /// <value>
+            The maximum length of the First Name.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.IRecordValidator.LastNameMinLength">
+            <summary>
+            Gets the minimul length of the Last Name.
+            </summary>
+            /// <value>
+            The minimul length of the Last Name.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.IRecordValidator.LastNameMaxLength">
+            <summary>
+            Gets the maximum length of the Last Name.
+            </summary>
+            <value>
+            The maximum length of the Last Name.
+            </value>
+        </member>
+        <member name="P:FileCabinetApp.IRecordValidator.MinDate">
+            <summary>
+            Gets the earliest date of birth.
+            </summary>
+            <value>
+            The earliest date of birth.
+            </value>
         </member>
         <member name="M:FileCabinetApp.IRecordValidator.FirstNameValidator(System.String)">
             <summary>
