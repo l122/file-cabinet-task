@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "FileCabinetGenerator": {
+      "commandName": "Project",
+      "commandLineArgs": "-t xml -o c:\\users\\myuser\\records.xml -a 5000 -i 45"
+    }
+  }
+}
