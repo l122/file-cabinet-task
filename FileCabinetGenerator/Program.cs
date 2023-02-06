@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 
 [assembly: CLSCompliant(true)]
@@ -17,16 +18,14 @@ namespace FileCabinetGenerator
         private static readonly string[] OutputFileFlags = { "--output", "-o" };
         private static readonly string[] RecordsAmountFlags = { "--records-amount", "-a" };
         private static readonly string[] StartIdFlags = { "--start-id", "-i" };
+        private static readonly IRecordValidator validator = new DefaultValidator();
+        private static readonly List<FileCabinetRecord> list = new ();
         private const string Csv = "csv";
         private const string Xml = "xml";
         private static string outputType = Csv;
         private static string outputFile = "data.csv";
         private static int recordsAmount = 0;
         private static int startId = 0;
-        private static IRecordValidator validator = new DefaultValidator();
-
-
-        private static List<FileCabinetRecord> list = new ();
 
         /// <summary>
         /// The main method.
@@ -40,8 +39,8 @@ namespace FileCabinetGenerator
 
             var writtenAmountOfRecords = outputType switch
             {
-                //Csv => ExportToCsv(list),
-                //Xml => ExportToXml(list),
+                Csv => ExportToCsv(),
+                Xml => ExportToXml(),
                 _ => recordsAmount,
             };
 
@@ -51,9 +50,8 @@ namespace FileCabinetGenerator
         /// <summary>
         /// Exports records to an xml-file.
         /// </summary>
-        /// <param name="records">A <see cref="List"/> of <see cref="FileCabinetRecord"/> records.</param>
         /// <returns>The <see cref="int"/> instance of the total exported records.</returns>
-        private static int ExportToXml(List<FileCabinetRecord> records)
+        private static int ExportToXml()
         {
             throw new NotImplementedException();
         }
@@ -61,11 +59,21 @@ namespace FileCabinetGenerator
         /// <summary>
         /// Exports records to a csv-file.
         /// </summary>
-        /// <param name="records">A <see cref="List"/> of <see cref="FileCabinetRecord"/> records.</param>
         /// <returns>The <see cref="int"/> instance of the total exported records.</returns>
-        private static int ExportToCsv(List<FileCabinetRecord> records)
+        private static int ExportToCsv()
         {
-            throw new NotImplementedException();
+            int counter = 0;
+            using (var sw = File.CreateText(outputFile))
+            {
+                var writer = new FileCabinetRecordCsvWriter(sw);
+                foreach (var record in list)
+                {
+                    writer.Write(record);
+                    counter++;
+                }
+            }
+
+            return counter;
         }
 
         /// <summary>
@@ -78,16 +86,18 @@ namespace FileCabinetGenerator
 
             for (int i = 0; i < recordsAmount; i++)
             {
-                FileCabinetRecord record = new ();
-                record.Id = startId;
-                record.FirstName = RandomString(random.Next(validator.FirstNameMinLength, validator.FirstNameMaxLength));
-                record.LastName = RandomString(random.Next(validator.LastNameMinLength, validator.LastNameMaxLength));
-                record.DateOfBirth = new DateTime(random.Next(validator.MinDate.Year, DateTime.Today.Year),
+                FileCabinetRecord record = new ()
+                {
+                    Id = startId,
+                    FirstName = RandomString(random.Next(validator.FirstNameMinLength, validator.FirstNameMaxLength)),
+                    LastName = RandomString(random.Next(validator.LastNameMinLength, validator.LastNameMaxLength)),
+                    DateOfBirth = new DateTime(random.Next(validator.MinDate.Year, DateTime.Today.Year),
                     random.Next(validator.MinDate.Month, DateTime.Today.Month),
-                    random.Next(validator.MinDate.Day, DateTime.Today.Day));
-                record.WorkPlaceNumber = (short)random.Next(short.MaxValue);
-                record.Salary = Convert.ToDecimal(random.Next());
-                record.Department = Convert.ToChar(random.Next(26) + 65);
+                    random.Next(validator.MinDate.Day, DateTime.Today.Day)),
+                    WorkPlaceNumber = (short)random.Next(short.MaxValue),
+                    Salary = Convert.ToDecimal(random.Next()),
+                    Department = Convert.ToChar(random.Next(26) + 65)
+                };
 
                 list.Add(record);
                 startId++;
@@ -110,8 +120,7 @@ namespace FileCabinetGenerator
 
             foreach (var flag in OutputTypeFlags)
             {
-                var value = string.Empty;
-                if (parsedArgsDictionary.TryGetValue(flag, out value))
+                if (parsedArgsDictionary.TryGetValue(flag, out string? value))
                 {
                     outputType = value;
                 }
@@ -119,8 +128,7 @@ namespace FileCabinetGenerator
 
             foreach (var flag in OutputFileFlags)
             {
-                var value = string.Empty;
-                if (parsedArgsDictionary.TryGetValue(flag, out value))
+                if (parsedArgsDictionary.TryGetValue(flag, out string? value))
                 {
                     outputFile = value;
                 }
@@ -129,13 +137,11 @@ namespace FileCabinetGenerator
                     outputFile = "data.xml";
                 }
             }
-
+            
             foreach (var flag in RecordsAmountFlags)
             {
-                var strValue = string.Empty;
-                int value = 0;
-                if (parsedArgsDictionary.TryGetValue(flag, out strValue)
-                    && int.TryParse(strValue, out value))
+                if (parsedArgsDictionary.TryGetValue(flag, out string? strValue)
+                    && int.TryParse(strValue, out int value))
                 {
                     recordsAmount = value;
                 }
@@ -143,10 +149,8 @@ namespace FileCabinetGenerator
 
             foreach (var flag in StartIdFlags)
             {
-                var strValue = string.Empty;
-                int value = 0;
-                if (parsedArgsDictionary.TryGetValue(flag, out strValue)
-                    && int.TryParse(strValue, out value))
+                if (parsedArgsDictionary.TryGetValue(flag, out string? strValue)
+                    && int.TryParse(strValue, out int value))
                 {
                     startId = value;
                 }
