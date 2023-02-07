@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Xml.Serialization;
 
 [assembly: CLSCompliant(true)]
 
@@ -19,7 +20,9 @@ namespace FileCabinetGenerator
         private static readonly string[] RecordsAmountFlags = { "--records-amount", "-a" };
         private static readonly string[] StartIdFlags = { "--start-id", "-i" };
         private static readonly IRecordValidator validator = new DefaultValidator();
+
         private static readonly List<FileCabinetRecord> list = new ();
+        
         private const string Csv = "csv";
         private const string Xml = "xml";
         private static string outputType = Csv;
@@ -53,7 +56,26 @@ namespace FileCabinetGenerator
         /// <returns>The <see cref="int"/> instance of the total exported records.</returns>
         private static int ExportToXml()
         {
-            throw new NotImplementedException();
+            var xOver = new XmlAttributeOverrides();
+            var attrs = new XmlAttributes();
+            var xRoot = new XmlRootAttribute
+            {
+                ElementName = "records"
+            };
+            attrs.XmlRoot = xRoot;
+
+            xOver.Add(typeof(List<FileCabinetRecord>), attrs);
+
+            var ns = new XmlSerializerNamespaces();
+            ns.Add(string.Empty, string.Empty);
+
+            using (var sw = File.Create(outputFile))
+            {
+                var serializer = new XmlSerializer(typeof(List<FileCabinetRecord>), xOver);
+                serializer.Serialize(sw, list, ns);
+            }
+
+            return list.Count;
         }
 
         /// <summary>
