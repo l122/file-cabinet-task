@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace FileCabinetApp
 {
@@ -15,15 +16,17 @@ namespace FileCabinetApp
         /// <param name="tw">The <see cref="TextWriter"/> instance.</param>
         public FileCabinetRecordCsvWriter(TextWriter tw)
         {
+            var record = new FileCabinetRecord();
+
             this.textWriter = tw;
             string line = new (
-                "id," +
-                "First Name," +
-                "Last Name," +
-                "Date of Birth," +
-                "Work Place Number," +
-                "Salary," +
-                "Department");
+                $"{nameof(record.Id)}," +
+                $"{nameof(record.FirstName)}," +
+                $"{nameof(record.LastName)}," +
+                $"{nameof(record.DateOfBirth)}," +
+                $"{nameof(record.WorkPlaceNumber)}," +
+                $"{nameof(record.Salary)}," +
+                $"{nameof(record.Department)}");
 
             this.textWriter.WriteLine(line);
         }

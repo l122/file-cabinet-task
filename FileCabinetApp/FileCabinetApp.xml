@@ -92,34 +92,19 @@
             <param name="validator">The <see cref="T:FileCabinetApp.IRecordValidator"/> specialised instance.</param>
         </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.CreateRecord">
-            <summary>
-            Creates a new record.
-            </summary>
-            <returns>The <see cref="T:System.Int32"/> instance of record's id.</returns>
+            <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.GetRecords">
-            <summary>
-            Returns all records.
-            </summary>
-            <returns>A read-only instance of all records.</returns>
+            <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.GetStat">
-            <summary>
-            Returns the number of records.
-            </summary>
-            <returns>The <see cref="T:System.Int32"/> instance of total number of records.</returns>
+            <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.EditRecord(System.Int32)">
-            <summary>
-            Edits a record.
-            </summary>
-            <param name="id">The <see cref="T:System.Int32"/> instance of record's id.</param>
+            <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.MakeSnapshot">
-            <summary>
-            Creates an instance of <see cref="T:FileCabinetApp.IFileCabinetServiceSnapshot"/>.
-            </summary>
-            <returns>An <see cref="T:FileCabinetApp.IFileCabinetServiceSnapshot"/> instance.</returns>
+            <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.Dispose">
             <summary>
@@ -127,25 +112,16 @@
             </summary>
         </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.FindByFirstName(System.String)">
-            <summary>
-            Searches for a record by first name.
-            </summary>
-            <param name="firstName">The <see cref="T:System.String"/> instance of the first name.</param>
-            <returns>A read-only instance of all matched records.</returns>
+            <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.FindByLastName(System.String)">
-            <summary>
-            Searches for a record by last name.
-            </summary>
-            <param name="lastName">The <see cref="T:System.String"/> instance of the last name.</param>
-            <returns>A read-only instance of all matched records.</returns>
+            <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.FindByDateOfBirth(System.String)">
-            <summary>
-            Searches for a record by date of birth.
-            </summary>
-            <param name="dateOfBirthString">The <see cref="T:System.String"/> instance of the date of birth.</param>
-            <returns>A read-only instance of all matched records.</returns>
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.Restore(FileCabinetApp.IFileCabinetServiceSnapshot)">
+            <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.Dispose(System.Boolean)">
             <summary>
@@ -184,55 +160,31 @@
             <param name="validator">The <see cref="T:FileCabinetApp.IRecordValidator"/> specialised instance.</param>
         </member>
         <member name="M:FileCabinetApp.FileCabinetMemoryService.CreateRecord">
-            <summary>
-            Creates a new record.
-            </summary>
-            <returns>The <see cref="T:System.Int32"/> instance of record's id.</returns>
+            <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.FileCabinetMemoryService.GetRecords">
-            <summary>
-            Returns all records.
-            </summary>
-            <returns>A read-only instance of all records.</returns>
+            <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.FileCabinetMemoryService.GetStat">
-            <summary>
-            Returns the number of records.
-            </summary>
-            <returns>The <see cref="T:System.Int32"/> instance of total number of records.</returns>
+            <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.FileCabinetMemoryService.EditRecord(System.Int32)">
-            <summary>
-            Edits a record.
-            </summary>
-            <param name="id">The <see cref="T:System.Int32"/> instance of record's id.</param>
+            <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.FileCabinetMemoryService.MakeSnapshot">
-            <summary>
-            Creates an instance of <see cref="T:FileCabinetApp.IFileCabinetServiceSnapshot"/>.
-            </summary>
-            <returns>An <see cref="T:FileCabinetApp.IFileCabinetServiceSnapshot"/> instance.</returns>
+            <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.FileCabinetMemoryService.FindByFirstName(System.String)">
-            <summary>
-            Searches for a record by first name.
-            </summary>
-            <param name="firstName">The <see cref="T:System.String"/> instance of the first name.</param>
-            <returns>A read-only instance of all matched records.</returns>
+            <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.FileCabinetMemoryService.FindByLastName(System.String)">
-            <summary>
-            Searches for a record by last name.
-            </summary>
-            <param name="lastName">The <see cref="T:System.String"/> instance of the last name.</param>
-            <returns>A read-only instance of all matched records.</returns>
+            <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.FileCabinetMemoryService.FindByDateOfBirth(System.String)">
-            <summary>
-            Searches for a record by date of birth.
-            </summary>
-            <param name="dateOfBirthString">The <see cref="T:System.String"/> instance of the date of birth.</param>
-            <returns>A read-only instance of all matched records.</returns>
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.Restore(FileCabinetApp.IFileCabinetServiceSnapshot)">
+            <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.FileCabinetMemoryService.AddRecordToSearchDictionaries(FileCabinetApp.FileCabinetRecord@)">
             <summary>
@@ -299,6 +251,30 @@
             </summary>
             <returns>A <see cref="T:System.String"/> representation of the <see cref="T:FileCabinetApp.FileCabinetRecord"/> instance.</returns>
         </member>
+        <member name="T:FileCabinetApp.FileCabinetRecordCsvReader">
+            <summary>
+            Helper class for reading data from csv.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordCsvReader.#ctor(System.IO.StreamReader)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetRecordCsvReader"/> class.
+            </summary>
+            <param name="streamReader">A <see cref="T:System.IO.StreamReader"/> instance.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordCsvReader.ReadAll">
+            <summary>
+            Reads csv data into a list.
+            </summary>
+            <returns>The <see cref="T:System.Collections.Generic.IList`1"/> instance of <see cref="T:FileCabinetApp.FileCabinetRecord"/> items.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordCsvReader.ParseStringArrayToRecord(System.String[])">
+            <summary>
+            Parses an array of strings into a record.
+            </summary>
+            <param name="values">An array of <see cref="T:System.String"/>.</param>
+            <returns>A <see cref="T:FileCabinetApp.FileCabinetRecord"/> instance.</returns>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetRecordCsvWriter">
             <summary>
             CSV Writer Class.
@@ -351,16 +327,17 @@
             It provides common methods and fields.
             </summary>
         </member>
-        <member name="F:FileCabinetApp.FileCabinetService.validator">
-            <summary>
-            The <see cref="T:FileCabinetApp.IRecordValidator"/> specialized instance.
-            </summary>
-        </member>
         <member name="M:FileCabinetApp.FileCabinetService.#ctor(FileCabinetApp.IRecordValidator)">
             <summary>
             Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetService"/> class.
             </summary>
             <param name="value">The <see cref="T:FileCabinetApp.IRecordValidator"/> specialized instance.</param>
+        </member>
+        <member name="P:FileCabinetApp.FileCabinetService.Validator">
+            <summary>
+            Gets the <see cref="T:FileCabinetApp.IRecordValidator"/> specialized instance.
+            </summary>
+            <value>The <see cref="T:FileCabinetApp.IRecordValidator"/> specialized instance.</value>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.CharConverter(System.String)">
             <summary>
@@ -412,28 +389,33 @@
             </summary>
             <returns>The <see cref="T:FileCabinetApp.FileCabinetRecord"/> instance with id = 0.</returns>
         </member>
-        <member name="T:FileCabinetApp.FileCabinetServiceShanpshot">
+        <member name="T:FileCabinetApp.FileCabinetServiceSnapshot">
             <summary>
             File Cabinet Service Snapshot class.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetServiceShanpshot.#ctor(FileCabinetApp.FileCabinetRecord[])">
+        <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.#ctor">
             <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetServiceShanpshot"/> class.
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetServiceSnapshot"/> class.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.#ctor(FileCabinetApp.FileCabinetRecord[])">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetServiceSnapshot"/> class.
             </summary>
             <param name="param">The <see cref="T:FileCabinetApp.FileCabinetRecord"/> array instance.</param>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetServiceShanpshot.SaveToCsv(System.IO.StreamWriter)">
-            <summary>
-            Saves a snapshot to a csv file.
-            </summary>
-            <param name="sw">A <see cref="T:System.IO.StreamWriter"/> instance.</param>
+        <member name="P:FileCabinetApp.FileCabinetServiceSnapshot.Records">
+            <inheritdoc/>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetServiceShanpshot.SaveToXml(System.IO.StreamWriter)">
-            <summary>
-            Saves a snapshot to an xml file.
-            </summary>
-            <param name="sw">A <see cref="T:System.IO.StreamWriter"/> instance.</param>
+        <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.LoadFromCsv(System.IO.FileStream)">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.SaveToCsv(System.IO.StreamWriter)">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.SaveToXml(System.IO.StreamWriter)">
+            <inheritdoc/>
         </member>
         <member name="T:FileCabinetApp.IFileCabinetService">
             <summary>
@@ -491,10 +473,22 @@
             </summary>
             <returns>An <see cref="T:FileCabinetApp.IFileCabinetServiceSnapshot"/> instance.</returns>
         </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.Restore(FileCabinetApp.IFileCabinetServiceSnapshot)">
+            <summary>
+            Restores a <see cref="T:FileCabinetApp.FileCabinetServiceSnapshot"/> instance.
+            </summary>
+            <param name="snapshot">A <see cref="T:FileCabinetApp.IFileCabinetServiceSnapshot"/> specialized instance.</param>
+        </member>
         <member name="T:FileCabinetApp.IFileCabinetServiceSnapshot">
             <summary>
             File Cabinet Service Snapshot interface.
             </summary>
+        </member>
+        <member name="P:FileCabinetApp.IFileCabinetServiceSnapshot.Records">
+            <summary>
+            Gets records.
+            </summary>
+            <value>Records.</value>
         </member>
         <member name="M:FileCabinetApp.IFileCabinetServiceSnapshot.SaveToCsv(System.IO.StreamWriter)">
             <summary>
@@ -507,6 +501,12 @@
             Saves a snapshot to an xml file.
             </summary>
             <param name="sw">A <see cref="T:System.IO.StreamWriter"/> instance.</param>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetServiceSnapshot.LoadFromCsv(System.IO.FileStream)">
+            <summary>
+            Loads data from csv.
+            </summary>
+            <param name="fileStream">A <see cref="T:System.IO.FileStream"/> instance.</param>
         </member>
         <member name="T:FileCabinetApp.IRecordValidator">
             <summary>

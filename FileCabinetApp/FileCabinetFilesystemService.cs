@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -34,10 +33,7 @@ namespace FileCabinetApp
             Deleted,
         }
 
-        /// <summary>
-        /// Creates a new record.
-        /// </summary>
-        /// <returns>The <see cref="int"/> instance of record's id.</returns>
+        /// <inheritdoc/>
         public int CreateRecord()
         {
             var record = this.GetInputData();
@@ -53,10 +49,7 @@ namespace FileCabinetApp
             return -1;
         }
 
-        /// <summary>
-        /// Returns all records.
-        /// </summary>
-        /// <returns>A read-only instance of all records.</returns>
+        /// <inheritdoc/>
         public ReadOnlyCollection<FileCabinetRecord> GetRecords()
         {
             List<FileCabinetRecord> records = new ();
@@ -76,10 +69,7 @@ namespace FileCabinetApp
             return new ReadOnlyCollection<FileCabinetRecord>(records);
         }
 
-        /// <summary>
-        /// Returns the number of records.
-        /// </summary>
-        /// <returns>The <see cref="int"/> instance of total number of records.</returns>
+        /// <inheritdoc/>
         public int GetStat()
         {
             byte[] buffer = new byte[2];
@@ -108,10 +98,7 @@ namespace FileCabinetApp
             return counter;
         }
 
-        /// <summary>
-        /// Edits a record.
-        /// </summary>
-        /// <param name="id">The <see cref="int"/> instance of record's id.</param>
+        /// <inheritdoc/>
         public void EditRecord(int id)
         {
             var pos = this.FindById(id);
@@ -134,10 +121,7 @@ namespace FileCabinetApp
             }
         }
 
-        /// <summary>
-        /// Creates an instance of <see cref="IFileCabinetServiceSnapshot"/>.
-        /// </summary>
-        /// <returns>An <see cref="IFileCabinetServiceSnapshot"/> instance.</returns>
+        /// <inheritdoc/>
         public IFileCabinetServiceSnapshot MakeSnapshot()
         {
             throw new NotImplementedException();
@@ -152,11 +136,7 @@ namespace FileCabinetApp
             GC.SuppressFinalize(this);
         }
 
-        /// <summary>
-        /// Searches for a record by first name.
-        /// </summary>
-        /// <param name="firstName">The <see cref="string"/> instance of the first name.</param>
-        /// <returns>A read-only instance of all matched records.</returns>
+        /// <inheritdoc/>
         public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
         {
             List<FileCabinetRecord> result = new ();
@@ -174,11 +154,7 @@ namespace FileCabinetApp
             return new ReadOnlyCollection<FileCabinetRecord>(result);
         }
 
-        /// <summary>
-        /// Searches for a record by last name.
-        /// </summary>
-        /// <param name="lastName">The <see cref="string"/> instance of the last name.</param>
-        /// <returns>A read-only instance of all matched records.</returns>
+        /// <inheritdoc/>
         public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
         {
             List<FileCabinetRecord> result = new ();
@@ -196,11 +172,7 @@ namespace FileCabinetApp
             return new ReadOnlyCollection<FileCabinetRecord>(result);
         }
 
-        /// <summary>
-        /// Searches for a record by date of birth.
-        /// </summary>
-        /// <param name="dateOfBirthString">The <see cref="string"/> instance of the date of birth.</param>
-        /// <returns>A read-only instance of all matched records.</returns>
+        /// <inheritdoc/>
         public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirthString)
         {
             List<FileCabinetRecord> result = new ();
@@ -224,6 +196,12 @@ namespace FileCabinetApp
             }
 
             return new ReadOnlyCollection<FileCabinetRecord>(result);
+        }
+
+        /// <inheritdoc/>
+        public void Restore(IFileCabinetServiceSnapshot snapshot)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>

@@ -175,7 +175,7 @@ namespace FileCabinetApp
         {
             const string csvParameter = "csv";
             const string xmlParameter = "xml";
-            int recordQuantity = 0;
+            int oldQuantity = Program.fileCabinetService.GetStat();
 
             var input = parameters.Split(" ");
             if (input.Length != 2)
@@ -195,22 +195,23 @@ namespace FileCabinetApp
 
             try
             {
-                using (var sr = new StreamReader(file))
+                using var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read);
+                var snapshot = new FileCabinetServiceSnapshot();
+
+                string parameter = input[0];
+                switch (parameter)
                 {
-                    string parameter = input[0];
-                    switch (parameter)
-                    {
-                        case csvParameter:
-                            //recordQuantity = fileCabinetService.ImportFromCsv(sr);
-                            break;
-                        case xmlParameter:
-                            //recordQuantity = fileCabinetService.ImportFromXml(sr);
-                            break;
-                        default:
-                            Console.WriteLine("Invalid parameters.");
-                            break;
-                    }
+                    case csvParameter:
+                        snapshot.LoadFromCsv(fileStream);
+                        break;
+                    case xmlParameter:
+                        break;
+                    default:
+                        Console.WriteLine("Invalid parameters.");
+                        break;
                 }
+
+                fileCabinetService.Restore(snapshot);
             }
             catch (Exception e)
             {
@@ -218,7 +219,7 @@ namespace FileCabinetApp
                 return;
             }
 
-            Console.WriteLine("{0} records were imported from {1}", recordQuantity, file);
+            Console.WriteLine("{0} records were imported from {1}", Program.fileCabinetService.GetStat() - oldQuantity, file);
         }
 
         private static void PrintMissedCommandInfo(string command)

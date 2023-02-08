@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Linq;
 
 namespace FileCabinetApp
 {
@@ -28,49 +29,40 @@ namespace FileCabinetApp
             this.dateOfBirthDictionary = new Dictionary<string, List<FileCabinetRecord>>();
         }
 
-        /// <summary>
-        /// Creates a new record.
-        /// </summary>
-        /// <returns>The <see cref="int"/> instance of record's id.</returns>
+        /// <inheritdoc/>
         public int CreateRecord()
         {
             var record = this.GetInputData();
 
+            // Update record id, because the default id = 1
+            if (this.list.Count > 0)
+            {
+                record.Id = this.list.Last().Id + 1;
+            }
+
             this.list.Add(record);
-
-            // Update record id, because the default id = 0
-            record.Id = this.list.Count;
-
             this.AddRecordToSearchDictionaries(record);
 
             return record.Id;
         }
 
-        /// <summary>
-        /// Returns all records.
-        /// </summary>
-        /// <returns>A read-only instance of all records.</returns>
+        /// <inheritdoc/>
         public ReadOnlyCollection<FileCabinetRecord> GetRecords()
         {
             return new ReadOnlyCollection<FileCabinetRecord>(this.list);
         }
 
-        /// <summary>
-        /// Returns the number of records.
-        /// </summary>
-        /// <returns>The <see cref="int"/> instance of total number of records.</returns>
+        /// <inheritdoc/>
         public int GetStat()
         {
             return this.list.Count;
         }
 
-        /// <summary>
-        /// Edits a record.
-        /// </summary>
-        /// <param name="id">The <see cref="int"/> instance of record's id.</param>
+        /// <inheritdoc/>
         public void EditRecord(int id)
         {
-            if (id < 1 || id > this.GetStat())
+            int listId = this.list.FindIndex(p => p.Id == id);
+            if (listId == -1)
             {
                 Console.WriteLine("#{0} record is not found.", id);
                 return;
@@ -78,7 +70,6 @@ namespace FileCabinetApp
 
             var record = this.GetInputData();
 
-            int listId = id - 1;
             this.RemoveRecordFromSearchDictionaries(this.list[listId]);
 
             // Update record
@@ -96,20 +87,13 @@ namespace FileCabinetApp
             Console.WriteLine("Record #{0} is updated.", id);
         }
 
-        /// <summary>
-        /// Creates an instance of <see cref="IFileCabinetServiceSnapshot"/>.
-        /// </summary>
-        /// <returns>An <see cref="IFileCabinetServiceSnapshot"/> instance.</returns>
+        /// <inheritdoc/>
         public IFileCabinetServiceSnapshot MakeSnapshot()
         {
-            return new FileCabinetServiceShanpshot(this.list.ToArray());
+            return new FileCabinetServiceSnapshot(this.list.ToArray());
         }
 
-        /// <summary>
-        /// Searches for a record by first name.
-        /// </summary>
-        /// <param name="firstName">The <see cref="string"/> instance of the first name.</param>
-        /// <returns>A read-only instance of all matched records.</returns>
+        /// <inheritdoc/>
         public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
         {
             if (this.firstNameDictionary.TryGetValue(firstName.ToUpperInvariant(), out List<FileCabinetRecord>? result))
@@ -120,11 +104,7 @@ namespace FileCabinetApp
             return new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
         }
 
-        /// <summary>
-        /// Searches for a record by last name.
-        /// </summary>
-        /// <param name="lastName">The <see cref="string"/> instance of the last name.</param>
-        /// <returns>A read-only instance of all matched records.</returns>
+        /// <inheritdoc/>
         public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
         {
             if (this.lastNameDictionary.TryGetValue(lastName.ToUpperInvariant(), out List<FileCabinetRecord>? result))
@@ -135,11 +115,7 @@ namespace FileCabinetApp
             return new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
         }
 
-        /// <summary>
-        /// Searches for a record by date of birth.
-        /// </summary>
-        /// <param name="dateOfBirthString">The <see cref="string"/> instance of the date of birth.</param>
-        /// <returns>A read-only instance of all matched records.</returns>
+        /// <inheritdoc/>
         public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirthString)
         {
             if (DateTime.TryParse(dateOfBirthString, out DateTime dateOfBirth))
@@ -153,6 +129,51 @@ namespace FileCabinetApp
             }
 
             return new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
+        }
+
+        /// <inheritdoc/>
+        public void Restore(IFileCabinetServiceSnapshot snapshot)
+        {
+            var records = snapshot.Records;
+
+            foreach (var record in records)
+            {
+                // Validate First Name
+                var validationResult = this.Validator.FirstNameValidator(record.FirstName);
+                if (!validationResult.Item1)
+                {
+                    Console.WriteLine("#{0}: {1}", record.Id, validationResult.Item2);
+                    continue;
+                }
+
+                // Validate Last Name
+                validationResult = this.Validator.LastNameValidator(record.LastName);
+                if (!validationResult.Item1)
+                {
+                    Console.WriteLine("#{0}: {1}", record.Id, validationResult.Item2);
+                    continue;
+                }
+
+                // Date of birth validator
+                validationResult = this.Validator.DateOfBirthValidator(record.DateOfBirth);
+                if (!validationResult.Item1)
+                {
+                    Console.WriteLine("#{0}: {1}", record.Id, validationResult.Item2);
+                    continue;
+                }
+
+                this.AddRecordToSearchDictionaries(record);
+
+                var listId = this.list.FindIndex(p => p.Id == record.Id);
+                if (listId != -1)
+                {
+                    this.list[listId] = record;
+                }
+                else
+                {
+                    this.list.Add(record);
+                }
+            }
         }
 
         /// <summary>
