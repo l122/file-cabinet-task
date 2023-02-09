@@ -132,6 +132,22 @@
             </summary>
             <param name="disposing">The <see cref="T:System.Boolean"/> instance parameter.</param>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.CopyToBuffer(System.Byte[]@,System.Byte[],System.Int32@)">
+            <summary>
+            Copies byte[] into a byte[] at specified position.
+            </summary>
+            <param name="data">A <see cref="T:System.Byte"/> source array.</param>
+            <param name="buffer">A <see cref="T:System.Byte"/> destination array.</param>
+            <param name="offset">A <see cref="T:System.Int32"/> start index of the destination array.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.CopyIntToBuffer(System.Int32[]@,System.Byte[],System.Int32@)">
+            <summary>
+            Copies int[] into a byte[] at specified position.
+            </summary>
+            <param name="data">A <see cref="T:System.Int32"/> source array.</param>
+            <param name="buffer">A <see cref="T:System.Byte"/> destination array.</param>
+            <param name="offset">A <see cref="T:System.Int32"/> start index of the destination array.</param>
+        </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.WriteToFile(FileCabinetApp.FileCabinetRecord,System.Int64)">
             <summary>
             Writes the <see cref="T:FileCabinetApp.FileCabinetRecord"/> instance to a binary file.

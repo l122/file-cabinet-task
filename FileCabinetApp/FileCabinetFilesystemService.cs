@@ -225,7 +225,26 @@ namespace FileCabinetApp
         /// <inheritdoc/>
         public void RemoveRecord(int id)
         {
-            throw new NotImplementedException();
+            // find id
+            var position = this.FindById(id);
+            if (position == -1)
+            {
+                Console.WriteLine("Record #{0} doesn't exit.", id);
+                return;
+            }
+
+            this.fileStream.Position = position;
+            try
+            {
+                this.fileStream.Write(BitConverter.GetBytes((short)Status.Deleted), 0, sizeof(short));
+                this.fileStream.Flush();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error deleting a record: {0}", e.ToString());
+            }
+
+            Console.WriteLine("Record #{0} is removed.", id);
         }
 
         /// <summary>
@@ -238,6 +257,32 @@ namespace FileCabinetApp
             {
                 this.fileStream.Dispose();
             }
+        }
+
+        /// <summary>
+        /// Copies byte[] into a byte[] at specified position.
+        /// </summary>
+        /// <param name="data">A <see cref="byte"/> source array.</param>
+        /// <param name="buffer">A <see cref="byte"/> destination array.</param>
+        /// <param name="offset">A <see cref="int"/> start index of the destination array.</param>
+        private static void CopyToBuffer(in byte[] data, byte[] buffer, ref int offset)
+        {
+            BitArray bitArray = new (data);
+            bitArray.CopyTo(buffer, offset);
+            offset += bitArray.Count / 8;
+        }
+
+        /// <summary>
+        /// Copies int[] into a byte[] at specified position.
+        /// </summary>
+        /// <param name="data">A <see cref="int"/> source array.</param>
+        /// <param name="buffer">A <see cref="byte"/> destination array.</param>
+        /// <param name="offset">A <see cref="int"/> start index of the destination array.</param>
+        private static void CopyIntToBuffer(in int[] data, byte[] buffer, ref int offset)
+        {
+            BitArray bitArray = new (data);
+            bitArray.CopyTo(buffer, offset);
+            offset += bitArray.Count / 8;
         }
 
         /// <summary>
@@ -324,22 +369,6 @@ namespace FileCabinetApp
             {
                 Console.WriteLine("Error in verifying data in: {0}", e.ToString());
                 return false;
-            }
-
-            // Copies byte[] into a byte[] at specified position
-            void CopyToBuffer(in byte[] data, byte[] buffer, ref int offset)
-            {
-                BitArray bitArray = new (data);
-                bitArray.CopyTo(buffer, offset);
-                offset += bitArray.Count / 8;
-            }
-
-            // Copies int[] into a byte[] at specified position
-            void CopyIntToBuffer(in int[] data, byte[] buffer, ref int offset)
-            {
-                BitArray bitArray = new (data);
-                bitArray.CopyTo(buffer, offset);
-                offset += bitArray.Count / 8;
             }
 
             return true;

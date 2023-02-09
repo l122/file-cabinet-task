@@ -165,6 +165,7 @@ namespace FileCabinetApp
             if (listId == -1)
             {
                 Console.WriteLine("Record #{0} doesn't exit.", id);
+                return;
             }
 
             this.list.RemoveAt(listId);
