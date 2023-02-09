@@ -160,7 +160,17 @@ namespace FileCabinetApp
         /// <inheritdoc/>
         public void RemoveRecord(int id)
         {
-            throw new NotImplementedException();
+            var listId = this.list.FindIndex(p => p.Id == id);
+
+            if (listId == -1)
+            {
+                Console.WriteLine("Record #{0} doesn't exit.", id);
+            }
+
+            this.list.RemoveAt(listId);
+            this.RemoveRecordFromSearchDictionaries(this.list[listId]);
+
+            Console.WriteLine("Record #{0} is removed.", id);
         }
 
         /// <summary>
