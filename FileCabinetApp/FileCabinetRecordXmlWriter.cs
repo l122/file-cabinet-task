@@ -19,9 +19,10 @@ namespace FileCabinetApp
         /// <param name="textWriter">The <see cref="TextWriter"/> instance.</param>
         public FileCabinetRecordXmlWriter(TextWriter textWriter)
         {
-            XmlWriterSettings settings = new XmlWriterSettings();
-            settings.Indent = true;
-            settings.WriteEndDocumentOnClose = true;
+            XmlWriterSettings settings = new ()
+            {
+                Indent = true,
+            };
 
             this.xmlWriter = XmlWriter.Create(textWriter, settings);
             this.xmlWriter.WriteStartDocument();
@@ -37,14 +38,12 @@ namespace FileCabinetApp
         {
             this.xmlWriter.WriteStartElement("record");
             this.xmlWriter.WriteAttributeString("id", $"{record.Id}");
-            this.xmlWriter.WriteStartElement("name");
-            this.xmlWriter.WriteAttributeString("first", $"{record.FirstName}");
-            this.xmlWriter.WriteAttributeString("last", $"{record.LastName}");
-            this.xmlWriter.WriteEndElement();
-            this.xmlWriter.WriteElementString("dateOfBirth", record.DateOfBirth.ToString("dd/MM/yyyy", CultureInfo.InvariantCulture));
-            this.xmlWriter.WriteElementString("PlaceOfWork", $"{record.WorkPlaceNumber}");
-            this.xmlWriter.WriteElementString("Salary", $"{record.Salary}");
-            this.xmlWriter.WriteElementString("Department", $"{record.Department}");
+            this.xmlWriter.WriteElementString("firstName", $"{record.FirstName}");
+            this.xmlWriter.WriteElementString("lastName", $"{record.LastName}");
+            this.xmlWriter.WriteElementString("dateOfBirth", record.DateOfBirth.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+            this.xmlWriter.WriteElementString("workPlace", $"{record.WorkPlaceNumber}");
+            this.xmlWriter.WriteElementString("salary", $"{record.Salary}");
+            this.xmlWriter.WriteElementString("department", $"{(int)record.Department}");
             this.xmlWriter.WriteEndElement();
             this.xmlWriter.Flush();
         }

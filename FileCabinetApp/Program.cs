@@ -44,6 +44,7 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("edit", Edit),
             new Tuple<string, Action<string>>("find", Find),
             new Tuple<string, Action<string>>("export", Export),
+            new Tuple<string, Action<string>>("import", Import),
         };
 
         private static readonly string[][] HelpMessages = new string[][]
@@ -56,6 +57,7 @@ namespace FileCabinetApp
             new string[] { "edit", "edits a record", "The 'edit #id' command edits record #id." },
             new string[] { "find", "searches records", "The 'find <firstname, lastname, dateofbirth> <criterion>' command searches all records with <field> = <criterion>." },
             new string[] { "export", "exports records to csv or xml", "The 'export <csv, xml> <file_name>' command exports records to a csv or xml file" },
+            new string[] { "import", "imports records from csv or xml", "The 'import <csv, xml> <file_name>' command imports records from a csv or xml file" },
         };
 
         private static IFileCabinetService fileCabinetService = new FileCabinetMemoryService(new DefaultValidator());
@@ -167,6 +169,58 @@ namespace FileCabinetApp
                     sw.Close();
                 }
             }
+        }
+
+        private static void Import(string parameters)
+        {
+            const string csvParameter = "csv";
+            const string xmlParameter = "xml";
+            int oldQuantity = Program.fileCabinetService.GetStat();
+
+            var input = parameters.Split(" ");
+            if (input.Length != 2)
+            {
+                Console.WriteLine("Invalid parameters.");
+                Console.WriteLine("Use syntax 'import <csv, xml> <file_name>'");
+                return;
+            }
+
+            // Create / open file
+            string? file = input[1];
+            if (!File.Exists(file))
+            {
+                Console.WriteLine("Import error: file {0} does not exist.", file);
+                return;
+            }
+
+            try
+            {
+                using var fileStream = new FileStream(file, FileMode.Open, FileAccess.Read);
+                var snapshot = new FileCabinetServiceSnapshot();
+
+                string parameter = input[0];
+                switch (parameter)
+                {
+                    case csvParameter:
+                        snapshot.LoadFromCsv(fileStream);
+                        break;
+                    case xmlParameter:
+                        snapshot.LoadFromXml(fileStream);
+                        break;
+                    default:
+                        Console.WriteLine("Invalid parameters.");
+                        break;
+                }
+
+                fileCabinetService.Restore(snapshot);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error: {0}", e.ToString());
+                return;
+            }
+
+            Console.WriteLine("{0} records were imported from {1}", Program.fileCabinetService.GetStat() - oldQuantity, file);
         }
 
         private static void PrintMissedCommandInfo(string command)

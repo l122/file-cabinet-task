@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace FileCabinetApp
 {
@@ -7,13 +8,22 @@ namespace FileCabinetApp
     /// </summary>
     public class DefaultValidator : IRecordValidator
     {
-        private static readonly DateTime MinDate = new (1950, 1, 1);
+        /// <inheritdoc/>
+        public int FirstNameMinLength { get; } = 2;
 
-        /// <summary>
-        /// Validates First Name.
-        /// </summary>
-        /// <param name="value">The <see cref="string"/> instance value.</param>
-        /// <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+        /// <inheritdoc/>
+        public int FirstNameMaxLength { get; } = 60;
+
+        /// <inheritdoc/>
+        public int LastNameMinLength { get; } = 2;
+
+        /// <inheritdoc/>
+        public int LastNameMaxLength { get; } = 60;
+
+        /// <inheritdoc/>
+        public DateTime MinDate { get; } = new (1950, 1, 1);
+
+        /// <inheritdoc/>
         public Tuple<bool, string> FirstNameValidator(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
@@ -22,19 +32,15 @@ namespace FileCabinetApp
             }
 
             value = value.Trim();
-            if (value.Length < 2 || value.Length > 60)
+            if (value.Length < this.FirstNameMinLength || value.Length > this.FirstNameMaxLength)
             {
-                return Tuple.Create(false, "First name has to have at least 2 and maximum 60 characters.");
+                return Tuple.Create(false, $"First name has to have at least {this.FirstNameMinLength} and maximum {this.FirstNameMaxLength} characters.");
             }
 
             return Tuple.Create(true, string.Empty);
         }
 
-        /// <summary>
-        /// Validates Last Name.
-        /// </summary>
-        /// <param name="value">The <see cref="string"/> instance value.</param>
-        /// <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+        /// <inheritdoc/>
         public Tuple<bool, string> LastNameValidator(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
@@ -43,35 +49,27 @@ namespace FileCabinetApp
             }
 
             value = value.Trim();
-            if (value.Length < 2 || value.Length > 60)
+            if (value.Length < this.LastNameMinLength || value.Length > this.LastNameMaxLength)
             {
-                return Tuple.Create(false, "Last name has to have at least 2 and maximum 60 characters.");
+                return Tuple.Create(false, $"Last name has to have at least {this.LastNameMinLength} and maximum {this.LastNameMaxLength} characters.");
             }
 
             return Tuple.Create(true, string.Empty);
         }
 
-        /// <summary>
-        /// Validates date of birth.
-        /// </summary>
-        /// <param name="value">The <see cref="DateTime"/> instance value.</param>
-        /// <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+        /// <inheritdoc/>
         public Tuple<bool, string> DateOfBirthValidator(DateTime value)
         {
-            if (DateTime.Compare(value, MinDate) < 0
+            if (DateTime.Compare(value, this.MinDate) < 0
                 || DateTime.Compare(value, DateTime.Today) > 0)
             {
-                return Tuple.Create(false, "Date of birth should be within 01-Jan-1950 and today.");
+                return Tuple.Create(false, $"Date of birth should be within {this.MinDate.ToString("dd.MMM.yyyy", CultureInfo.InvariantCulture)} and today.");
             }
 
             return Tuple.Create(true, string.Empty);
         }
 
-        /// <summary>
-        /// Validates place of work.
-        /// </summary>
-        /// <param name="value">The <see cref="short"/> instance value.</param>
-        /// <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+        /// <inheritdoc/>
         public Tuple<bool, string> WorkPlaceValidator(short value)
         {
             if (value < 0)
@@ -82,11 +80,7 @@ namespace FileCabinetApp
             return Tuple.Create(true, string.Empty);
         }
 
-        /// <summary>
-        /// Validates salary.
-        /// </summary>
-        /// <param name="value">The <see cref="decimal"/> instance value.</param>
-        /// <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+        /// <inheritdoc/>
         public Tuple<bool, string> SalaryValidator(decimal value)
         {
             if (value < 0)
@@ -97,11 +91,7 @@ namespace FileCabinetApp
             return Tuple.Create(true, string.Empty);
         }
 
-        /// <summary>
-        /// Validates department letter.
-        /// </summary>
-        /// <param name="value">The <see cref="char"/> instance value.</param>
-        /// <returns>True, if valudation is successful, false otherwise, and a validation result.</returns>
+        /// <inheritdoc/>
         public Tuple<bool, string> DepartmentValidator(char value)
         {
             if (!char.IsLetter(value))

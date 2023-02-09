@@ -10,18 +10,19 @@ namespace FileCabinetApp
     public class FileCabinetService
     {
         /// <summary>
-        /// The <see cref="IRecordValidator"/> specialized instance.
-        /// </summary>
-        private readonly IRecordValidator validator;
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="FileCabinetService"/> class.
         /// </summary>
         /// <param name="value">The <see cref="IRecordValidator"/> specialized instance.</param>
         protected FileCabinetService(IRecordValidator value)
         {
-            this.validator = value;
+            this.Validator = value;
         }
+
+        /// <summary>
+        /// Gets the <see cref="IRecordValidator"/> specialized instance.
+        /// </summary>
+        /// <value>The <see cref="IRecordValidator"/> specialized instance.</value>
+        protected IRecordValidator Validator { get; init; }
 
         /// <summary>
         /// Converts a <see cref="string"/> argument into a <see cref="char"/>.
@@ -141,26 +142,26 @@ namespace FileCabinetApp
         protected FileCabinetRecord GetInputData()
         {
             Console.Write("First name: ");
-            string firstName = ReadInput(StringConverter, this.validator.FirstNameValidator);
+            string firstName = ReadInput(StringConverter, this.Validator.FirstNameValidator);
 
             Console.Write("Last name: ");
-            string lastName = ReadInput(StringConverter, this.validator.LastNameValidator);
+            string lastName = ReadInput(StringConverter, this.Validator.LastNameValidator);
 
             Console.Write("Date of birth: ");
-            DateTime dateOfBirth = ReadInput(DateConverter, this.validator.DateOfBirthValidator);
+            DateTime dateOfBirth = ReadInput(DateConverter, this.Validator.DateOfBirthValidator);
 
             Console.Write("Work Place Number: ");
-            short workPlaceNumber = ReadInput(ShortConverter, this.validator.WorkPlaceValidator);
+            short workPlaceNumber = ReadInput(ShortConverter, this.Validator.WorkPlaceValidator);
 
             Console.Write("Salary: ");
-            decimal salary = ReadInput(DecimalConverter, this.validator.SalaryValidator);
+            decimal salary = ReadInput(DecimalConverter, this.Validator.SalaryValidator);
 
             Console.Write("Department (one letter): ");
-            char department = ReadInput(CharConverter, this.validator.DepartmentValidator);
+            char department = ReadInput(CharConverter, this.Validator.DepartmentValidator);
 
             return new FileCabinetRecord()
             {
-                Id = 0,
+                Id = 1,
                 FirstName = firstName,
                 LastName = lastName,
                 DateOfBirth = dateOfBirth,
@@ -168,6 +169,40 @@ namespace FileCabinetApp
                 Salary = salary,
                 Department = department,
             };
+        }
+
+        /// <summary>
+        /// Validates the <see cref="FileCabinetRecord"/> instance.
+        /// </summary>
+        /// <param name="record">A <see cref="FileCabinetRecord"/> instance.</param>
+        /// <returns>true if record is valid, false otherwise.</returns>
+        protected bool IsValidRecord(FileCabinetRecord record)
+        {
+            // Validate First Name
+            var validationResult = this.Validator.FirstNameValidator(record.FirstName);
+            if (!validationResult.Item1)
+            {
+                Console.WriteLine("#{0}: {1}", record.Id, validationResult.Item2);
+                return false;
+            }
+
+            // Validate Last Name
+            validationResult = this.Validator.LastNameValidator(record.LastName);
+            if (!validationResult.Item1)
+            {
+                Console.WriteLine("#{0}: {1}", record.Id, validationResult.Item2);
+                return false;
+            }
+
+            // Date of birth validator
+            validationResult = this.Validator.DateOfBirthValidator(record.DateOfBirth);
+            if (!validationResult.Item1)
+            {
+                Console.WriteLine("#{0}: {1}", record.Id, validationResult.Item2);
+                return false;
+            }
+
+            return true;
         }
     }
 }

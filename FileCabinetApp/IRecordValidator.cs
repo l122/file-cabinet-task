@@ -8,6 +8,46 @@ namespace FileCabinetApp
     public interface IRecordValidator
     {
         /// <summary>
+        /// Gets the minimum length of the First Name.
+        /// </summary>
+        /// /// <value>
+        /// The minimum length of the First Name.
+        /// </value>
+        public int FirstNameMinLength { get; }
+
+        /// <summary>
+        /// Gets the maximum length of the First Name.
+        /// </summary>
+        /// /// <value>
+        /// The maximum length of the First Name.
+        /// </value>
+        public int FirstNameMaxLength { get; }
+
+        /// <summary>
+        /// Gets the minimul length of the Last Name.
+        /// </summary>
+        /// /// <value>
+        /// The minimul length of the Last Name.
+        /// </value>
+        public int LastNameMinLength { get; }
+
+        /// <summary>
+        /// Gets the maximum length of the Last Name.
+        /// </summary>
+        /// <value>
+        /// The maximum length of the Last Name.
+        /// </value>
+        public int LastNameMaxLength { get; }
+
+        /// <summary>
+        /// Gets the earliest date of birth.
+        /// </summary>
+        /// <value>
+        /// The earliest date of birth.
+        /// </value>
+        public DateTime MinDate { get; }
+
+        /// <summary>
         /// Validates First Name.
         /// </summary>
         /// <param name="value">The <see cref="string"/> instance value.</param>

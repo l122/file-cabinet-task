@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.IO;
 
 namespace FileCabinetApp
 {
@@ -57,5 +58,11 @@ namespace FileCabinetApp
         /// </summary>
         /// <returns>An <see cref="IFileCabinetServiceSnapshot"/> instance.</returns>
         public IFileCabinetServiceSnapshot MakeSnapshot();
+
+        /// <summary>
+        /// Restores a <see cref="FileCabinetServiceSnapshot"/> instance.
+        /// </summary>
+        /// <param name="snapshot">A <see cref="IFileCabinetServiceSnapshot"/> specialized instance.</param>
+        public void Restore(IFileCabinetServiceSnapshot snapshot);
     }
 }
