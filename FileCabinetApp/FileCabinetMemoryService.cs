@@ -53,9 +53,9 @@ namespace FileCabinetApp
         }
 
         /// <inheritdoc/>
-        public int GetStat()
+        public (int, int) GetStat()
         {
-            return this.list.Count;
+            return (this.list.Count, 0);
         }
 
         /// <inheritdoc/>
@@ -155,6 +155,31 @@ namespace FileCabinetApp
                     this.list.Add(record);
                 }
             }
+        }
+
+        /// <inheritdoc/>
+        public void RemoveRecord(int id)
+        {
+            var listId = this.list.FindIndex(p => p.Id == id);
+
+            if (listId == -1)
+            {
+                Console.WriteLine("Record #{0} doesn't exit.", id);
+                return;
+            }
+
+            this.list.RemoveAt(listId);
+            this.RemoveRecordFromSearchDictionaries(this.list[listId]);
+
+            Console.WriteLine("Record #{0} is removed.", id);
+        }
+
+        /// <summary>
+        /// Does nothing for FileCabinetMemorySerive.
+        /// </summary>
+        public void Purge()
+        {
+            // Do nothing because it's not applied to the memory service.
         }
 
         /// <summary>

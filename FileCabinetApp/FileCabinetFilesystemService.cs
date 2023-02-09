@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace FileCabinetApp
@@ -15,7 +16,7 @@ namespace FileCabinetApp
         private const string FileName = "cabinet-records.db";
         private const int RecordSize = 278;
         private const int StringBufferSize = 120;
-        private readonly FileStream fileStream;
+        private FileStream fileStream;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileCabinetFilesystemService"/> class.
@@ -70,7 +71,7 @@ namespace FileCabinetApp
         }
 
         /// <inheritdoc/>
-        public int GetStat()
+        public (int, int) GetStat()
         {
             byte[] buffer = new byte[2];
             int counter = 0;
@@ -95,7 +96,9 @@ namespace FileCabinetApp
                 }
             }
 
-            return counter;
+            var deletedQuantity = (int)(this.fileStream.Length / RecordSize) - counter;
+
+            return (counter, deletedQuantity);
         }
 
         /// <inheritdoc/>
@@ -124,7 +127,7 @@ namespace FileCabinetApp
         /// <inheritdoc/>
         public IFileCabinetServiceSnapshot MakeSnapshot()
         {
-            throw new NotImplementedException();
+            return new FileCabinetServiceSnapshot(this.GetRecords().ToArray());
         }
 
         /// <summary>
@@ -222,6 +225,64 @@ namespace FileCabinetApp
             }
         }
 
+        /// <inheritdoc/>
+        public void RemoveRecord(int id)
+        {
+            // find id
+            var position = this.FindById(id);
+            if (position == -1)
+            {
+                Console.WriteLine("Record #{0} doesn't exit.", id);
+                return;
+            }
+
+            this.fileStream.Position = position;
+            try
+            {
+                this.fileStream.Write(BitConverter.GetBytes((short)Status.Deleted), 0, sizeof(short));
+                this.fileStream.Flush();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error deleting a record: {0}", e.ToString());
+            }
+
+            Console.WriteLine("Record #{0} is removed.", id);
+        }
+
+        /// <inheritdoc/>
+        public void Purge()
+        {
+            var oldQuantity = this.fileStream.Length / RecordSize;
+
+            var records = this.GetRecords();
+            try
+            {
+                if (this.fileStream != null)
+                {
+                    this.fileStream.Dispose();
+                }
+
+                this.fileStream = File.Open(FileName, FileMode.Create, FileAccess.ReadWrite);
+
+                var position = 0;
+                foreach (var record in records)
+                {
+                    this.WriteToFile(record, position);
+                    position += RecordSize;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error while clearing file {0} : {1}", FileName, e.ToString());
+                return;
+            }
+
+            var newQuantity = this.fileStream.Length / RecordSize;
+            var purgedQuantity = oldQuantity - newQuantity;
+            Console.WriteLine("Data file processing is completed: {0} of {1} records were purged.", purgedQuantity, oldQuantity);
+        }
+
         /// <summary>
         /// Releases resourses.
         /// </summary>
@@ -232,6 +293,32 @@ namespace FileCabinetApp
             {
                 this.fileStream.Dispose();
             }
+        }
+
+        /// <summary>
+        /// Copies byte[] into a byte[] at specified position.
+        /// </summary>
+        /// <param name="data">A <see cref="byte"/> source array.</param>
+        /// <param name="buffer">A <see cref="byte"/> destination array.</param>
+        /// <param name="offset">A <see cref="int"/> start index of the destination array.</param>
+        private static void CopyToBuffer(in byte[] data, byte[] buffer, ref int offset)
+        {
+            BitArray bitArray = new (data);
+            bitArray.CopyTo(buffer, offset);
+            offset += bitArray.Count / 8;
+        }
+
+        /// <summary>
+        /// Copies int[] into a byte[] at specified position.
+        /// </summary>
+        /// <param name="data">A <see cref="int"/> source array.</param>
+        /// <param name="buffer">A <see cref="byte"/> destination array.</param>
+        /// <param name="offset">A <see cref="int"/> start index of the destination array.</param>
+        private static void CopyIntToBuffer(in int[] data, byte[] buffer, ref int offset)
+        {
+            BitArray bitArray = new (data);
+            bitArray.CopyTo(buffer, offset);
+            offset += bitArray.Count / 8;
         }
 
         /// <summary>
@@ -318,22 +405,6 @@ namespace FileCabinetApp
             {
                 Console.WriteLine("Error in verifying data in: {0}", e.ToString());
                 return false;
-            }
-
-            // Copies byte[] into a byte[] at specified position
-            void CopyToBuffer(in byte[] data, byte[] buffer, ref int offset)
-            {
-                BitArray bitArray = new (data);
-                bitArray.CopyTo(buffer, offset);
-                offset += bitArray.Count / 8;
-            }
-
-            // Copies int[] into a byte[] at specified position
-            void CopyIntToBuffer(in int[] data, byte[] buffer, ref int offset)
-            {
-                BitArray bitArray = new (data);
-                bitArray.CopyTo(buffer, offset);
-                offset += bitArray.Count / 8;
             }
 
             return true;

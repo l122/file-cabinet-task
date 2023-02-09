@@ -123,11 +123,33 @@
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.Restore(FileCabinetApp.IFileCabinetServiceSnapshot)">
             <inheritdoc/>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.RemoveRecord(System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.Purge">
+            <inheritdoc/>
+        </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.Dispose(System.Boolean)">
             <summary>
             Releases resourses.
             </summary>
             <param name="disposing">The <see cref="T:System.Boolean"/> instance parameter.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.CopyToBuffer(System.Byte[]@,System.Byte[],System.Int32@)">
+            <summary>
+            Copies byte[] into a byte[] at specified position.
+            </summary>
+            <param name="data">A <see cref="T:System.Byte"/> source array.</param>
+            <param name="buffer">A <see cref="T:System.Byte"/> destination array.</param>
+            <param name="offset">A <see cref="T:System.Int32"/> start index of the destination array.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.CopyIntToBuffer(System.Int32[]@,System.Byte[],System.Int32@)">
+            <summary>
+            Copies int[] into a byte[] at specified position.
+            </summary>
+            <param name="data">A <see cref="T:System.Int32"/> source array.</param>
+            <param name="buffer">A <see cref="T:System.Byte"/> destination array.</param>
+            <param name="offset">A <see cref="T:System.Int32"/> start index of the destination array.</param>
         </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.WriteToFile(FileCabinetApp.FileCabinetRecord,System.Int64)">
             <summary>
@@ -192,6 +214,14 @@
         </member>
         <member name="M:FileCabinetApp.FileCabinetMemoryService.Restore(FileCabinetApp.IFileCabinetServiceSnapshot)">
             <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.RemoveRecord(System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.Purge">
+            <summary>
+            Does nothing for FileCabinetMemorySerive.
+            </summary>
         </member>
         <member name="M:FileCabinetApp.FileCabinetMemoryService.AddRecordToSearchDictionaries(FileCabinetApp.FileCabinetRecord@)">
             <summary>
@@ -472,7 +502,7 @@
             <summary>
             Returns the number of records.
             </summary>
-            <returns>The <see cref="T:System.Int32"/> instance of total number of records.</returns>
+            <returns>The <see cref="T:System.Tuple"/> instance of total and deleted number of records.</returns>
         </member>
         <member name="M:FileCabinetApp.IFileCabinetService.EditRecord(System.Int32)">
             <summary>
@@ -512,6 +542,17 @@
             Restores a <see cref="T:FileCabinetApp.FileCabinetServiceSnapshot"/> instance.
             </summary>
             <param name="snapshot">A <see cref="T:FileCabinetApp.IFileCabinetServiceSnapshot"/> specialized instance.</param>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.RemoveRecord(System.Int32)">
+            <summary>
+            Removes a record.
+            </summary>
+            <param name="id">A <see cref="T:System.Int32"/> instance of id.</param>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.Purge">
+            <summary>
+            Removes the records that are marked as deleted from a database.
+            </summary>
         </member>
         <member name="T:FileCabinetApp.IFileCabinetServiceSnapshot">
             <summary>

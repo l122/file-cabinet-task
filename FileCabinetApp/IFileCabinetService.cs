@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.IO;
 
 namespace FileCabinetApp
@@ -23,8 +24,8 @@ namespace FileCabinetApp
         /// <summary>
         /// Returns the number of records.
         /// </summary>
-        /// <returns>The <see cref="int"/> instance of total number of records.</returns>
-        public int GetStat();
+        /// <returns>The <see cref="Tuple"/> instance of total and deleted number of records.</returns>
+        public (int, int) GetStat();
 
         /// <summary>
         /// Edits a record.
@@ -64,5 +65,16 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="snapshot">A <see cref="IFileCabinetServiceSnapshot"/> specialized instance.</param>
         public void Restore(IFileCabinetServiceSnapshot snapshot);
+
+        /// <summary>
+        /// Removes a record.
+        /// </summary>
+        /// <param name="id">A <see cref="int"/> instance of id.</param>
+        public void RemoveRecord(int id);
+
+        /// <summary>
+        /// Removes the records that are marked as deleted from a database.
+        /// </summary>
+        public void Purge();
     }
 }

@@ -45,6 +45,8 @@ namespace FileCabinetApp
             new Tuple<string, Action<string>>("find", Find),
             new Tuple<string, Action<string>>("export", Export),
             new Tuple<string, Action<string>>("import", Import),
+            new Tuple<string, Action<string>>("remove", Remove),
+            new Tuple<string, Action<string>>("purge", Purge),
         };
 
         private static readonly string[][] HelpMessages = new string[][]
@@ -56,8 +58,10 @@ namespace FileCabinetApp
             new string[] { "list", "prints all records", "The 'list' command prints all records." },
             new string[] { "edit", "edits a record", "The 'edit #id' command edits record #id." },
             new string[] { "find", "searches records", "The 'find <firstname, lastname, dateofbirth> <criterion>' command searches all records with <field> = <criterion>." },
-            new string[] { "export", "exports records to csv or xml", "The 'export <csv, xml> <file_name>' command exports records to a csv or xml file" },
-            new string[] { "import", "imports records from csv or xml", "The 'import <csv, xml> <file_name>' command imports records from a csv or xml file" },
+            new string[] { "export", "exports records to csv or xml", "The 'export <csv, xml> <file_name>' command exports records to a csv or xml file." },
+            new string[] { "import", "imports records from csv or xml", "The 'import <csv, xml> <file_name>' command imports records from a csv or xml file." },
+            new string[] { "remove", "removes a record", "The 'remove #id' command removes a records." },
+            new string[] { "purge", "removes records marked as deleted from the database", "The 'purge' command removes records marked as deleted from the database." },
         };
 
         private static IFileCabinetService fileCabinetService = new FileCabinetMemoryService(new DefaultValidator());
@@ -175,7 +179,7 @@ namespace FileCabinetApp
         {
             const string csvParameter = "csv";
             const string xmlParameter = "xml";
-            int oldQuantity = Program.fileCabinetService.GetStat();
+            int oldQuantity = Program.fileCabinetService.GetStat().Item1;
 
             var input = parameters.Split(" ");
             if (input.Length != 2)
@@ -220,7 +224,7 @@ namespace FileCabinetApp
                 return;
             }
 
-            Console.WriteLine("{0} records were imported from {1}", Program.fileCabinetService.GetStat() - oldQuantity, file);
+            Console.WriteLine("{0} records were imported from {1}", Program.fileCabinetService.GetStat().Item1 - oldQuantity, file);
         }
 
         private static void PrintMissedCommandInfo(string command)
@@ -265,7 +269,7 @@ namespace FileCabinetApp
         private static void Stat(string parameters)
         {
             var recordsCount = Program.fileCabinetService.GetStat();
-            Console.WriteLine($"{recordsCount} record(s).");
+            Console.WriteLine("{0} record(s), {1} deleted record(s).", recordsCount.Item1, recordsCount.Item2);
         }
 
         private static void Create(string parameters)
@@ -343,6 +347,22 @@ namespace FileCabinetApp
             {
                 Console.WriteLine(e.Message);
             }
+        }
+
+        private static void Remove(string parameters)
+        {
+            if (!int.TryParse(parameters, out int id))
+            {
+                Console.WriteLine("Incorrect id parameter: {0}", parameters);
+                return;
+            }
+
+            fileCabinetService.RemoveRecord(id);
+        }
+
+        private static void Purge(string parameters)
+        {
+            fileCabinetService.Purge();
         }
 
         private static void PrintRecords(ReadOnlyCollection<FileCabinetRecord> records)
