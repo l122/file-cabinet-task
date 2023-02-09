@@ -170,5 +170,39 @@ namespace FileCabinetApp
                 Department = department,
             };
         }
+
+        /// <summary>
+        /// Validates the <see cref="FileCabinetRecord"/> instance.
+        /// </summary>
+        /// <param name="record">A <see cref="FileCabinetRecord"/> instance.</param>
+        /// <returns>true if record is valid, false otherwise.</returns>
+        protected bool IsValidRecord(FileCabinetRecord record)
+        {
+            // Validate First Name
+            var validationResult = this.Validator.FirstNameValidator(record.FirstName);
+            if (!validationResult.Item1)
+            {
+                Console.WriteLine("#{0}: {1}", record.Id, validationResult.Item2);
+                return false;
+            }
+
+            // Validate Last Name
+            validationResult = this.Validator.LastNameValidator(record.LastName);
+            if (!validationResult.Item1)
+            {
+                Console.WriteLine("#{0}: {1}", record.Id, validationResult.Item2);
+                return false;
+            }
+
+            // Date of birth validator
+            validationResult = this.Validator.DateOfBirthValidator(record.DateOfBirth);
+            if (!validationResult.Item1)
+            {
+                Console.WriteLine("#{0}: {1}", record.Id, validationResult.Item2);
+                return false;
+            }
+
+            return true;
+        }
     }
 }

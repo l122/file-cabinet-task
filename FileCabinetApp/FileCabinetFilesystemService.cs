@@ -201,7 +201,25 @@ namespace FileCabinetApp
         /// <inheritdoc/>
         public void Restore(IFileCabinetServiceSnapshot snapshot)
         {
-            throw new NotImplementedException();
+            var records = snapshot.Records;
+
+            foreach (var record in records)
+            {
+                if (!this.IsValidRecord(record))
+                {
+                    continue;
+                }
+
+                var position = this.FindById(record.Id);
+                if (position != -1)
+                {
+                    this.WriteToFile(record, position);
+                }
+                else
+                {
+                    this.WriteToFile(record, this.fileStream.Length);
+                }
+            }
         }
 
         /// <summary>
@@ -321,6 +339,11 @@ namespace FileCabinetApp
             return true;
         }
 
+        /// <summary>
+        /// Finds the position of the record in a binary file by record's id.
+        /// </summary>
+        /// <param name="id">An <see cref="int"/> instance.</param>
+        /// <returns>A <see cref="long"/> instance.</returns>
         private long FindById(int id)
         {
             byte[] bufferStatus = new byte[2];

@@ -136,6 +136,13 @@
             <param name="record">A <see cref="T:FileCabinetApp.FileCabinetRecord"/> instance.</param>
             <returns>true if success, false otherwise.</returns>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.FindById(System.Int32)">
+            <summary>
+            Finds the position of the record in a binary file by record's id.
+            </summary>
+            <param name="id">An <see cref="T:System.Int32"/> instance.</param>
+            <returns>A <see cref="T:System.Int64"/> instance.</returns>
+        </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.GetLastId">
             <summary>
             Return the id of the last non-deleted record.
@@ -405,6 +412,13 @@
             Gets input data from console and creates a new record with id = 0.
             </summary>
             <returns>The <see cref="T:FileCabinetApp.FileCabinetRecord"/> instance with id = 0.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.IsValidRecord(FileCabinetApp.FileCabinetRecord)">
+            <summary>
+            Validates the <see cref="T:FileCabinetApp.FileCabinetRecord"/> instance.
+            </summary>
+            <param name="record">A <see cref="T:FileCabinetApp.FileCabinetRecord"/> instance.</param>
+            <returns>true if record is valid, false otherwise.</returns>
         </member>
         <member name="T:FileCabinetApp.FileCabinetServiceSnapshot">
             <summary>

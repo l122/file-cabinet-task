@@ -138,27 +138,8 @@ namespace FileCabinetApp
 
             foreach (var record in records)
             {
-                // Validate First Name
-                var validationResult = this.Validator.FirstNameValidator(record.FirstName);
-                if (!validationResult.Item1)
+                if (!this.IsValidRecord(record))
                 {
-                    Console.WriteLine("#{0}: {1}", record.Id, validationResult.Item2);
-                    continue;
-                }
-
-                // Validate Last Name
-                validationResult = this.Validator.LastNameValidator(record.LastName);
-                if (!validationResult.Item1)
-                {
-                    Console.WriteLine("#{0}: {1}", record.Id, validationResult.Item2);
-                    continue;
-                }
-
-                // Date of birth validator
-                validationResult = this.Validator.DateOfBirthValidator(record.DateOfBirth);
-                if (!validationResult.Item1)
-                {
-                    Console.WriteLine("#{0}: {1}", record.Id, validationResult.Item2);
                     continue;
                 }
 
