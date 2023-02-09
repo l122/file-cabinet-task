@@ -175,6 +175,14 @@ namespace FileCabinetApp
         }
 
         /// <summary>
+        /// Does nothing for FileCabinetMemorySerive.
+        /// </summary>
+        public void Purge()
+        {
+            // Do nothing because it's not applied to the memory service.
+        }
+
+        /// <summary>
         /// Adds a record data to the search dictionaries.
         /// </summary>
         /// <param name="record">The <see cref="FileCabinetRecord"/> instance.</param>

@@ -70,5 +70,10 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="id">A <see cref="int"/> instance of id.</param>
         public void RemoveRecord(int id);
+
+        /// <summary>
+        /// Removes the records that are marked as deleted from a database.
+        /// </summary>
+        public void Purge();
     }
 }

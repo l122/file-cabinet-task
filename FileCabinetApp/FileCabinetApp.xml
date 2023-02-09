@@ -126,6 +126,9 @@
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.RemoveRecord(System.Int32)">
             <inheritdoc/>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.Purge">
+            <inheritdoc/>
+        </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.Dispose(System.Boolean)">
             <summary>
             Releases resourses.
@@ -214,6 +217,11 @@
         </member>
         <member name="M:FileCabinetApp.FileCabinetMemoryService.RemoveRecord(System.Int32)">
             <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.Purge">
+            <summary>
+            Does nothing for FileCabinetMemorySerive.
+            </summary>
         </member>
         <member name="M:FileCabinetApp.FileCabinetMemoryService.AddRecordToSearchDictionaries(FileCabinetApp.FileCabinetRecord@)">
             <summary>
@@ -540,6 +548,11 @@
             Removes a record.
             </summary>
             <param name="id">A <see cref="T:System.Int32"/> instance of id.</param>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.Purge">
+            <summary>
+            Removes the records that are marked as deleted from a database.
+            </summary>
         </member>
         <member name="T:FileCabinetApp.IFileCabinetServiceSnapshot">
             <summary>

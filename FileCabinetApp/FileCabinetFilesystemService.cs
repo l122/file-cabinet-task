@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace FileCabinetApp
@@ -15,7 +16,7 @@ namespace FileCabinetApp
         private const string FileName = "cabinet-records.db";
         private const int RecordSize = 278;
         private const int StringBufferSize = 120;
-        private readonly FileStream fileStream;
+        private FileStream fileStream;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileCabinetFilesystemService"/> class.
@@ -124,7 +125,7 @@ namespace FileCabinetApp
         /// <inheritdoc/>
         public IFileCabinetServiceSnapshot MakeSnapshot()
         {
-            throw new NotImplementedException();
+            return new FileCabinetServiceSnapshot(this.GetRecords().ToArray());
         }
 
         /// <summary>
@@ -245,6 +246,39 @@ namespace FileCabinetApp
             }
 
             Console.WriteLine("Record #{0} is removed.", id);
+        }
+
+        /// <inheritdoc/>
+        public void Purge()
+        {
+            var oldQuantity = this.fileStream.Length / RecordSize;
+
+            var records = this.GetRecords();
+            try
+            {
+                if (this.fileStream != null)
+                {
+                    this.fileStream.Dispose();
+                }
+
+                this.fileStream = File.Open(FileName, FileMode.Create, FileAccess.ReadWrite);
+
+                var position = 0;
+                foreach (var record in records)
+                {
+                    this.WriteToFile(record, position);
+                    position += RecordSize;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error while clearing file {0} : {1}", FileName, e.ToString());
+                return;
+            }
+
+            var newQuantity = this.fileStream.Length / RecordSize;
+            var purgedQuantity = oldQuantity - newQuantity;
+            Console.WriteLine("Data file processing is completed: {0} of {1} records were purged.", purgedQuantity, oldQuantity);
         }
 
         /// <summary>
