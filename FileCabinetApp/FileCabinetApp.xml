@@ -123,6 +123,9 @@
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.Restore(FileCabinetApp.IFileCabinetServiceSnapshot)">
             <inheritdoc/>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetFilesystemService.RemoveRecord(System.Int32)">
+            <inheritdoc/>
+        </member>
         <member name="M:FileCabinetApp.FileCabinetFilesystemService.Dispose(System.Boolean)">
             <summary>
             Releases resourses.
@@ -191,6 +194,9 @@
             <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.FileCabinetMemoryService.Restore(FileCabinetApp.IFileCabinetServiceSnapshot)">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetMemoryService.RemoveRecord(System.Int32)">
             <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.FileCabinetMemoryService.AddRecordToSearchDictionaries(FileCabinetApp.FileCabinetRecord@)">
@@ -512,6 +518,12 @@
             Restores a <see cref="T:FileCabinetApp.FileCabinetServiceSnapshot"/> instance.
             </summary>
             <param name="snapshot">A <see cref="T:FileCabinetApp.IFileCabinetServiceSnapshot"/> specialized instance.</param>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetService.RemoveRecord(System.Int32)">
+            <summary>
+            Removes a record.
+            </summary>
+            <param name="id">A <see cref="T:System.Int32"/> instance of id.</param>
         </member>
         <member name="T:FileCabinetApp.IFileCabinetServiceSnapshot">
             <summary>

@@ -64,5 +64,11 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="snapshot">A <see cref="IFileCabinetServiceSnapshot"/> specialized instance.</param>
         public void Restore(IFileCabinetServiceSnapshot snapshot);
+
+        /// <summary>
+        /// Removes a record.
+        /// </summary>
+        /// <param name="id">A <see cref="int"/> instance of id.</param>
+        public void RemoveRecord(int id);
     }
 }

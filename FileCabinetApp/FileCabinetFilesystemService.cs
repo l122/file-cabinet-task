@@ -222,6 +222,12 @@ namespace FileCabinetApp
             }
         }
 
+        /// <inheritdoc/>
+        public void RemoveRecord(int id)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Releases resourses.
         /// </summary>

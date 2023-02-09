@@ -157,6 +157,12 @@ namespace FileCabinetApp
             }
         }
 
+        /// <inheritdoc/>
+        public void RemoveRecord(int id)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Adds a record data to the search dictionaries.
         /// </summary>
