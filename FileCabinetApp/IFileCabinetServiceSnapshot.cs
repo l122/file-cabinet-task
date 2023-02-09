@@ -31,5 +31,11 @@ namespace FileCabinetApp
         /// </summary>
         /// <param name="fileStream">A <see cref="FileStream"/> instance.</param>
         public void LoadFromCsv(FileStream fileStream);
+
+        /// <summary>
+        /// Loads data from csv.
+        /// </summary>
+        /// <param name="fileStream">A <see cref="FileStream"/> instance.</param>
+        public void LoadFromXml(FileStream fileStream);
     }
 }

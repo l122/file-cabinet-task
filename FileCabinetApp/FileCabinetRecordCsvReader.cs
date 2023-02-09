@@ -9,7 +9,7 @@ namespace FileCabinetApp
     /// <summary>
     /// Helper class for reading data from csv.
     /// </summary>
-    internal class FileCabinetRecordCsvReader
+    public class FileCabinetRecordCsvReader
     {
         private readonly StreamReader reader;
         private readonly Dictionary<string, int> headers;

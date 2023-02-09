@@ -205,6 +205,7 @@ namespace FileCabinetApp
                         snapshot.LoadFromCsv(fileStream);
                         break;
                     case xmlParameter:
+                        snapshot.LoadFromXml(fileStream);
                         break;
                     default:
                         Console.WriteLine("Invalid parameters.");

@@ -292,6 +292,23 @@
             </summary>
             <param name="record">The <see cref="T:FileCabinetApp.FileCabinetRecord"/> instance.</param>
         </member>
+        <member name="T:FileCabinetApp.FileCabinetRecordXmlReader">
+            <summary>
+            Helper class for reading data from xml.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordXmlReader.#ctor(System.IO.StreamReader)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetRecordXmlReader"/> class.
+            </summary>
+            <param name="streamReader">A <see cref="T:System.IO.StreamReader"/> instance.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetRecordXmlReader.ReadAll">
+            <summary>
+            Reads xml data into a list.
+            </summary>
+            <returns>The <see cref="T:System.Collections.Generic.IList`1"/> instance of <see cref="T:FileCabinetApp.FileCabinetRecord"/> items.</returns>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetRecordXmlWriter">
             <summary>
             File Cabinet XML Writer Class.
@@ -411,6 +428,9 @@
         <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.LoadFromCsv(System.IO.FileStream)">
             <inheritdoc/>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.LoadFromXml(System.IO.FileStream)">
+            <inheritdoc/>
+        </member>
         <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.SaveToCsv(System.IO.StreamWriter)">
             <inheritdoc/>
         </member>
@@ -503,6 +523,12 @@
             <param name="sw">A <see cref="T:System.IO.StreamWriter"/> instance.</param>
         </member>
         <member name="M:FileCabinetApp.IFileCabinetServiceSnapshot.LoadFromCsv(System.IO.FileStream)">
+            <summary>
+            Loads data from csv.
+            </summary>
+            <param name="fileStream">A <see cref="T:System.IO.FileStream"/> instance.</param>
+        </member>
+        <member name="M:FileCabinetApp.IFileCabinetServiceSnapshot.LoadFromXml(System.IO.FileStream)">
             <summary>
             Loads data from csv.
             </summary>

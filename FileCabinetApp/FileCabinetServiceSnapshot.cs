@@ -42,6 +42,13 @@ namespace FileCabinetApp
         }
 
         /// <inheritdoc/>
+        public void LoadFromXml(FileStream fileStream)
+        {
+            var reader = new FileCabinetRecordXmlReader(new StreamReader(fileStream));
+            this.records = reader.ReadAll().ToArray();
+        }
+
+        /// <inheritdoc/>
         public void SaveToCsv(StreamWriter sw)
         {
             var writer = new FileCabinetRecordCsvWriter(sw);
