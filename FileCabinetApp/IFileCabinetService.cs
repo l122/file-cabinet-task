@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.IO;
 
 namespace FileCabinetApp
@@ -23,8 +24,8 @@ namespace FileCabinetApp
         /// <summary>
         /// Returns the number of records.
         /// </summary>
-        /// <returns>The <see cref="int"/> instance of total number of records.</returns>
-        public int GetStat();
+        /// <returns>The <see cref="Tuple"/> instance of total and deleted number of records.</returns>
+        public (int, int) GetStat();
 
         /// <summary>
         /// Edits a record.

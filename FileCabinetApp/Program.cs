@@ -179,7 +179,7 @@ namespace FileCabinetApp
         {
             const string csvParameter = "csv";
             const string xmlParameter = "xml";
-            int oldQuantity = Program.fileCabinetService.GetStat();
+            int oldQuantity = Program.fileCabinetService.GetStat().Item1;
 
             var input = parameters.Split(" ");
             if (input.Length != 2)
@@ -224,7 +224,7 @@ namespace FileCabinetApp
                 return;
             }
 
-            Console.WriteLine("{0} records were imported from {1}", Program.fileCabinetService.GetStat() - oldQuantity, file);
+            Console.WriteLine("{0} records were imported from {1}", Program.fileCabinetService.GetStat().Item1 - oldQuantity, file);
         }
 
         private static void PrintMissedCommandInfo(string command)
@@ -269,7 +269,7 @@ namespace FileCabinetApp
         private static void Stat(string parameters)
         {
             var recordsCount = Program.fileCabinetService.GetStat();
-            Console.WriteLine($"{recordsCount} record(s).");
+            Console.WriteLine("{0} record(s), {1} deleted record(s).", recordsCount.Item1, recordsCount.Item2);
         }
 
         private static void Create(string parameters)

@@ -502,7 +502,7 @@
             <summary>
             Returns the number of records.
             </summary>
-            <returns>The <see cref="T:System.Int32"/> instance of total number of records.</returns>
+            <returns>The <see cref="T:System.Tuple"/> instance of total and deleted number of records.</returns>
         </member>
         <member name="M:FileCabinetApp.IFileCabinetService.EditRecord(System.Int32)">
             <summary>

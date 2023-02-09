@@ -71,7 +71,7 @@ namespace FileCabinetApp
         }
 
         /// <inheritdoc/>
-        public int GetStat()
+        public (int, int) GetStat()
         {
             byte[] buffer = new byte[2];
             int counter = 0;
@@ -96,7 +96,9 @@ namespace FileCabinetApp
                 }
             }
 
-            return counter;
+            var deletedQuantity = (int)(this.fileStream.Length / RecordSize) - counter;
+
+            return (counter, deletedQuantity);
         }
 
         /// <inheritdoc/>
