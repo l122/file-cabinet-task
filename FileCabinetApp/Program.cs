@@ -55,7 +55,6 @@ namespace FileCabinetApp
                 const int commandIndex = 0;
                 var command = inputs[commandIndex];
 
-
                 if (string.IsNullOrEmpty(command))
                 {
                     Console.WriteLine(Program.HintMessage);
@@ -64,14 +63,44 @@ namespace FileCabinetApp
 
                 const int parametersIndex = 1;
                 var parameters = inputs.Length > 1 ? inputs[parametersIndex] : string.Empty;
+
                 commandHandler.Handle(new AppCommandRequest(command, parameters));
             }
             while (isRunning);
         }
 
+        /// <summary>
+        /// Creates the <see cref="ICommandHandler"/> Specialized Objects.
+        /// </summary>
+        /// <returns>The <see cref="HelpCommandHandler"/> instance.</returns>
         private static ICommandHandler CreateCommandHandlers()
         {
-            return new CommandHandler();
+            var helpHandler = new HelpCommandHandler();
+            var createHandler = new CreateCommandHandler();
+            var editHandler = new EditCommandHandler();
+            var statHandler = new StatCommandHandler();
+            var listHandler = new ListCommandHandler();
+            var findHandler = new FindCommandHandler();
+            var removeHandler = new RemoveCommandHandler();
+            var purgeHandler = new PurgeCommandHandler();
+            var exportHandler = new ExportCommandHandler();
+            var importHandler = new ImportCommandHandler();
+            var exitHandler = new ExitCommandHandler();
+            var missedCommandHandler = new MissedCommandHandler();
+
+            helpHandler.SetNext(createHandler);
+            createHandler.SetNext(editHandler);
+            editHandler.SetNext(statHandler);
+            statHandler.SetNext(listHandler);
+            listHandler.SetNext(findHandler);
+            findHandler.SetNext(removeHandler);
+            removeHandler.SetNext(purgeHandler);
+            purgeHandler.SetNext(exportHandler);
+            exportHandler.SetNext(importHandler);
+            importHandler.SetNext(exitHandler);
+            exitHandler.SetNext(missedCommandHandler);
+
+            return helpHandler;
         }
 
         /// <summary>
