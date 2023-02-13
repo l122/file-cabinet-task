@@ -26,7 +26,7 @@ namespace FileCabinetApp
         {
             decimal value = record.Salary;
 
-            if (value < this.min && value > this.max)
+            if (value < this.min || value > this.max)
             {
                 return Tuple.Create(false, $"Salary cannot be less than {this.min} and greater than {this.max}.");
             }

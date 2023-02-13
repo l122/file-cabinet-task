@@ -16,17 +16,15 @@ namespace FileCabinetApp
         /// <param name="tw">The <see cref="TextWriter"/> instance.</param>
         public FileCabinetRecordCsvWriter(TextWriter tw)
         {
-            var record = new FileCabinetRecord();
-
             this.textWriter = tw;
             string line = new (
-                $"{nameof(record.Id)}," +
-                $"{nameof(record.FirstName)}," +
-                $"{nameof(record.LastName)}," +
-                $"{nameof(record.DateOfBirth)}," +
-                $"{nameof(record.WorkPlaceNumber)}," +
-                $"{nameof(record.Salary)}," +
-                $"{nameof(record.Department)}");
+                $"{nameof(FileCabinetRecord.Id)}," +
+                $"{nameof(FileCabinetRecord.FirstName)}," +
+                $"{nameof(FileCabinetRecord.LastName)}," +
+                $"{nameof(FileCabinetRecord.DateOfBirth)}," +
+                $"{nameof(FileCabinetRecord.WorkPlaceNumber)}," +
+                $"{nameof(FileCabinetRecord.Salary)}," +
+                $"{nameof(FileCabinetRecord.Department)}");
 
             this.textWriter.WriteLine(line);
         }

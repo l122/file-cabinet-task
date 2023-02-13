@@ -151,6 +151,25 @@
         <member name="M:FileCabinetApp.ExportCommandHandler.Handle(FileCabinetApp.AppCommandRequest)">
             <inheritdoc/>
         </member>
+        <member name="T:FileCabinetApp.ExtensionMethods">
+            <summary>
+            The class with extension methods.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.ExtensionMethods.CreateDefaultValidator(FileCabinetApp.ValidatorBuilder)">
+            <summary>
+            Extension method for <see cref="T:FileCabinetApp.ValidatorBuilder"/> that creates a default validator object.
+            </summary>
+            <param name="validator">A <see cref="T:FileCabinetApp.ValidatorBuilder"/> instance object.</param>
+            <returns>An <see cref="T:FileCabinetApp.IRecordValidator"/> instance.</returns>
+        </member>
+        <member name="M:FileCabinetApp.ExtensionMethods.CreateCustomValidator(FileCabinetApp.ValidatorBuilder)">
+            <summary>
+            Extension method for <see cref="T:FileCabinetApp.ValidatorBuilder"/> that creates a custom validator object.
+            </summary>
+            <param name="validator">A <see cref="T:FileCabinetApp.ValidatorBuilder"/> instance object.</param>
+            <returns>An <see cref="T:FileCabinetApp.IRecordValidator"/> instance.</returns>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetFilesystemService">
             <summary>
             Helper class for storing data in a binary file.

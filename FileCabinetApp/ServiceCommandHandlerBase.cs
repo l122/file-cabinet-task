@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace FileCabinetApp
+﻿namespace FileCabinetApp
 {
     /// <summary>
     /// Base class for the Service Command Handler Classes.

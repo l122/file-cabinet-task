@@ -26,7 +26,7 @@ namespace FileCabinetApp
         {
             short value = record.WorkPlaceNumber;
 
-            if (value < this.fromNumber && value > this.toNumber)
+            if (value < this.fromNumber || value > this.toNumber)
             {
                 return Tuple.Create(false, $"WorkPlaceNumber cannot be less than {this.fromNumber} and greater than {this.toNumber}.");
             }

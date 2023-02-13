@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 
 namespace FileCabinetApp
@@ -90,7 +91,7 @@ namespace FileCabinetApp
                     DateOfBirth = dateOfBirth,
                     WorkPlaceNumber = workPlaceNumber,
                     Salary = salary,
-                    Department = department,
+                    Department = department.ToString().ToUpper(CultureInfo.InvariantCulture)[0],
                 };
             }
 

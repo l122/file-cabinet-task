@@ -18,7 +18,7 @@ namespace FileCabinetApp
         /// <returns>The <see cref="ValidatorBuilder"/> instance.</returns>
         public ValidatorBuilder ValidateFirstName(int min, int max)
         {
-            this.validators.Add(new FirstNameValidator(2, 60));
+            this.validators.Add(new FirstNameValidator(min, max));
             return this;
         }
 
@@ -30,7 +30,7 @@ namespace FileCabinetApp
         /// <returns>The <see cref="ValidatorBuilder"/> instance.</returns>
         public ValidatorBuilder ValidateLastName(int min, int max)
         {
-            this.validators.Add(new LastNameValidator(2, 60));
+            this.validators.Add(new LastNameValidator(min, max));
             return this;
         }
 

@@ -159,7 +159,7 @@ namespace FileCabinetApp
                     DateOfBirth = dateOfBirth,
                     WorkPlaceNumber = workPlaceNumber,
                     Salary = salary,
-                    Department = department,
+                    Department = department.ToString().ToUpper(CultureInfo.InvariantCulture)[0],
                 };
 
                 var validationResult = this.Validator.ValidateParameters(record);
