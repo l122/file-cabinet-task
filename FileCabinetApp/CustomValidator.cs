@@ -5,17 +5,22 @@ namespace FileCabinetApp
     /// <summary>
     /// Custom Validator implementation.
     /// </summary>
-    public class CustomValidator : IRecordValidator
+    public class CustomValidator : CompositeValidator
     {
-        /// <inheritdoc/>
-        public Tuple<bool, string> ValidateParameters(object parameters)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CustomValidator"/> class.
+        /// </summary>
+        public CustomValidator()
+            : base(new IRecordValidator[]
+            {
+                new FirstNameValidator(1, 30),
+                new LastNameValidator(1, 30),
+                new DateOfBirthValidator(new DateTime(1900, 1, 1), DateTime.Today),
+                new WorkplaceValidator(1, short.MaxValue),
+                new SalaryValidator(0, decimal.MaxValue),
+                new DepartmentValidator('A', 'Z'),
+            })
         {
-            new FirstNameValidator(1, 30).ValidateParameters(parameters);
-            new LastNameValidator(1, 30).ValidateParameters(parameters);
-            new DateOfBirthValidator(new DateTime(1900, 1, 1), DateTime.Today).ValidateParameters(parameters);
-            new WorkplaceValidator(1, short.MaxValue).ValidateParameters(parameters);
-            new SalaryValidator(0, decimal.MaxValue).ValidateParameters(parameters);
-            new DepartmentValidator('A', 'Z').ValidateParameters(parameters);
         }
     }
 }
