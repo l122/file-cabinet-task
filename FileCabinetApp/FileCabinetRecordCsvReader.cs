@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
-using System.Net.Http.Headers;
-using System.Runtime.CompilerServices;
 
 namespace FileCabinetApp
 {
@@ -92,7 +91,7 @@ namespace FileCabinetApp
                     DateOfBirth = dateOfBirth,
                     WorkPlaceNumber = workPlaceNumber,
                     Salary = salary,
-                    Department = department,
+                    Department = department.ToString().ToUpper(CultureInfo.InvariantCulture)[0],
                 };
             }
 
