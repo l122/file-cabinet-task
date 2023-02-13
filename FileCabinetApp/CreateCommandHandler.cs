@@ -5,18 +5,17 @@ namespace FileCabinetApp
     /// <summary>
     /// Handles the Create Command Request.
     /// </summary>
-    public class CreateCommandHandler : CommandHandlerBase
+    public class CreateCommandHandler : ServiceCommandHandlerBase
     {
         private const string Trigger = "create";
-        private readonly IFileCabinetService service;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CreateCommandHandler"/> class.
         /// </summary>
         /// <param name="fileCabinetService">A <see cref="IFileCabinetService"/> specialized instance.</param>
         public CreateCommandHandler(IFileCabinetService fileCabinetService)
+            : base(fileCabinetService)
         {
-            this.service = fileCabinetService;
         }
 
         /// <inheritdoc/>

@@ -5,18 +5,17 @@ namespace FileCabinetApp
     /// <summary>
     /// Handles the Remove Command Request.
     /// </summary>
-    public class RemoveCommandHandler : CommandHandlerBase
+    public class RemoveCommandHandler : ServiceCommandHandlerBase
     {
         private const string Trigger = "remove";
-        private readonly IFileCabinetService service;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RemoveCommandHandler"/> class.
         /// </summary>
         /// <param name="fileCabinetService">A <see cref="IFileCabinetService"/> specialized instance.</param>
         public RemoveCommandHandler(IFileCabinetService fileCabinetService)
+            : base(fileCabinetService)
         {
-            this.service = fileCabinetService;
         }
 
         /// <inheritdoc/>

@@ -3,18 +3,17 @@
     /// <summary>
     /// Handles the Purge Command Request.
     /// </summary>
-    public class PurgeCommandHandler : CommandHandlerBase
+    public class PurgeCommandHandler : ServiceCommandHandlerBase
     {
         private const string Trigger = "purge";
-        private readonly IFileCabinetService service;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PurgeCommandHandler"/> class.
         /// </summary>
         /// <param name="fileCabinetService">A <see cref="IFileCabinetService"/> specialized instance.</param>
         public PurgeCommandHandler(IFileCabinetService fileCabinetService)
+            : base(fileCabinetService)
         {
-            this.service = fileCabinetService;
         }
 
         /// <inheritdoc/>

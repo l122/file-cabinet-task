@@ -6,18 +6,17 @@ namespace FileCabinetApp
     /// <summary>
     /// Handles the Find Command Request.
     /// </summary>
-    public class FindCommandHandler : CommandHandlerBase
+    public class FindCommandHandler : ServiceCommandHandlerBase
     {
         private const string Trigger = "find";
-        private readonly IFileCabinetService service;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FindCommandHandler"/> class.
         /// </summary>
         /// <param name="fileCabinetService">A <see cref="IFileCabinetService"/> specialized instance.</param>
         public FindCommandHandler(IFileCabinetService fileCabinetService)
+            : base(fileCabinetService)
         {
-            this.service = fileCabinetService;
         }
 
         /// <inheritdoc/>

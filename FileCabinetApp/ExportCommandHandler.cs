@@ -6,18 +6,17 @@ namespace FileCabinetApp
     /// <summary>
     /// Handles the Export Command Request.
     /// </summary>
-    public class ExportCommandHandler : CommandHandlerBase
+    public class ExportCommandHandler : ServiceCommandHandlerBase
     {
         private const string Trigger = "export";
-        private readonly IFileCabinetService service;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ExportCommandHandler"/> class.
         /// </summary>
         /// <param name="fileCabinetService">A <see cref="IFileCabinetService"/> specialized instance.</param>
         public ExportCommandHandler(IFileCabinetService fileCabinetService)
+            : base(fileCabinetService)
         {
-            this.service = fileCabinetService;
         }
 
         /// <inheritdoc/>

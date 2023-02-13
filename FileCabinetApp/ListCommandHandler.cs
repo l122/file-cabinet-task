@@ -3,18 +3,17 @@
     /// <summary>
     /// Handles the List Command Request.
     /// </summary>
-    public class ListCommandHandler : CommandHandlerBase
+    public class ListCommandHandler : ServiceCommandHandlerBase
     {
         private const string Trigger = "list";
-        private readonly IFileCabinetService service;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ListCommandHandler"/> class.
         /// </summary>
         /// <param name="fileCabinetService">A <see cref="IFileCabinetService"/> specialized instance.</param>
         public ListCommandHandler(IFileCabinetService fileCabinetService)
+            : base(fileCabinetService)
         {
-            this.service = fileCabinetService;
         }
 
         /// <inheritdoc/>

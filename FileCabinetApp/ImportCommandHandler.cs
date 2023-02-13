@@ -6,18 +6,17 @@ namespace FileCabinetApp
     /// <summary>
     /// Handles the Import Command Request.
     /// </summary>
-    public class ImportCommandHandler : CommandHandlerBase
+    public class ImportCommandHandler : ServiceCommandHandlerBase
     {
         private const string Trigger = "import";
-        private readonly IFileCabinetService service;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ImportCommandHandler"/> class.
         /// </summary>
         /// <param name="fileCabinetService">A <see cref="IFileCabinetService"/> specialized instance.</param>
         public ImportCommandHandler(IFileCabinetService fileCabinetService)
+            : base(fileCabinetService)
         {
-            this.service = fileCabinetService;
         }
 
         /// <inheritdoc/>

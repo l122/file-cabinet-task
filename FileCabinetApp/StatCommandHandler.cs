@@ -5,18 +5,17 @@ namespace FileCabinetApp
     /// <summary>
     /// The class for handling the statistics command.
     /// </summary>
-    public class StatCommandHandler : CommandHandlerBase
+    public class StatCommandHandler : ServiceCommandHandlerBase
     {
         private const string Trigger = "stat";
-        private readonly IFileCabinetService service;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StatCommandHandler"/> class.
         /// </summary>
         /// <param name="fileCabinetService">A <see cref="IFileCabinetService"/> specialized instance.</param>
         public StatCommandHandler(IFileCabinetService fileCabinetService)
+            : base(fileCabinetService)
         {
-            this.service = fileCabinetService;
         }
 
         /// <inheritdoc/>

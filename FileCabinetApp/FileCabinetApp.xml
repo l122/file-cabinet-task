@@ -912,6 +912,22 @@
         <member name="M:FileCabinetApp.RemoveCommandHandler.Handle(FileCabinetApp.AppCommandRequest)">
             <inheritdoc/>
         </member>
+        <member name="T:FileCabinetApp.ServiceCommandHandlerBase">
+            <summary>
+            Base class for the Service Command Handler Classes.
+            </summary>
+        </member>
+        <member name="F:FileCabinetApp.ServiceCommandHandlerBase.service">
+            <summary>
+            A <see cref="T:FileCabinetApp.IFileCabinetService"/> specialized instance.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.ServiceCommandHandlerBase.#ctor(FileCabinetApp.IFileCabinetService)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.ServiceCommandHandlerBase"/> class.
+            </summary>
+            <param name="service">A <see cref="T:FileCabinetApp.IFileCabinetService"/> specialized instance.</param>
+        </member>
         <member name="T:FileCabinetApp.StatCommandHandler">
             <summary>
             The class for handling the statistics command.

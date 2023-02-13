@@ -5,18 +5,17 @@ namespace FileCabinetApp
     /// <summary>
     /// Handles the Edit Command Request.
     /// </summary>
-    public class EditCommandHandler : CommandHandlerBase
+    public class EditCommandHandler : ServiceCommandHandlerBase
     {
         private const string Trigger = "edit";
-        private readonly IFileCabinetService service;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EditCommandHandler"/> class.
         /// </summary>
         /// <param name="fileCabinetService">A <see cref="IFileCabinetService"/> specialized instance.</param>
         public EditCommandHandler(IFileCabinetService fileCabinetService)
+            : base(fileCabinetService)
         {
-            this.service = fileCabinetService;
         }
 
         /// <inheritdoc/>
