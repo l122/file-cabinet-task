@@ -22,9 +22,9 @@ namespace FileCabinetApp
         }
 
         /// <inheritdoc/>
-        public Tuple<bool, string> ValidateParameters(object parameters)
+        public Tuple<bool, string> ValidateParameters(FileCabinetRecord record)
         {
-            string value = (string)parameters;
+            string value = record.FirstName;
 
             if (string.IsNullOrWhiteSpace(value))
             {

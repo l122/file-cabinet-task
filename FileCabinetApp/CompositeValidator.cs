@@ -6,7 +6,7 @@ namespace FileCabinetApp
     /// <summary>
     /// The Composite Validator Class.
     /// </summary>
-    public abstract class CompositeValidator : IRecordValidator
+    public class CompositeValidator : IRecordValidator
     {
         private readonly List<IRecordValidator> validators;
 
@@ -14,18 +14,24 @@ namespace FileCabinetApp
         /// Initializes a new instance of the <see cref="CompositeValidator"/> class.
         /// </summary>
         /// <param name="validators">A <see cref="IEnumerable{T}"/> of validator instances.</param>
-        protected CompositeValidator(IEnumerable<IRecordValidator> validators)
+        public CompositeValidator(IEnumerable<IRecordValidator> validators)
         {
             this.validators = new List<IRecordValidator>(validators);
         }
 
         /// <inheritdoc/>
-        public Tuple<bool, string> ValidateParameters(object parameters)
+        public Tuple<bool, string> ValidateParameters(FileCabinetRecord record)
         {
             foreach (var validator in this.validators)
             {
-                validator.ValidateParameters(parameters);
+                var validationResult = validator.ValidateParameters(record);
+                if (!validationResult.Item1)
+                {
+                    return validationResult;
+                }
             }
+
+            return Tuple.Create(true, string.Empty);
         }
     }
 }

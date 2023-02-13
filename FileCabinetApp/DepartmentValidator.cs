@@ -22,9 +22,9 @@ namespace FileCabinetApp
         }
 
         /// <inheritdoc/>
-        public Tuple<bool, string> ValidateParameters(object parameters)
+        public Tuple<bool, string> ValidateParameters(FileCabinetRecord record)
         {
-            char value = (char)parameters;
+            char value = record.Department;
 
             if (!char.IsLetter(value))
             {

@@ -22,9 +22,9 @@ namespace FileCabinetApp
         }
 
         /// <inheritdoc/>
-        public Tuple<bool, string> ValidateParameters(object parameters)
+        public Tuple<bool, string> ValidateParameters(FileCabinetRecord record)
         {
-            decimal value = (decimal)parameters;
+            decimal value = record.Salary;
 
             if (value < this.min && value > this.max)
             {

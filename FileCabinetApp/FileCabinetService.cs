@@ -104,14 +104,11 @@ namespace FileCabinetApp
         /// </summary>
         /// <typeparam name="T">The type to be read to.</typeparam>
         /// <param name="converter">Converts a string into a needed type.</param>
-        /// <param name="validator">Validates input type with rules.</param>
         /// <returns>The <c>T</c>-type instance of input data.</returns>
-        protected static T ReadInput<T>(Func<string?, Tuple<bool, string, T>> converter, Func<T, Tuple<bool, string>> validator)
+        protected static T ReadInput<T>(Func<string?, Tuple<bool, string, T>> converter)
         {
             do
             {
-                T value;
-
                 var input = Console.ReadLine();
                 var conversionResult = converter(input);
 
@@ -121,16 +118,7 @@ namespace FileCabinetApp
                     continue;
                 }
 
-                value = conversionResult.Item3;
-
-                var validationResult = validator(value);
-                if (!validationResult.Item1)
-                {
-                    Console.WriteLine($"Validation failed: {validationResult.Item2}. Please, correct your input.");
-                    continue;
-                }
-
-                return value;
+                return conversionResult.Item3;
             }
             while (true);
         }
@@ -141,34 +129,49 @@ namespace FileCabinetApp
         /// <returns>The <see cref="FileCabinetRecord"/> instance with id = 0.</returns>
         protected FileCabinetRecord GetInputData()
         {
-            Console.Write("First name: ");
-            string firstName = ReadInput(StringConverter, this.Validator.ValidateParameters);
+            FileCabinetRecord record;
 
-            Console.Write("Last name: ");
-            string lastName = ReadInput(StringConverter, this.Validator.ValidateParameters);
-
-            Console.Write("Date of birth: ");
-            DateTime dateOfBirth = ReadInput(DateConverter, this.Validator.ValidateParameters);
-
-            Console.Write("Work Place Number: ");
-            short workPlaceNumber = ReadInput(ShortConverter, this.Validator.ValidateParameters);
-
-            Console.Write("Salary: ");
-            decimal salary = ReadInput(DecimalConverter, this.Validator.ValidateParameters);
-
-            Console.Write("Department (one letter): ");
-            char department = ReadInput(CharConverter, this.Validator.ValidateParameters);
-
-            return new FileCabinetRecord()
+            do
             {
-                Id = 1,
-                FirstName = firstName,
-                LastName = lastName,
-                DateOfBirth = dateOfBirth,
-                WorkPlaceNumber = workPlaceNumber,
-                Salary = salary,
-                Department = department,
-            };
+                Console.Write("First name: ");
+                string firstName = ReadInput(StringConverter);
+
+                Console.Write("Last name: ");
+                string lastName = ReadInput(StringConverter);
+
+                Console.Write("Date of birth: ");
+                DateTime dateOfBirth = ReadInput(DateConverter);
+
+                Console.Write("Work Place Number: ");
+                short workPlaceNumber = ReadInput(ShortConverter);
+
+                Console.Write("Salary: ");
+                decimal salary = ReadInput(DecimalConverter);
+
+                Console.Write("Department (one letter): ");
+                char department = ReadInput(CharConverter);
+
+                record = new FileCabinetRecord()
+                {
+                    Id = 1,
+                    FirstName = firstName,
+                    LastName = lastName,
+                    DateOfBirth = dateOfBirth,
+                    WorkPlaceNumber = workPlaceNumber,
+                    Salary = salary,
+                    Department = department,
+                };
+
+                var validationResult = this.Validator.ValidateParameters(record);
+                if (!validationResult.Item1)
+                {
+                    Console.WriteLine("Validation failed: {0}", validationResult.Item2);
+                    continue;
+                }
+
+                return record;
+            }
+            while (true);
         }
 
         /// <summary>
@@ -178,24 +181,8 @@ namespace FileCabinetApp
         /// <returns>true if record is valid, false otherwise.</returns>
         protected bool IsValidRecord(FileCabinetRecord record)
         {
-            // Validate First Name
-            var validationResult = this.Validator.FirstNameValidator(record.FirstName);
-            if (!validationResult.Item1)
-            {
-                Console.WriteLine("#{0}: {1}", record.Id, validationResult.Item2);
-                return false;
-            }
-
-            // Validate Last Name
-            validationResult = this.Validator.LastNameValidator(record.LastName);
-            if (!validationResult.Item1)
-            {
-                Console.WriteLine("#{0}: {1}", record.Id, validationResult.Item2);
-                return false;
-            }
-
-            // Date of birth validator
-            validationResult = this.Validator.DateOfBirthValidator(record.DateOfBirth);
+            // Validate Record
+            var validationResult = this.Validator.ValidateParameters(record);
             if (!validationResult.Item1)
             {
                 Console.WriteLine("#{0}: {1}", record.Id, validationResult.Item2);

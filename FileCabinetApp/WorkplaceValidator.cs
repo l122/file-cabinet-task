@@ -22,9 +22,9 @@ namespace FileCabinetApp
         }
 
         /// <inheritdoc/>
-        public Tuple<bool, string> ValidateParameters(object parameters)
+        public Tuple<bool, string> ValidateParameters(FileCabinetRecord record)
         {
-            short value = (short)parameters;
+            short value = record.WorkPlaceNumber;
 
             if (value < this.fromNumber && value > this.toNumber)
             {

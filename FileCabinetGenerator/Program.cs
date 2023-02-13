@@ -19,7 +19,6 @@ namespace FileCabinetGenerator
         private static readonly string[] OutputFileFlags = { "--output", "-o" };
         private static readonly string[] RecordsAmountFlags = { "--records-amount", "-a" };
         private static readonly string[] StartIdFlags = { "--start-id", "-i" };
-        private static readonly IRecordValidator validator = new DefaultValidator();
 
         private static readonly List<FileCabinetRecord> list = new ();
         
@@ -111,11 +110,11 @@ namespace FileCabinetGenerator
                 FileCabinetRecord record = new ()
                 {
                     Id = startId,
-                    FirstName = RandomString(random.Next(validator.FirstNameMinLength, validator.FirstNameMaxLength)),
-                    LastName = RandomString(random.Next(validator.LastNameMinLength, validator.LastNameMaxLength)),
-                    DateOfBirth = new DateTime(random.Next(validator.MinDate.Year, DateTime.Today.Year),
-                    random.Next(validator.MinDate.Month, DateTime.Today.Month),
-                    random.Next(validator.MinDate.Day, DateTime.Today.Day)),
+                    FirstName = RandomString(random.Next(2, 60)),
+                    LastName = RandomString(random.Next(2, 60)),
+                    DateOfBirth = new DateTime(random.Next(1950, DateTime.Today.Year),
+                    random.Next(1, DateTime.Today.Month),
+                    random.Next(1, DateTime.Today.Day)),
                     WorkPlaceNumber = (short)random.Next(short.MaxValue),
                     Salary = Convert.ToDecimal(random.Next()),
                     Department = Convert.ToChar(random.Next(26) + 65)

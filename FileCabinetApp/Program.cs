@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 
 [assembly: CLSCompliant(true)]
 
@@ -29,7 +30,7 @@ namespace FileCabinetApp
             new Tuple<string, Func<IRecordValidator, IFileCabinetService>>("file", GetFileCabinetFilesystemServiceObject),
         };
 
-        private static IFileCabinetService fileCabinetService = new FileCabinetMemoryService(new DefaultValidator());
+        private static IFileCabinetService fileCabinetService;
         private static bool isRunning = true;
 
         /// <summary>
@@ -155,12 +156,28 @@ namespace FileCabinetApp
 
         private static IRecordValidator GetCustomValidatorObject()
         {
-            return new CustomValidator();
+            var validator = new ValidatorBuilder()
+                .ValidateFirstName(1, 30)
+                .ValidateLastName(1, 30)
+                .ValidateDateOfBirth(new DateTime(1900, 1, 1), DateTime.Today)
+                .ValidateWorkplace(1, short.MaxValue)
+                .ValidateSalary(0, decimal.MaxValue)
+                .ValidateDepartment('A', 'Z');
+
+            return validator.Create();
         }
 
         private static IRecordValidator GetDefaultValidatorObject()
         {
-            return new DefaultValidator();
+            var validator = new ValidatorBuilder()
+                .ValidateFirstName(2, 60)
+                .ValidateLastName(2, 60)
+                .ValidateDateOfBirth(new DateTime(1950, 1, 1), DateTime.Today)
+                .ValidateWorkplace(1, short.MaxValue)
+                .ValidateSalary(0, decimal.MaxValue)
+                .ValidateDepartment('A', 'Z');
+
+            return validator.Create();
         }
 
         /// <summary>

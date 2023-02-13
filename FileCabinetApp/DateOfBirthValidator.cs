@@ -23,9 +23,9 @@ namespace FileCabinetApp
         }
 
         /// <inheritdoc/>
-        public Tuple<bool, string> ValidateParameters(object parameters)
+        public Tuple<bool, string> ValidateParameters(FileCabinetRecord record)
         {
-            DateTime value = (DateTime)parameters;
+            DateTime value = record.DateOfBirth;
 
             if (DateTime.Compare(value, this.fromDate) < 01
                 || DateTime.Compare(value, this.toDate) > 0)
