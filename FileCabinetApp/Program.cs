@@ -78,8 +78,9 @@ namespace FileCabinetApp
             var createHandler = new CreateCommandHandler(fileCabinetService);
             var editHandler = new EditCommandHandler(fileCabinetService);
             var statHandler = new StatCommandHandler(fileCabinetService);
-            var listHandler = new ListCommandHandler(fileCabinetService);
-            var findHandler = new FindCommandHandler(fileCabinetService);
+            var recordPrinter = new DefaultRecordPrinter();
+            var listHandler = new ListCommandHandler(fileCabinetService, recordPrinter);
+            var findHandler = new FindCommandHandler(fileCabinetService, recordPrinter);
             var removeHandler = new RemoveCommandHandler(fileCabinetService);
             var purgeHandler = new PurgeCommandHandler(fileCabinetService);
             var exportHandler = new ExportCommandHandler(fileCabinetService);

@@ -6,14 +6,17 @@
     public class ListCommandHandler : ServiceCommandHandlerBase
     {
         private const string Trigger = "list";
+        private readonly IRecordPrinter printer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ListCommandHandler"/> class.
         /// </summary>
         /// <param name="fileCabinetService">A <see cref="IFileCabinetService"/> specialized instance.</param>
-        public ListCommandHandler(IFileCabinetService fileCabinetService)
+        /// <param name="printer">An <see cref="IRecordPrinter"/> specialized instance.</param>
+        public ListCommandHandler(IFileCabinetService fileCabinetService, IRecordPrinter printer)
             : base(fileCabinetService)
         {
+            this.printer = printer;
         }
 
         /// <inheritdoc/>
@@ -31,7 +34,7 @@
 
         private void List()
         {
-            PrintRecords(this.service.GetRecords());
+            this.printer.Print(this.service.GetRecords());
         }
     }
 }

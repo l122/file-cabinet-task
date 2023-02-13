@@ -9,14 +9,17 @@ namespace FileCabinetApp
     public class FindCommandHandler : ServiceCommandHandlerBase
     {
         private const string Trigger = "find";
+        private readonly IRecordPrinter printer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FindCommandHandler"/> class.
         /// </summary>
         /// <param name="fileCabinetService">A <see cref="IFileCabinetService"/> specialized instance.</param>
-        public FindCommandHandler(IFileCabinetService fileCabinetService)
+        /// <param name="printer">An <see cref="IRecordPrinter"/> specialized instance.</param>
+        public FindCommandHandler(IFileCabinetService fileCabinetService, IRecordPrinter printer)
             : base(fileCabinetService)
         {
+            this.printer = printer;
         }
 
         /// <inheritdoc/>
@@ -53,15 +56,15 @@ namespace FileCabinetApp
                 switch (field)
                 {
                     case firstNameField:
-                        PrintRecords(this.service.FindByFirstName(criterion));
+                        this.printer.Print(this.service.FindByFirstName(criterion));
                         break;
 
                     case lastNameField:
-                        PrintRecords(this.service.FindByLastName(criterion));
+                        this.printer.Print(this.service.FindByLastName(criterion));
                         break;
 
                     case dateOfBirthField:
-                        PrintRecords(this.service.FindByDateOfBirth(criterion));
+                        this.printer.Print(this.service.FindByDateOfBirth(criterion));
                         break;
 
                     default:

@@ -35,22 +35,5 @@ namespace FileCabinetApp
         {
             return request.Equals(trigger, StringComparison.OrdinalIgnoreCase);
         }
-
-        /// <summary>
-        /// Prints record to console.
-        /// </summary>
-        /// <param name="records">The <see cref="ReadOnlyCollection{T}"/> of type <see cref="FileCabinetRecord"/> instance.</param>
-        protected static void PrintRecords(ReadOnlyCollection<FileCabinetRecord> records)
-        {
-            if (records == null)
-            {
-                return;
-            }
-
-            foreach (var record in records)
-            {
-                Console.WriteLine(record.ToString());
-            }
-        }
     }
 }

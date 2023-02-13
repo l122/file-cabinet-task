@@ -51,12 +51,6 @@
             <param name="request">A <see cref="T:System.String"/> instance of the request.</param>
             <returns>true if can handle, false otherwise.</returns>
         </member>
-        <member name="M:FileCabinetApp.CommandHandlerBase.PrintRecords(System.Collections.ObjectModel.ReadOnlyCollection{FileCabinetApp.FileCabinetRecord})">
-            <summary>
-            Prints record to console.
-            </summary>
-            <param name="records">The <see cref="T:System.Collections.ObjectModel.ReadOnlyCollection`1"/> of type <see cref="T:FileCabinetApp.FileCabinetRecord"/> instance.</param>
-        </member>
         <member name="T:FileCabinetApp.CreateCommandHandler">
             <summary>
             Handles the Create Command Request.
@@ -107,6 +101,14 @@
             <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.CustomValidator.DepartmentValidator(System.Char)">
+            <inheritdoc/>
+        </member>
+        <member name="T:FileCabinetApp.DefaultRecordPrinter">
+            <summary>
+            A default class for printing records.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.DefaultRecordPrinter.Print(System.Collections.Generic.IEnumerable{FileCabinetApp.FileCabinetRecord})">
             <inheritdoc/>
         </member>
         <member name="T:FileCabinetApp.DefaultValidator">
@@ -595,11 +597,12 @@
             Handles the Find Command Request.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.FindCommandHandler.#ctor(FileCabinetApp.IFileCabinetService)">
+        <member name="M:FileCabinetApp.FindCommandHandler.#ctor(FileCabinetApp.IFileCabinetService,FileCabinetApp.IRecordPrinter)">
             <summary>
             Initializes a new instance of the <see cref="T:FileCabinetApp.FindCommandHandler"/> class.
             </summary>
             <param name="fileCabinetService">A <see cref="T:FileCabinetApp.IFileCabinetService"/> specialized instance.</param>
+            <param name="printer">An <see cref="T:FileCabinetApp.IRecordPrinter"/> specialized instance.</param>
         </member>
         <member name="M:FileCabinetApp.FindCommandHandler.Handle(FileCabinetApp.AppCommandRequest)">
             <inheritdoc/>
@@ -751,6 +754,17 @@
         <member name="M:FileCabinetApp.ImportCommandHandler.Handle(FileCabinetApp.AppCommandRequest)">
             <inheritdoc/>
         </member>
+        <member name="T:FileCabinetApp.IRecordPrinter">
+            <summary>
+            An interface for the Record Printer Classes.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.IRecordPrinter.Print(System.Collections.Generic.IEnumerable{FileCabinetApp.FileCabinetRecord})">
+            <summary>
+            Prints records.
+            </summary>
+            <param name="records">A collection of records of type <see cref="T:FileCabinetApp.FileCabinetRecord"/>.</param>
+        </member>
         <member name="T:FileCabinetApp.IRecordValidator">
             <summary>
             Strategy interface for choosing a validator object.
@@ -843,11 +857,12 @@
             Handles the List Command Request.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.ListCommandHandler.#ctor(FileCabinetApp.IFileCabinetService)">
+        <member name="M:FileCabinetApp.ListCommandHandler.#ctor(FileCabinetApp.IFileCabinetService,FileCabinetApp.IRecordPrinter)">
             <summary>
             Initializes a new instance of the <see cref="T:FileCabinetApp.ListCommandHandler"/> class.
             </summary>
             <param name="fileCabinetService">A <see cref="T:FileCabinetApp.IFileCabinetService"/> specialized instance.</param>
+            <param name="printer">An <see cref="T:FileCabinetApp.IRecordPrinter"/> specialized instance.</param>
         </member>
         <member name="M:FileCabinetApp.ListCommandHandler.Handle(FileCabinetApp.AppCommandRequest)">
             <inheritdoc/>
