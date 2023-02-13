@@ -166,6 +166,12 @@
             Handles the Exit Command Request.
             </summary>
         </member>
+        <member name="M:FileCabinetApp.ExitCommandHandler.#ctor(System.Action{System.Boolean})">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.ExitCommandHandler"/> class.
+            </summary>
+            <param name="onExit">An <see cref="T:System.Action`1"/> instance.</param>
+        </member>
         <member name="M:FileCabinetApp.ExitCommandHandler.Handle(FileCabinetApp.AppCommandRequest)">
             <inheritdoc/>
         </member>

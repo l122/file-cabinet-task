@@ -30,8 +30,7 @@ namespace FileCabinetApp
         };
 
         private static IFileCabinetService fileCabinetService = new FileCabinetMemoryService(new DefaultValidator());
-
-        public static bool isRunning = true;
+        private static bool isRunning = true;
 
         /// <summary>
         /// The Main method class of the program.
@@ -85,7 +84,7 @@ namespace FileCabinetApp
             var purgeHandler = new PurgeCommandHandler(fileCabinetService);
             var exportHandler = new ExportCommandHandler(fileCabinetService);
             var importHandler = new ImportCommandHandler(fileCabinetService);
-            var exitHandler = new ExitCommandHandler();
+            var exitHandler = new ExitCommandHandler(p => isRunning = p);
             var missedCommandHandler = new MissedCommandHandler();
 
             helpHandler.SetNext(createHandler);
