@@ -142,7 +142,7 @@ namespace FileCabinetApp
         protected FileCabinetRecord GetInputData()
         {
             Console.Write("First name: ");
-            string firstName = ReadInput(StringConverter, this.Validator.FirstNameValidator);
+            string firstName = ReadInput(StringConverter, this.Validator.ValidateParameters);
 
             Console.Write("Last name: ");
             string lastName = ReadInput(StringConverter, this.Validator.LastNameValidator);

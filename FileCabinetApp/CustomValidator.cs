@@ -8,23 +8,24 @@ namespace FileCabinetApp
     /// </summary>
     public class CustomValidator : IRecordValidator
     {
-        /// <inheritdoc/>
-        public int FirstNameMinLength { get; } = 1;
+        private const int FirstNameMinLength = 1;
+        private const int FirstNameMaxLength = 30;
+        private const int LastNameMinLength = 1;
+        private const int LastNameMaxLength = 30;
+        private readonly DateTime minDate = new (1900, 1, 1);
 
         /// <inheritdoc/>
-        public int FirstNameMaxLength { get; } = 30;
+        public Tuple<bool, string> ValidateParameters(object value)
+        {
+            this.ValidateFirstName((string)value);
+            this.ValidateLastName((string)value);
+            this.ValidateDateOfBirth((DateTime)value);
+            this.ValidateWorkPlace((short)value);
+            this.ValidateSalary((decimal)value);
+            this.ValidateDepartment((char)value);
+        }
 
-        /// <inheritdoc/>
-        public int LastNameMinLength { get; } = 1;
-
-        /// <inheritdoc/>
-        public int LastNameMaxLength { get; } = 30;
-
-        /// <inheritdoc/>
-        public DateTime MinDate { get; } = new (1900, 1, 1);
-
-        /// <inheritdoc/>
-        public Tuple<bool, string> FirstNameValidator(string value)
+        private Tuple<bool, string> ValidateFirstName(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
             {
@@ -32,16 +33,15 @@ namespace FileCabinetApp
             }
 
             value = value.Trim();
-            if (value.Length < this.FirstNameMinLength || value.Length > this.FirstNameMaxLength)
+            if (value.Length < FirstNameMinLength || value.Length > FirstNameMaxLength)
             {
-                return Tuple.Create(false, $"First name has to have at least {this.FirstNameMinLength} and maximum {this.FirstNameMaxLength} characters.");
+                return Tuple.Create(false, $"First name has to have at least {FirstNameMinLength} and maximum {FirstNameMaxLength} characters.");
             }
 
             return Tuple.Create(true, string.Empty);
         }
 
-        /// <inheritdoc/>
-        public Tuple<bool, string> LastNameValidator(string value)
+        private Tuple<bool, string> ValidateLastName(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
             {
@@ -49,28 +49,26 @@ namespace FileCabinetApp
             }
 
             value = value.Trim();
-            if (value.Length < this.LastNameMinLength || value.Length > this.LastNameMaxLength)
+            if (value.Length < LastNameMinLength || value.Length > LastNameMaxLength)
             {
-                return Tuple.Create(false, $"Last name has to have at least {this.LastNameMinLength} and maximum {this.LastNameMaxLength} characters.");
+                return Tuple.Create(false, $"Last name has to have at least {LastNameMinLength}  and maximum  {LastNameMaxLength} characters.");
             }
 
             return Tuple.Create(true, string.Empty);
         }
 
-        /// <inheritdoc/>
-        public Tuple<bool, string> DateOfBirthValidator(DateTime value)
+        private Tuple<bool, string> ValidateDateOfBirth(DateTime value)
         {
-            if (DateTime.Compare(value, this.MinDate) < 0
+            if (DateTime.Compare(value, this.minDate) < 0
                 || DateTime.Compare(value, DateTime.Today) > 0)
             {
-                return Tuple.Create(false, $"Date of birth should be within {this.MinDate.ToString("dd.MMM.yyyy", CultureInfo.InvariantCulture)} and today.");
+                return Tuple.Create(false, $"Date of birth should be within {this.minDate.ToString("dd.MMM.yyyy", CultureInfo.InvariantCulture)} and today.");
             }
 
             return Tuple.Create(true, string.Empty);
         }
 
-        /// <inheritdoc/>
-        public Tuple<bool, string> WorkPlaceValidator(short value)
+        private Tuple<bool, string> ValidateWorkPlace(short value)
         {
             if (value < 0)
             {
@@ -80,8 +78,7 @@ namespace FileCabinetApp
             return Tuple.Create(true, string.Empty);
         }
 
-        /// <inheritdoc/>
-        public Tuple<bool, string> SalaryValidator(decimal value)
+        private Tuple<bool, string> ValidateSalary(decimal value)
         {
             if (value < 0)
             {
@@ -91,8 +88,7 @@ namespace FileCabinetApp
             return Tuple.Create(true, string.Empty);
         }
 
-        /// <inheritdoc/>
-        public Tuple<bool, string> DepartmentValidator(char value)
+        private Tuple<bool, string> ValidateDepartment(char value)
         {
             if (!char.IsLetter(value))
             {
