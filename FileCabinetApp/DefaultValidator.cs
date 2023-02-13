@@ -8,14 +8,14 @@ namespace FileCabinetApp
     public class DefaultValidator : IRecordValidator
     {
         /// <inheritdoc/>
-        public Tuple<bool, string> ValidateParameters(object value)
+        public Tuple<bool, string> ValidateParameters(object parameters)
         {
-            new DefaultFirstNameValidator().ValidateParameters(value);
-            new DefaultLastNameValidator().ValidateParameters(value);
-            new DefaultDateOfBirthValidator().ValidateParameters(value);
-            new DefaultWorkplaceValidator().ValidateParameters(value);
-            new DefaultSalaryValidator().ValidateParameters(value);
-            new DefaultDepartmentValidator().ValidateParameters(value);
+            new FirstNameValidator(2, 60).ValidateParameters(parameters);
+            new LastNameValidator(2, 60).ValidateParameters(parameters);
+            new DateOfBirthValidator(new DateTime(1950, 1, 1), DateTime.Today).ValidateParameters(parameters);
+            new WorkplaceValidator(1, short.MaxValue).ValidateParameters(parameters);
+            new SalaryValidator(0, decimal.MaxValue).ValidateParameters(parameters);
+            new DepartmentValidator('A', 'Z').ValidateParameters(parameters);
         }
     }
 }
