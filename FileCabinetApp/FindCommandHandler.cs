@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 
 namespace FileCabinetApp
@@ -9,14 +10,14 @@ namespace FileCabinetApp
     public class FindCommandHandler : ServiceCommandHandlerBase
     {
         private const string Trigger = "find";
-        private readonly IRecordPrinter printer;
+        private readonly Action<IEnumerable<FileCabinetRecord>> printer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FindCommandHandler"/> class.
         /// </summary>
         /// <param name="fileCabinetService">A <see cref="IFileCabinetService"/> specialized instance.</param>
-        /// <param name="printer">An <see cref="IRecordPrinter"/> specialized instance.</param>
-        public FindCommandHandler(IFileCabinetService fileCabinetService, IRecordPrinter printer)
+        /// <param name="printer">An <see cref="Action{T}"/> specialized instance.</param>
+        public FindCommandHandler(IFileCabinetService fileCabinetService, Action<IEnumerable<FileCabinetRecord>> printer)
             : base(fileCabinetService)
         {
             this.printer = printer;
@@ -56,15 +57,15 @@ namespace FileCabinetApp
                 switch (field)
                 {
                     case firstNameField:
-                        this.printer.Print(this.service.FindByFirstName(criterion));
+                        this.printer(this.service.FindByFirstName(criterion));
                         break;
 
                     case lastNameField:
-                        this.printer.Print(this.service.FindByLastName(criterion));
+                        this.printer(this.service.FindByLastName(criterion));
                         break;
 
                     case dateOfBirthField:
-                        this.printer.Print(this.service.FindByDateOfBirth(criterion));
+                        this.printer(this.service.FindByDateOfBirth(criterion));
                         break;
 
                     default:
