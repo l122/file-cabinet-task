@@ -145,19 +145,19 @@ namespace FileCabinetApp
             string firstName = ReadInput(StringConverter, this.Validator.ValidateParameters);
 
             Console.Write("Last name: ");
-            string lastName = ReadInput(StringConverter, this.Validator.LastNameValidator);
+            string lastName = ReadInput(StringConverter, this.Validator.ValidateParameters);
 
             Console.Write("Date of birth: ");
-            DateTime dateOfBirth = ReadInput(DateConverter, this.Validator.DateOfBirthValidator);
+            DateTime dateOfBirth = ReadInput(DateConverter, this.Validator.ValidateParameters);
 
             Console.Write("Work Place Number: ");
-            short workPlaceNumber = ReadInput(ShortConverter, this.Validator.WorkPlaceValidator);
+            short workPlaceNumber = ReadInput(ShortConverter, this.Validator.ValidateParameters);
 
             Console.Write("Salary: ");
-            decimal salary = ReadInput(DecimalConverter, this.Validator.SalaryValidator);
+            decimal salary = ReadInput(DecimalConverter, this.Validator.ValidateParameters);
 
             Console.Write("Department (one letter): ");
-            char department = ReadInput(CharConverter, this.Validator.DepartmentValidator);
+            char department = ReadInput(CharConverter, this.Validator.ValidateParameters);
 
             return new FileCabinetRecord()
             {

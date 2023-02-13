@@ -8,10 +8,10 @@ namespace FileCabinetApp
     public interface IRecordValidator
     {
         /// <summary>
-        /// Validates input value.
+        /// Validates input parameters.
         /// </summary>
-        /// <param name="value">A <see cref="string"/> isntance.</param>
+        /// <param name="parameters">A <see cref="string"/> isntance.</param>
         /// <returns>A <see cref="Tuple{T1, T2}"/>.</returns>
-        public Tuple<bool, string> ValidateParameters(object value);
+        public Tuple<bool, string> ValidateParameters(object parameters);
     }
 }
