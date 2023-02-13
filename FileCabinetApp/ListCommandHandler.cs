@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
-
-namespace FileCabinetApp
+﻿namespace FileCabinetApp
 {
     /// <summary>
     /// Handles the List Command Request.
@@ -9,13 +6,23 @@ namespace FileCabinetApp
     public class ListCommandHandler : CommandHandlerBase
     {
         private const string Trigger = "list";
+        private readonly IFileCabinetService service;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ListCommandHandler"/> class.
+        /// </summary>
+        /// <param name="fileCabinetService">A <see cref="IFileCabinetService"/> specialized instance.</param>
+        public ListCommandHandler(IFileCabinetService fileCabinetService)
+        {
+            this.service = fileCabinetService;
+        }
 
         /// <inheritdoc/>
         public override void Handle(AppCommandRequest appCommandRequest)
         {
             if (CanHandle(Trigger, appCommandRequest.Command))
             {
-                List();
+                this.List();
             }
             else
             {
@@ -23,9 +30,9 @@ namespace FileCabinetApp
             }
         }
 
-        private static void List()
+        private void List()
         {
-            PrintRecords(Program.fileCabinetService.GetRecords());
+            PrintRecords(this.service.GetRecords());
         }
     }
 }

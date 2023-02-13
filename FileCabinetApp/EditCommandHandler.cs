@@ -8,13 +8,23 @@ namespace FileCabinetApp
     public class EditCommandHandler : CommandHandlerBase
     {
         private const string Trigger = "edit";
+        private readonly IFileCabinetService service;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EditCommandHandler"/> class.
+        /// </summary>
+        /// <param name="fileCabinetService">A <see cref="IFileCabinetService"/> specialized instance.</param>
+        public EditCommandHandler(IFileCabinetService fileCabinetService)
+        {
+            this.service = fileCabinetService;
+        }
 
         /// <inheritdoc/>
         public override void Handle(AppCommandRequest appCommandRequest)
         {
             if (CanHandle(Trigger, appCommandRequest.Command))
             {
-                Edit(appCommandRequest.Parameters);
+                this.Edit(appCommandRequest.Parameters);
             }
             else
             {
@@ -22,7 +32,7 @@ namespace FileCabinetApp
             }
         }
 
-        private static void Edit(string parameters)
+        private void Edit(string parameters)
         {
             if (!int.TryParse(parameters, out int id))
             {
@@ -30,8 +40,7 @@ namespace FileCabinetApp
                 return;
             }
 
-            Program.fileCabinetService.EditRecord(id);
+            this.service.EditRecord(id);
         }
-
     }
 }

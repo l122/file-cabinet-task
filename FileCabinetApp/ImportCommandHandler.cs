@@ -9,13 +9,23 @@ namespace FileCabinetApp
     public class ImportCommandHandler : CommandHandlerBase
     {
         private const string Trigger = "import";
+        private readonly IFileCabinetService service;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ImportCommandHandler"/> class.
+        /// </summary>
+        /// <param name="fileCabinetService">A <see cref="IFileCabinetService"/> specialized instance.</param>
+        public ImportCommandHandler(IFileCabinetService fileCabinetService)
+        {
+            this.service = fileCabinetService;
+        }
 
         /// <inheritdoc/>
         public override void Handle(AppCommandRequest appCommandRequest)
         {
             if (CanHandle(Trigger, appCommandRequest.Command))
             {
-                Import(appCommandRequest.Parameters);
+                this.Import(appCommandRequest.Parameters);
             }
             else
             {
@@ -23,11 +33,11 @@ namespace FileCabinetApp
             }
         }
 
-        private static void Import(string parameters)
+        private void Import(string parameters)
         {
             const string csvParameter = "csv";
             const string xmlParameter = "xml";
-            int oldQuantity = Program.fileCabinetService.GetStat().Item1;
+            int oldQuantity = this.service.GetStat().Item1;
 
             var input = parameters.Split(" ");
             if (input.Length != 2)
@@ -64,7 +74,7 @@ namespace FileCabinetApp
                         break;
                 }
 
-                Program.fileCabinetService.Restore(snapshot);
+                this.service.Restore(snapshot);
             }
             catch (Exception e)
             {
@@ -72,8 +82,7 @@ namespace FileCabinetApp
                 return;
             }
 
-            Console.WriteLine("{0} records were imported from {1}", Program.fileCabinetService.GetStat().Item1 - oldQuantity, file);
+            Console.WriteLine("{0} records were imported from {1}", this.service.GetStat().Item1 - oldQuantity, file);
         }
-
     }
 }

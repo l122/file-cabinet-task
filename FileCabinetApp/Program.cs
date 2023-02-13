@@ -29,7 +29,7 @@ namespace FileCabinetApp
             new Tuple<string, Func<IRecordValidator, IFileCabinetService>>("file", GetFileCabinetFilesystemServiceObject),
         };
 
-        public static IFileCabinetService fileCabinetService = new FileCabinetMemoryService(new DefaultValidator());
+        private static IFileCabinetService fileCabinetService = new FileCabinetMemoryService(new DefaultValidator());
 
         public static bool isRunning = true;
 
@@ -45,7 +45,7 @@ namespace FileCabinetApp
             Console.WriteLine(Program.HintMessage);
             Console.WriteLine();
 
-            var commandHandler = CreateCommandHandlers();
+            var commandHandler = CreateCommandHandlers(fileCabinetService);
 
             do
             {
@@ -73,18 +73,18 @@ namespace FileCabinetApp
         /// Creates the <see cref="ICommandHandler"/> Specialized Objects.
         /// </summary>
         /// <returns>The <see cref="HelpCommandHandler"/> instance.</returns>
-        private static ICommandHandler CreateCommandHandlers()
+        private static ICommandHandler CreateCommandHandlers(IFileCabinetService fileCabinetService)
         {
             var helpHandler = new HelpCommandHandler();
-            var createHandler = new CreateCommandHandler();
-            var editHandler = new EditCommandHandler();
-            var statHandler = new StatCommandHandler();
-            var listHandler = new ListCommandHandler();
-            var findHandler = new FindCommandHandler();
-            var removeHandler = new RemoveCommandHandler();
-            var purgeHandler = new PurgeCommandHandler();
-            var exportHandler = new ExportCommandHandler();
-            var importHandler = new ImportCommandHandler();
+            var createHandler = new CreateCommandHandler(fileCabinetService);
+            var editHandler = new EditCommandHandler(fileCabinetService);
+            var statHandler = new StatCommandHandler(fileCabinetService);
+            var listHandler = new ListCommandHandler(fileCabinetService);
+            var findHandler = new FindCommandHandler(fileCabinetService);
+            var removeHandler = new RemoveCommandHandler(fileCabinetService);
+            var purgeHandler = new PurgeCommandHandler(fileCabinetService);
+            var exportHandler = new ExportCommandHandler(fileCabinetService);
+            var importHandler = new ImportCommandHandler(fileCabinetService);
             var exitHandler = new ExitCommandHandler();
             var missedCommandHandler = new MissedCommandHandler();
 

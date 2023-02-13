@@ -62,6 +62,12 @@
             Handles the Create Command Request.
             </summary>
         </member>
+        <member name="M:FileCabinetApp.CreateCommandHandler.#ctor(FileCabinetApp.IFileCabinetService)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.CreateCommandHandler"/> class.
+            </summary>
+            <param name="fileCabinetService">A <see cref="T:FileCabinetApp.IFileCabinetService"/> specialized instance.</param>
+        </member>
         <member name="M:FileCabinetApp.CreateCommandHandler.Handle(FileCabinetApp.AppCommandRequest)">
             <inheritdoc/>
         </member>
@@ -146,6 +152,12 @@
             Handles the Edit Command Request.
             </summary>
         </member>
+        <member name="M:FileCabinetApp.EditCommandHandler.#ctor(FileCabinetApp.IFileCabinetService)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.EditCommandHandler"/> class.
+            </summary>
+            <param name="fileCabinetService">A <see cref="T:FileCabinetApp.IFileCabinetService"/> specialized instance.</param>
+        </member>
         <member name="M:FileCabinetApp.EditCommandHandler.Handle(FileCabinetApp.AppCommandRequest)">
             <inheritdoc/>
         </member>
@@ -161,6 +173,12 @@
             <summary>
             Handles the Export Command Request.
             </summary>
+        </member>
+        <member name="M:FileCabinetApp.ExportCommandHandler.#ctor(FileCabinetApp.IFileCabinetService)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.ExportCommandHandler"/> class.
+            </summary>
+            <param name="fileCabinetService">A <see cref="T:FileCabinetApp.IFileCabinetService"/> specialized instance.</param>
         </member>
         <member name="M:FileCabinetApp.ExportCommandHandler.Handle(FileCabinetApp.AppCommandRequest)">
             <inheritdoc/>
@@ -566,6 +584,17 @@
         <member name="M:FileCabinetApp.FileCabinetServiceSnapshot.SaveToXml(System.IO.StreamWriter)">
             <inheritdoc/>
         </member>
+        <member name="T:FileCabinetApp.FindCommandHandler">
+            <summary>
+            Handles the Find Command Request.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FindCommandHandler.#ctor(FileCabinetApp.IFileCabinetService)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FindCommandHandler"/> class.
+            </summary>
+            <param name="fileCabinetService">A <see cref="T:FileCabinetApp.IFileCabinetService"/> specialized instance.</param>
+        </member>
         <member name="M:FileCabinetApp.FindCommandHandler.Handle(FileCabinetApp.AppCommandRequest)">
             <inheritdoc/>
         </member>
@@ -707,6 +736,12 @@
             Handles the Import Command Request.
             </summary>
         </member>
+        <member name="M:FileCabinetApp.ImportCommandHandler.#ctor(FileCabinetApp.IFileCabinetService)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.ImportCommandHandler"/> class.
+            </summary>
+            <param name="fileCabinetService">A <see cref="T:FileCabinetApp.IFileCabinetService"/> specialized instance.</param>
+        </member>
         <member name="M:FileCabinetApp.ImportCommandHandler.Handle(FileCabinetApp.AppCommandRequest)">
             <inheritdoc/>
         </member>
@@ -802,6 +837,12 @@
             Handles the List Command Request.
             </summary>
         </member>
+        <member name="M:FileCabinetApp.ListCommandHandler.#ctor(FileCabinetApp.IFileCabinetService)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.ListCommandHandler"/> class.
+            </summary>
+            <param name="fileCabinetService">A <see cref="T:FileCabinetApp.IFileCabinetService"/> specialized instance.</param>
+        </member>
         <member name="M:FileCabinetApp.ListCommandHandler.Handle(FileCabinetApp.AppCommandRequest)">
             <inheritdoc/>
         </member>
@@ -824,7 +865,7 @@
             </summary>
             <param name="args">The <see cref="T:System.String"/> array instance of input arguments.</param>
         </member>
-        <member name="M:FileCabinetApp.Program.CreateCommandHandlers">
+        <member name="M:FileCabinetApp.Program.CreateCommandHandlers(FileCabinetApp.IFileCabinetService)">
             <summary>
             Creates the <see cref="T:FileCabinetApp.ICommandHandler"/> Specialized Objects.
             </summary>
@@ -848,6 +889,12 @@
             Handles the Purge Command Request.
             </summary>
         </member>
+        <member name="M:FileCabinetApp.PurgeCommandHandler.#ctor(FileCabinetApp.IFileCabinetService)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.PurgeCommandHandler"/> class.
+            </summary>
+            <param name="fileCabinetService">A <see cref="T:FileCabinetApp.IFileCabinetService"/> specialized instance.</param>
+        </member>
         <member name="M:FileCabinetApp.PurgeCommandHandler.Handle(FileCabinetApp.AppCommandRequest)">
             <inheritdoc/>
         </member>
@@ -856,6 +903,12 @@
             Handles the Remove Command Request.
             </summary>
         </member>
+        <member name="M:FileCabinetApp.RemoveCommandHandler.#ctor(FileCabinetApp.IFileCabinetService)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.RemoveCommandHandler"/> class.
+            </summary>
+            <param name="fileCabinetService">A <see cref="T:FileCabinetApp.IFileCabinetService"/> specialized instance.</param>
+        </member>
         <member name="M:FileCabinetApp.RemoveCommandHandler.Handle(FileCabinetApp.AppCommandRequest)">
             <inheritdoc/>
         </member>
@@ -863,6 +916,12 @@
             <summary>
             The class for handling the statistics command.
             </summary>
+        </member>
+        <member name="M:FileCabinetApp.StatCommandHandler.#ctor(FileCabinetApp.IFileCabinetService)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.StatCommandHandler"/> class.
+            </summary>
+            <param name="fileCabinetService">A <see cref="T:FileCabinetApp.IFileCabinetService"/> specialized instance.</param>
         </member>
         <member name="M:FileCabinetApp.StatCommandHandler.Handle(FileCabinetApp.AppCommandRequest)">
             <inheritdoc/>

@@ -8,13 +8,23 @@ namespace FileCabinetApp
     public class RemoveCommandHandler : CommandHandlerBase
     {
         private const string Trigger = "remove";
+        private readonly IFileCabinetService service;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RemoveCommandHandler"/> class.
+        /// </summary>
+        /// <param name="fileCabinetService">A <see cref="IFileCabinetService"/> specialized instance.</param>
+        public RemoveCommandHandler(IFileCabinetService fileCabinetService)
+        {
+            this.service = fileCabinetService;
+        }
 
         /// <inheritdoc/>
         public override void Handle(AppCommandRequest appCommandRequest)
         {
             if (CanHandle(Trigger, appCommandRequest.Command))
             {
-                Remove(appCommandRequest.Parameters);
+                this.Remove(appCommandRequest.Parameters);
             }
             else
             {
@@ -22,7 +32,7 @@ namespace FileCabinetApp
             }
         }
 
-        private static void Remove(string parameters)
+        private void Remove(string parameters)
         {
             if (!int.TryParse(parameters, out int id))
             {
@@ -30,7 +40,7 @@ namespace FileCabinetApp
                 return;
             }
 
-            Program.fileCabinetService.RemoveRecord(id);
+            this.service.RemoveRecord(id);
         }
     }
 }

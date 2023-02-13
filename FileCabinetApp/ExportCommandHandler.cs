@@ -9,13 +9,23 @@ namespace FileCabinetApp
     public class ExportCommandHandler : CommandHandlerBase
     {
         private const string Trigger = "export";
+        private readonly IFileCabinetService service;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ExportCommandHandler"/> class.
+        /// </summary>
+        /// <param name="fileCabinetService">A <see cref="IFileCabinetService"/> specialized instance.</param>
+        public ExportCommandHandler(IFileCabinetService fileCabinetService)
+        {
+            this.service = fileCabinetService;
+        }
 
         /// <inheritdoc/>
         public override void Handle(AppCommandRequest appCommandRequest)
         {
             if (CanHandle(Trigger, appCommandRequest.Command))
             {
-                Export(appCommandRequest.Parameters);
+                this.Export(appCommandRequest.Parameters);
             }
             else
             {
@@ -23,7 +33,7 @@ namespace FileCabinetApp
             }
         }
 
-        private static void Export(string parameters)
+        private void Export(string parameters)
         {
             const string csvParameter = "csv";
             const string xmlParameter = "xml";
@@ -56,7 +66,7 @@ namespace FileCabinetApp
                 sw = File.CreateText(file);
 
                 //// Make Snapshot
-                var snapshot = Program.fileCabinetService.MakeSnapshot();
+                var snapshot = this.service.MakeSnapshot();
 
                 string parameter = input[0];
                 switch (parameter)

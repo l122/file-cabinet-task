@@ -3,16 +3,29 @@ using System.Globalization;
 
 namespace FileCabinetApp
 {
+    /// <summary>
+    /// Handles the Find Command Request.
+    /// </summary>
     public class FindCommandHandler : CommandHandlerBase
     {
         private const string Trigger = "find";
+        private readonly IFileCabinetService service;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FindCommandHandler"/> class.
+        /// </summary>
+        /// <param name="fileCabinetService">A <see cref="IFileCabinetService"/> specialized instance.</param>
+        public FindCommandHandler(IFileCabinetService fileCabinetService)
+        {
+            this.service = fileCabinetService;
+        }
 
         /// <inheritdoc/>
         public override void Handle(AppCommandRequest appCommandRequest)
         {
             if (CanHandle(Trigger, appCommandRequest.Command))
             {
-                Find(appCommandRequest.Parameters);
+                this.Find(appCommandRequest.Parameters);
             }
             else
             {
@@ -20,7 +33,7 @@ namespace FileCabinetApp
             }
         }
 
-        private static void Find(string parameters)
+        private void Find(string parameters)
         {
             const string firstNameField = "firstname";
             const string lastNameField = "lastname";
@@ -41,15 +54,15 @@ namespace FileCabinetApp
                 switch (field)
                 {
                     case firstNameField:
-                        PrintRecords(Program.fileCabinetService.FindByFirstName(criterion));
+                        PrintRecords(this.service.FindByFirstName(criterion));
                         break;
 
                     case lastNameField:
-                        PrintRecords(Program.fileCabinetService.FindByLastName(criterion));
+                        PrintRecords(this.service.FindByLastName(criterion));
                         break;
 
                     case dateOfBirthField:
-                        PrintRecords(Program.fileCabinetService.FindByDateOfBirth(criterion));
+                        PrintRecords(this.service.FindByDateOfBirth(criterion));
                         break;
 
                     default:
