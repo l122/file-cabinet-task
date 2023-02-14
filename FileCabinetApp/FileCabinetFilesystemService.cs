@@ -366,10 +366,10 @@ namespace FileCabinetApp
             // Copy Work Place Number
             CopyToBuffer(BitConverter.GetBytes(record.WorkPlaceNumber), buffer, ref offset);
 
-            // Copy Salary
+            // Copy SalaryType
             CopyIntToBuffer(decimal.GetBits(record.Salary), buffer, ref offset);
 
-            // Copy Department
+            // Copy DepartmentType
             CopyToBuffer(BitConverter.GetBytes(record.Department), buffer, ref offset);
 
             // Write buffer to the end of file
@@ -542,7 +542,7 @@ namespace FileCabinetApp
             record.WorkPlaceNumber = BitConverter.ToInt16(buffer, offset);
             offset += sizeof(short);
 
-            // Parse Salary
+            // Parse SalaryType
             int[] parts = new int[4];
             for (int i = 0; i < parts.Length; i++)
             {
@@ -555,7 +555,7 @@ namespace FileCabinetApp
             byte scale = (byte)((parts[3] >> 16) & 0x7F);
             record.Salary = new decimal(parts[0], parts[1], parts[2], sign, scale);
 
-            // Parse Department
+            // Parse DepartmentType
             record.Department = BitConverter.ToChar(buffer, offset);
 
             return record;

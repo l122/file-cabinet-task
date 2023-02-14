@@ -797,6 +797,132 @@
         <member name="M:FileCabinetApp.MissedCommandHandler.Handle(FileCabinetApp.AppCommandRequest)">
             <inheritdoc/>
         </member>
+        <member name="T:FileCabinetApp.Model.ValidationRules">
+            <summary>
+            A model class for validation rules.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Model.ValidationRules.FirstName">
+            <summary>
+            Gets or sets and sets FirstName.
+            </summary>
+            <value>And sets FirstName.</value>
+        </member>
+        <member name="P:FileCabinetApp.Model.ValidationRules.LastName">
+            <summary>
+            Gets or sets and sets LastName.
+            </summary>
+            <value>And sets LastName.</value>
+        </member>
+        <member name="P:FileCabinetApp.Model.ValidationRules.DateOfBirth">
+            <summary>
+            Gets or sets and sets DateOfBirthType.
+            </summary>
+            <value>And sets DateOfBirthType.</value>
+        </member>
+        <member name="P:FileCabinetApp.Model.ValidationRules.Workplace">
+            <summary>
+            Gets or sets and sets WorkplaceType.
+            </summary>
+            <value>And sets WorkplaceType.</value>
+        </member>
+        <member name="P:FileCabinetApp.Model.ValidationRules.Salary">
+            <summary>
+            Gets or sets and sets SalaryType.
+            </summary>
+            <value>And sets SalaryType.</value>
+        </member>
+        <member name="P:FileCabinetApp.Model.ValidationRules.Department">
+            <summary>
+            Gets or sets and sets DepartmentType.
+            </summary>
+            <value>And sets DepartmentType.</value>
+        </member>
+        <member name="T:FileCabinetApp.Model.ValidationRules.Name">
+            <summary>
+            Name Type.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Model.ValidationRules.Name.Min">
+            <summary>
+            Gets or sets and sets Min.
+            </summary>
+            <value>And sets Min.</value>
+        </member>
+        <member name="P:FileCabinetApp.Model.ValidationRules.Name.Max">
+            <summary>
+            Gets or sets and sets Max.
+            </summary>
+            <value>And sets Max.</value>
+        </member>
+        <member name="T:FileCabinetApp.Model.ValidationRules.DateOfBirthType">
+            <summary>
+            Date type.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Model.ValidationRules.DateOfBirthType.From">
+            <summary>
+            Gets or sets and sets From.
+            </summary>
+            <value>And sets From.</value>
+        </member>
+        <member name="P:FileCabinetApp.Model.ValidationRules.DateOfBirthType.To">
+            <summary>
+            Gets or sets and sets To.
+            </summary>
+            <value>And sets To.</value>
+        </member>
+        <member name="T:FileCabinetApp.Model.ValidationRules.WorkplaceType">
+            <summary>
+            Workplace type.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Model.ValidationRules.WorkplaceType.Min">
+            <summary>
+            Gets or sets and sets Min.
+            </summary>
+            <value>And sets Min.</value>
+        </member>
+        <member name="P:FileCabinetApp.Model.ValidationRules.WorkplaceType.Max">
+            <summary>
+            Gets or sets and sets Max.
+            </summary>
+            <value>And sets Max.</value>
+        </member>
+        <member name="T:FileCabinetApp.Model.ValidationRules.SalaryType">
+            <summary>
+            Salary type.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Model.ValidationRules.SalaryType.Min">
+            <summary>
+            Gets or sets and sets Min.
+            </summary>
+            <value>And sets Min.</value>
+        </member>
+        <member name="P:FileCabinetApp.Model.ValidationRules.SalaryType.Max">
+            <summary>
+            Gets or sets and sets Max.
+            </summary>
+            <value>And sets Max.</value>
+        </member>
+        <member name="T:FileCabinetApp.Model.ValidationRules.DepartmentType">
+            <summary>
+            Departmen Type.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Model.ValidationRules.DepartmentType.Start">
+            <summary>
+            Gets or sets and sets Start.
+            </summary>
+            <value>And sets Start.</value>
+        </member>
+        <member name="P:FileCabinetApp.Model.ValidationRules.DepartmentType.End">
+            <summary>
+            Gets or sets and sets End.
+            </summary>
+            <value>And sets End.</value>
+        </member>
         <member name="T:FileCabinetApp.Program">
             <summary>
             The class that contains the Main method.

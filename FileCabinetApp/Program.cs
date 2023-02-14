@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 
 [assembly: CLSCompliant(true)]
@@ -156,12 +155,12 @@ namespace FileCabinetApp
 
         private static IRecordValidator GetCustomValidatorObject()
         {
-            return new ValidatorBuilder().CreateDefaultValidator();
+            return new ValidatorBuilder().CreateCustomValidator();
         }
 
         private static IRecordValidator GetDefaultValidatorObject()
         {
-            return new ValidatorBuilder().CreateCustomValidator();
+            return new ValidatorBuilder().CreateDefaultValidator();
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace FileCabinetApp
 {
@@ -28,7 +29,7 @@ namespace FileCabinetApp
 
             if (string.IsNullOrWhiteSpace(value))
             {
-                return Tuple.Create(false, "First Name is not provided.");
+                return Tuple.Create(false, $"First Name is not provided. It has to be minimum {this.firstNameMinLength} and maximum {this.firstNameMaxLength} characters long.");
             }
 
             value = value.Trim();

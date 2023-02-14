@@ -1,4 +1,6 @@
 ﻿using System;
+using FileCabinetApp.Model;
+using Microsoft.Extensions.Configuration;
 
 namespace FileCabinetApp
 {
@@ -14,13 +16,24 @@ namespace FileCabinetApp
         /// <returns>An <see cref="IRecordValidator"/> instance.</returns>
         public static IRecordValidator CreateDefaultValidator(this ValidatorBuilder validator)
         {
-            validator = new ValidatorBuilder()
-                .ValidateFirstName(1, 30)
-                .ValidateLastName(1, 30)
-                .ValidateDateOfBirth(new DateTime(1900, 1, 1), DateTime.Today)
-                .ValidateWorkplace(1, short.MaxValue)
-                .ValidateSalary(0, decimal.MaxValue)
-                .ValidateDepartment('A', 'Z');
+            const string defaultSection = "default";
+
+            var configuration = new ConfigurationBuilder()
+                .AddJsonFile("validation-rules.json", true, true)
+                .Build();
+
+            var rules = configuration.GetSection(defaultSection).Get<ValidationRules>();
+
+            if (rules != null)
+            {
+                validator = new ValidatorBuilder()
+                    .ValidateFirstName(rules.FirstName.Min, rules.FirstName.Max)
+                    .ValidateLastName(rules.LastName.Min, rules.LastName.Max)
+                    .ValidateDateOfBirth(rules.DateOfBirth.From, rules.DateOfBirth.To)
+                    .ValidateWorkplace(rules.Workplace.Min, rules.Workplace.Max)
+                    .ValidateSalary(rules.Salary.Min, rules.Salary.Max)
+                    .ValidateDepartment(rules.Department.Start, rules.Department.End);
+            }
 
             return validator.Create();
         }
@@ -32,13 +45,24 @@ namespace FileCabinetApp
         /// <returns>An <see cref="IRecordValidator"/> instance.</returns>
         public static IRecordValidator CreateCustomValidator(this ValidatorBuilder validator)
         {
-            validator = new ValidatorBuilder()
-                .ValidateFirstName(2, 60)
-                .ValidateLastName(2, 60)
-                .ValidateDateOfBirth(new DateTime(1950, 1, 1), DateTime.Today)
-                .ValidateWorkplace(1, short.MaxValue)
-                .ValidateSalary(0, decimal.MaxValue)
-                .ValidateDepartment('A', 'Z');
+            const string customSection = "custom";
+
+            var configuration = new ConfigurationBuilder()
+                .AddJsonFile("validation-rules.json", true, true)
+                .Build();
+
+            var rules = configuration.GetSection(customSection).Get<ValidationRules>();
+
+            if (rules != null)
+            {
+                validator = new ValidatorBuilder()
+                    .ValidateFirstName(rules.FirstName.Min, rules.FirstName.Max)
+                    .ValidateLastName(rules.LastName.Min, rules.LastName.Max)
+                    .ValidateDateOfBirth(rules.DateOfBirth.From, rules.DateOfBirth.To)
+                    .ValidateWorkplace(rules.Workplace.Min, rules.Workplace.Max)
+                    .ValidateSalary(rules.Salary.Min, rules.Salary.Max)
+                    .ValidateDepartment(rules.Department.Start, rules.Department.End);
+            }
 
             return validator.Create();
         }
