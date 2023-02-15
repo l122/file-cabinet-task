@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using FileCabinetApp.FileCabinetService;
+using FileCabinetApp.Validators;
 
 namespace FileCabinetApp.Loggers
 {
@@ -24,10 +25,10 @@ namespace FileCabinetApp.Loggers
         }
 
         /// <inheritdoc/>
-        public int CreateRecord()
+        public int CreateRecord(FileCabinetRecord record)
         {
             this.stopwatch.Restart();
-            var result = this.service.CreateRecord();
+            var result = this.service.CreateRecord(record);
             this.stopwatch.Stop();
             Log(this.stopwatch.ElapsedTicks, "Create");
 
@@ -35,12 +36,13 @@ namespace FileCabinetApp.Loggers
         }
 
         /// <inheritdoc/>
-        public void EditRecord(int id)
+        public bool EditRecord(FileCabinetRecord record)
         {
             this.stopwatch.Restart();
-            this.service.EditRecord(id);
+            var result = this.service.EditRecord(record);
             this.stopwatch.Stop();
             Log(this.stopwatch.ElapsedTicks, "Edit");
+            return result;
         }
 
         /// <inheritdoc/>
@@ -110,21 +112,23 @@ namespace FileCabinetApp.Loggers
         }
 
         /// <inheritdoc/>
-        public void Purge()
+        public (int, int) Purge()
         {
             this.stopwatch.Restart();
-            this.service.Purge();
+            var result = this.service.Purge();
             this.stopwatch.Stop();
             Log(this.stopwatch.ElapsedTicks, "Purge");
+            return result;
         }
 
         /// <inheritdoc/>
-        public void RemoveRecord(int id)
+        public bool RemoveRecord(int id)
         {
             this.stopwatch.Restart();
-            this.service.RemoveRecord(id);
+            var result = this.service.RemoveRecord(id);
             this.stopwatch.Stop();
             Log(this.stopwatch.ElapsedTicks, "RemoveRecord");
+            return result;
         }
 
         /// <inheritdoc/>
@@ -134,6 +138,12 @@ namespace FileCabinetApp.Loggers
             this.service.Restore(snapshot);
             this.stopwatch.Stop();
             Log(this.stopwatch.ElapsedTicks, "Restore");
+        }
+
+        /// <inheritdoc/>
+        public FileCabinetRecord? FindById(int id)
+        {
+            return this.service.FindById(id);
         }
 
         /// <summary>

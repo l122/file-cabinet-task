@@ -34,7 +34,9 @@ namespace FileCabinetApp.CommandHandlers
 
         private void Create()
         {
-            var id = this.service.CreateRecord();
+            var record = Program.GetInputData();
+
+            var id = this.service.CreateRecord(record);
             if (id > 0)
             {
                 Console.WriteLine("Record #{0} is created.", id);

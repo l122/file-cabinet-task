@@ -1,9 +1,8 @@
-﻿using System;
-using FileCabinetApp.Models;
+﻿using FileCabinetApp.Models;
 using FileCabinetApp.Validators;
 using Microsoft.Extensions.Configuration;
 
-namespace FileCabinetApp.Extensions
+namespace FileCabinetApp.StaticClasses
 {
     /// <summary>
     /// The class with extension methods.
@@ -19,24 +18,7 @@ namespace FileCabinetApp.Extensions
         {
             const string defaultSection = "default";
 
-            var configuration = new ConfigurationBuilder()
-                .AddJsonFile("validation-rules.json", true, true)
-                .Build();
-
-            var rules = configuration.GetSection(defaultSection).Get<ValidationRules>();
-
-            if (rules != null)
-            {
-                validator = new ValidatorBuilder()
-                    .ValidateFirstName(rules.FirstName.Min, rules.FirstName.Max)
-                    .ValidateLastName(rules.LastName.Min, rules.LastName.Max)
-                    .ValidateDateOfBirth(rules.DateOfBirth.From, rules.DateOfBirth.To)
-                    .ValidateWorkplace(rules.Workplace.Min, rules.Workplace.Max)
-                    .ValidateSalary(rules.Salary.Min, rules.Salary.Max)
-                    .ValidateDepartment(rules.Department.Start, rules.Department.End);
-            }
-
-            return validator.Create();
+            return CreateValidator(validator, defaultSection);
         }
 
         /// <summary>
@@ -48,11 +30,16 @@ namespace FileCabinetApp.Extensions
         {
             const string customSection = "custom";
 
+            return CreateValidator(validator, customSection);
+        }
+
+        private static IRecordValidator CreateValidator(ValidatorBuilder validator, string section)
+        {
             var configuration = new ConfigurationBuilder()
                 .AddJsonFile("validation-rules.json", true, true)
                 .Build();
 
-            var rules = configuration.GetSection(customSection).Get<ValidationRules>();
+            var rules = configuration.GetSection(section).Get<ValidationRules>();
 
             if (rules != null)
             {

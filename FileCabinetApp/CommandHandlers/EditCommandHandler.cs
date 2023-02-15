@@ -40,7 +40,24 @@ namespace FileCabinetApp.CommandHandlers
                 return;
             }
 
-            this.service.EditRecord(id);
+            var oldRecord = this.service.FindById(id);
+            if (oldRecord == null)
+            {
+                Console.WriteLine("#{0} record is not found.", id);
+                return;
+            }
+
+            var newRecord = Program.GetInputData();
+            newRecord.Id = oldRecord.Id;
+
+            if (this.service.EditRecord(newRecord))
+            {
+                Console.WriteLine("Record #{0} is updated.", id);
+            }
+            else
+            {
+                Console.WriteLine("Record is not updated.");
+            }
         }
     }
 }

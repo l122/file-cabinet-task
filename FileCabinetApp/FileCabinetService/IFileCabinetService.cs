@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.IO;
 
 namespace FileCabinetApp.FileCabinetService
 {
@@ -10,10 +9,11 @@ namespace FileCabinetApp.FileCabinetService
     public interface IFileCabinetService
     {
         /// <summary>
-        /// Creates a new record.
+        /// Create a record.
         /// </summary>
-        /// <returns>The <see cref="int"/> instance of record's id.</returns>
-        public int CreateRecord();
+        /// <param name="record">A <see cref="FileCabinetRecord"/> instance.</param>
+        /// <returns>An <see cref="int"/> instance.</returns>
+        public int CreateRecord(FileCabinetRecord record);
 
         /// <summary>
         /// Returns all records.
@@ -22,7 +22,7 @@ namespace FileCabinetApp.FileCabinetService
         public ReadOnlyCollection<FileCabinetRecord> GetRecords();
 
         /// <summary>
-        /// Returns the number of records.
+        /// Returns a pair of (total, deleted) number of records.
         /// </summary>
         /// <returns>The <see cref="Tuple"/> instance of total and deleted number of records.</returns>
         public (int, int) GetStat();
@@ -30,8 +30,9 @@ namespace FileCabinetApp.FileCabinetService
         /// <summary>
         /// Edits a record.
         /// </summary>
-        /// <param name="id">The <see cref="int"/> instance of record's id.</param>
-        public void EditRecord(int id);
+        /// <param name="record">The <see cref="FileCabinetRecord"/> instance of the new record.</param>
+        /// <returns>true if success, false - otherwise.</returns>
+        public bool EditRecord(FileCabinetRecord record);
 
         /// <summary>
         /// Searches for a record by first name.
@@ -70,11 +71,20 @@ namespace FileCabinetApp.FileCabinetService
         /// Removes a record.
         /// </summary>
         /// <param name="id">A <see cref="int"/> instance of id.</param>
-        public void RemoveRecord(int id);
+        /// <returns>true if success, false otherwise.</returns>
+        public bool RemoveRecord(int id);
 
         /// <summary>
         /// Removes the records that are marked as deleted from a database.
         /// </summary>
-        public void Purge();
+        /// <returns>The <see cref="Tuple"/> instance of total and purged number of records.</returns>
+        public (int, int) Purge();
+
+        /// <summary>
+        /// Finds a record by id.
+        /// </summary>
+        /// <param name="id">An <see cref="int"/> instance.</param>
+        /// <returns>A nullable <see cref="FileCabinetRecord"/> instance if found, null - otherwise.</returns>
+        public FileCabinetRecord? FindById(int id);
     }
 }

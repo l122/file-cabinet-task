@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using FileCabinetApp.StaticClasses;
 using FileCabinetApp.Validators;
 
 namespace FileCabinetApp.FileCabinetService
@@ -12,11 +13,12 @@ namespace FileCabinetApp.FileCabinetService
     /// <summary>
     /// Helper class for storing data in a binary file.
     /// </summary>
-    public class FileCabinetFilesystemService : FileCabinetService, IFileCabinetService, IDisposable
+    public class FileCabinetFilesystemService : IFileCabinetService, IDisposable
     {
         private const string FileName = "cabinet-records.db";
         private const int RecordSize = 278;
         private const int StringBufferSize = 120;
+        private readonly IRecordValidator validator;
         private FileStream fileStream;
 
         /// <summary>
@@ -24,8 +26,8 @@ namespace FileCabinetApp.FileCabinetService
         /// </summary>
         /// <param name="validator">The <see cref="IRecordValidator"/> specialised instance.</param>
         public FileCabinetFilesystemService(IRecordValidator validator)
-            : base(validator)
         {
+            this.validator = validator;
             this.fileStream = File.Open(FileName, FileMode.OpenOrCreate, FileAccess.ReadWrite);
         }
 
@@ -36,10 +38,8 @@ namespace FileCabinetApp.FileCabinetService
         }
 
         /// <inheritdoc/>
-        public int CreateRecord()
+        public int CreateRecord(FileCabinetRecord record)
         {
-            var record = this.GetInputData();
-
             // Assign id
             record.Id = this.GetLastId() + 1;
 
@@ -103,26 +103,20 @@ namespace FileCabinetApp.FileCabinetService
         }
 
         /// <inheritdoc/>
-        public void EditRecord(int id)
+        public bool EditRecord(FileCabinetRecord record)
         {
-            var pos = this.FindById(id);
+            if (record == null)
+            {
+                return false;
+            }
+
+            var pos = this.GetPosition(record.Id);
             if (pos == -1)
             {
-                Console.WriteLine("#{0} record is not found.", id);
-                return;
+                return false;
             }
 
-            var record = this.GetInputData();
-            record.Id = id;
-
-            if (this.WriteToFile(record, pos))
-            {
-                Console.WriteLine("Record #{0} is updated.", id);
-            }
-            else
-            {
-                Console.WriteLine("Record is not updated.");
-            }
+            return this.WriteToFile(record, pos);
         }
 
         /// <inheritdoc/>
@@ -181,7 +175,7 @@ namespace FileCabinetApp.FileCabinetService
         {
             List<FileCabinetRecord> result = new ();
             DateTime? date;
-            var conversionResult = DateConverter(dateOfBirthString);
+            var conversionResult = Converter.DateConverter(dateOfBirthString);
             if (!conversionResult.Item1)
             {
                 Console.WriteLine($"Conversion failed: {conversionResult.Item2}. Please, correct your input.");
@@ -214,7 +208,7 @@ namespace FileCabinetApp.FileCabinetService
                     continue;
                 }
 
-                var position = this.FindById(record.Id);
+                var position = this.GetPosition(record.Id);
                 if (position != -1)
                 {
                     this.WriteToFile(record, position);
@@ -227,14 +221,13 @@ namespace FileCabinetApp.FileCabinetService
         }
 
         /// <inheritdoc/>
-        public void RemoveRecord(int id)
+        public bool RemoveRecord(int id)
         {
             // find id
-            var position = this.FindById(id);
+            var position = this.GetPosition(id);
             if (position == -1)
             {
-                Console.WriteLine("Record #{0} doesn't exit.", id);
-                return;
+                return false;
             }
 
             this.fileStream.Position = position;
@@ -246,15 +239,16 @@ namespace FileCabinetApp.FileCabinetService
             catch (Exception e)
             {
                 Console.WriteLine("Error deleting a record: {0}", e.ToString());
+                return false;
             }
 
-            Console.WriteLine("Record #{0} is removed.", id);
+            return true;
         }
 
         /// <inheritdoc/>
-        public void Purge()
+        public (int, int) Purge()
         {
-            var oldQuantity = this.fileStream.Length / RecordSize;
+            int oldQuantity = (int)(this.fileStream.Length / RecordSize);
 
             var records = this.GetRecords();
             try
@@ -276,12 +270,25 @@ namespace FileCabinetApp.FileCabinetService
             catch (Exception e)
             {
                 Console.WriteLine("Error while clearing file {0} : {1}", FileName, e.ToString());
-                return;
+                return (-1, -1);
             }
 
-            var newQuantity = this.fileStream.Length / RecordSize;
-            var purgedQuantity = oldQuantity - newQuantity;
-            Console.WriteLine("Data file processing is completed: {0} of {1} records were purged.", purgedQuantity, oldQuantity);
+            int newQuantity = (int)(this.fileStream.Length / RecordSize);
+            int purgedQuantity = oldQuantity - newQuantity;
+            return (purgedQuantity, oldQuantity);
+        }
+
+        /// <inheritdoc/>
+        public FileCabinetRecord? FindById(int id)
+        {
+            var pos = this.GetPosition(id);
+
+            if (pos >= 0)
+            {
+                return this.ReadRecord(pos);
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -320,6 +327,41 @@ namespace FileCabinetApp.FileCabinetService
             BitArray bitArray = new (data);
             bitArray.CopyTo(buffer, offset);
             offset += bitArray.Count / 8;
+        }
+
+        /// <summary>
+        /// Finds the position of the record in a binary file by record's id.
+        /// </summary>
+        /// <param name="id">An <see cref="int"/> instance.</param>
+        /// <returns>A <see cref="long"/> instance.</returns>
+        private long GetPosition(int id)
+        {
+            byte[] bufferStatus = new byte[2];
+            byte[] bufferId = new byte[4];
+
+            // Loop over file and count the records with the status "NotDelete"
+            for (long i = 0; i < this.fileStream.Length; i += RecordSize)
+            {
+                this.fileStream.Position = i;
+                try
+                {
+                    this.fileStream.Read(bufferStatus, 0, bufferStatus.Length);
+                    this.fileStream.Read(bufferId, 0, bufferId.Length);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Error in reading data in {0} : {1}", FileName, e.ToString());
+                    return -1;
+                }
+
+                var status = BitConverter.ToInt16(bufferStatus, 0);
+                if (status == (short)Status.NotDeleted && id == BitConverter.ToInt16(bufferId, 0))
+                {
+                    return i;
+                }
+            }
+
+            return -1;
         }
 
         /// <summary>
@@ -409,41 +451,6 @@ namespace FileCabinetApp.FileCabinetService
             }
 
             return true;
-        }
-
-        /// <summary>
-        /// Finds the position of the record in a binary file by record's id.
-        /// </summary>
-        /// <param name="id">An <see cref="int"/> instance.</param>
-        /// <returns>A <see cref="long"/> instance.</returns>
-        private long FindById(int id)
-        {
-            byte[] bufferStatus = new byte[2];
-            byte[] bufferId = new byte[4];
-
-            // Loop over file and count the records with the status "NotDelete"
-            for (long i = 0; i < this.fileStream.Length; i += RecordSize)
-            {
-                this.fileStream.Position = i;
-                try
-                {
-                    this.fileStream.Read(bufferStatus, 0, bufferStatus.Length);
-                    this.fileStream.Read(bufferId, 0, bufferId.Length);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Error in reading data in {0} : {1}", FileName, e.ToString());
-                    return -1;
-                }
-
-                var status = BitConverter.ToInt16(bufferStatus, 0);
-                if (status == (short)Status.NotDeleted && id == BitConverter.ToInt16(bufferId, 0))
-                {
-                    return i;
-                }
-            }
-
-            return -1;
         }
 
         /// <summary>
@@ -560,6 +567,24 @@ namespace FileCabinetApp.FileCabinetService
             record.Department = BitConverter.ToChar(buffer, offset);
 
             return record;
+        }
+
+        /// <summary>
+        /// Validates the <see cref="FileCabinetRecord"/> instance.
+        /// </summary>
+        /// <param name="record">A <see cref="FileCabinetRecord"/> instance.</param>
+        /// <returns>true if record is valid, false otherwise.</returns>
+        private bool IsValidRecord(FileCabinetRecord record)
+        {
+            // Validate Record
+            var validationResult = this.validator.ValidateParameters(record);
+            if (!validationResult.Item1)
+            {
+                Console.WriteLine("#{0}: {1}", record.Id, validationResult.Item2);
+                return false;
+            }
+
+            return true;
         }
     }
 }

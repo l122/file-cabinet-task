@@ -40,7 +40,14 @@ namespace FileCabinetApp.CommandHandlers
                 return;
             }
 
-            this.service.RemoveRecord(id);
+            if (this.service.RemoveRecord(id))
+            {
+                Console.WriteLine("Record #{0} is removed.", id);
+            }
+            else
+            {
+                Console.WriteLine("Record #{0} is not found.", id);
+            }
         }
     }
 }

@@ -10,11 +10,12 @@ namespace FileCabinetApp.FileCabinetService
     /// <summary>
     /// Helper class for storing data in a temporary memory.
     /// </summary>
-    public class FileCabinetMemoryService : FileCabinetService, IFileCabinetService
+    public class FileCabinetMemoryService : IFileCabinetService
     {
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary;
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary;
         private readonly Dictionary<string, List<FileCabinetRecord>> dateOfBirthDictionary;
+        private readonly IRecordValidator validator;
         private readonly List<FileCabinetRecord> list;
 
         /// <summary>
@@ -22,8 +23,8 @@ namespace FileCabinetApp.FileCabinetService
         /// </summary>
         /// <param name="validator">The <see cref="IRecordValidator"/> specialised instance.</param>
         public FileCabinetMemoryService(IRecordValidator validator)
-            : base(validator)
         {
+            this.validator = validator;
             this.list = new List<FileCabinetRecord>();
             this.firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
             this.lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
@@ -31,10 +32,8 @@ namespace FileCabinetApp.FileCabinetService
         }
 
         /// <inheritdoc/>
-        public int CreateRecord()
+        public int CreateRecord(FileCabinetRecord record)
         {
-            var record = this.GetInputData();
-
             // Update record id, because the default id = 1
             if (this.list.Count > 0)
             {
@@ -60,16 +59,13 @@ namespace FileCabinetApp.FileCabinetService
         }
 
         /// <inheritdoc/>
-        public void EditRecord(int id)
+        public bool EditRecord(FileCabinetRecord record)
         {
-            int listId = this.list.FindIndex(p => p.Id == id);
+            int listId = this.GetListId(record.Id);
             if (listId == -1)
             {
-                Console.WriteLine("#{0} record is not found.", id);
-                return;
+                return false;
             }
-
-            var record = this.GetInputData();
 
             this.RemoveRecordFromSearchDictionaries(this.list[listId]);
 
@@ -81,11 +77,9 @@ namespace FileCabinetApp.FileCabinetService
             this.list[listId].Salary = record.Salary;
             this.list[listId].Department = record.Department;
 
-            // Assign the correct id to the record, because the default id = 0
-            record.Id = id;
-
             this.AddRecordToSearchDictionaries(record);
-            Console.WriteLine("Record #{0} is updated.", id);
+
+            return true;
         }
 
         /// <inheritdoc/>
@@ -159,28 +153,37 @@ namespace FileCabinetApp.FileCabinetService
         }
 
         /// <inheritdoc/>
-        public void RemoveRecord(int id)
+        public bool RemoveRecord(int id)
         {
             var listId = this.list.FindIndex(p => p.Id == id);
 
             if (listId == -1)
             {
-                Console.WriteLine("Record #{0} doesn't exit.", id);
-                return;
+                return false;
             }
 
-            this.list.RemoveAt(listId);
             this.RemoveRecordFromSearchDictionaries(this.list[listId]);
+            this.list.RemoveAt(listId);
 
-            Console.WriteLine("Record #{0} is removed.", id);
+            return true;
         }
 
-        /// <summary>
-        /// Does nothing for FileCabinetMemorySerive.
-        /// </summary>
-        public void Purge()
+        /// <inheritdoc/>
+        public (int, int) Purge()
         {
-            // Do nothing because it's not applied to the memory service.
+            return (0, this.list.Count);
+        }
+
+        /// <inheritdoc/>
+        public FileCabinetRecord? FindById(int id)
+        {
+            var listId = this.GetListId(id);
+            if (listId == -1)
+            {
+                return null;
+            }
+
+            return this.list[listId];
         }
 
         /// <summary>
@@ -251,6 +254,29 @@ namespace FileCabinetApp.FileCabinetService
             {
                 this.dateOfBirthDictionary.Remove(dateOfBirthString);
             }
+        }
+
+        /// <summary>
+        /// Validates the <see cref="FileCabinetRecord"/> instance.
+        /// </summary>
+        /// <param name="record">A <see cref="FileCabinetRecord"/> instance.</param>
+        /// <returns>true if record is valid, false otherwise.</returns>
+        private bool IsValidRecord(FileCabinetRecord record)
+        {
+            // Validate Record
+            var validationResult = this.validator.ValidateParameters(record);
+            if (!validationResult.Item1)
+            {
+                Console.WriteLine("#{0}: {1}", record.Id, validationResult.Item2);
+                return false;
+            }
+
+            return true;
+        }
+
+        private int GetListId(int id)
+        {
+            return this.list.FindIndex(p => p.Id == id);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using FileCabinetApp.FileCabinetService;
+﻿using System;
+using FileCabinetApp.FileCabinetService;
 
 namespace FileCabinetApp.CommandHandlers
 {
@@ -23,7 +24,9 @@ namespace FileCabinetApp.CommandHandlers
         {
             if (CanHandle(Trigger, appCommandRequest.Command))
             {
-                this.service.Purge();
+                var result = this.service.Purge();
+
+                Console.WriteLine("Data file processing is completed: {0} of {1} records were purged.", result.Item1, result.Item2);
             }
             else
             {
