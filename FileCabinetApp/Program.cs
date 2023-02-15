@@ -1,6 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using FileCabinetApp.CommandHandlers;
+using FileCabinetApp.Extensions;
+using FileCabinetApp.FileCabinetService;
+using FileCabinetApp.Loggers;
+using FileCabinetApp.Validators;
 
 [assembly: CLSCompliant(true)]
 
@@ -13,6 +18,7 @@ namespace FileCabinetApp
     {
         private const string DeveloperName = "Oleg Shkadov";
         private const string HintMessage = "Enter your command, or enter 'help' to get help.";
+        private const string UseStopwatch = "--use-stopwatch";
 
         private static readonly string[] ValidationRulesFlags = { "--validation-rules", "-v" };
         private static readonly string[] StorageFlags = { "--storage", "-s" };
@@ -141,6 +147,10 @@ namespace FileCabinetApp
             }
 
             fileCabinetService = MemorySystems[memoryIndex].Item2(validator);
+            if (parsedArgsDictionary.TryGetValue(UseStopwatch, out var _))
+            {
+                fileCabinetService = new ServiceMeter(fileCabinetService);
+            }
         }
 
         private static IFileCabinetService GetFileCabinetFilesystemServiceObject(IRecordValidator validator)
@@ -174,15 +184,19 @@ namespace FileCabinetApp
             int i = 0;
             while (i < args.Length)
             {
-                var splitedArg = args[i].Split("=");
-                if (splitedArg.Length == 2)
+                var arg = args[i].Split("=");
+                if (arg.Length == 2)
                 {
-                    result.Add(splitedArg[0].ToLower(CultureInfo.InvariantCulture), splitedArg[1].ToLower(CultureInfo.InvariantCulture));
+                    result.Add(arg[0].ToLower(CultureInfo.InvariantCulture), arg[1].ToLower(CultureInfo.InvariantCulture));
                 }
-                else if (splitedArg.Length == 1 && i + 1 < args.Length)
+                else if (arg.Length == 1 && i + 1 < args.Length)
                 {
                     result.Add(args[i].ToLower(CultureInfo.InvariantCulture), args[i + 1].ToLower(CultureInfo.InvariantCulture));
                     i++;
+                }
+                else
+                {
+                    result.Add(args[i].ToLower(CultureInfo.InvariantCulture), string.Empty);
                 }
 
                 i++;
