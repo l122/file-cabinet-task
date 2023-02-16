@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Globalization;
+using FileCabinetApp.CommandHandlers;
+using FileCabinetApp.FileCabinetService;
+using FileCabinetApp.Loggers;
+using FileCabinetApp.StaticClasses;
+using FileCabinetApp.Validators;
 
 [assembly: CLSCompliant(true)]
 
@@ -14,6 +18,8 @@ namespace FileCabinetApp
     {
         private const string DeveloperName = "Oleg Shkadov";
         private const string HintMessage = "Enter your command, or enter 'help' to get help.";
+        private const string UseStopwatch = "--use-stopwatch";
+        private const string UseLogger = "--use-logger";
 
         private static readonly string[] ValidationRulesFlags = { "--validation-rules", "-v" };
         private static readonly string[] StorageFlags = { "--storage", "-s" };
@@ -30,7 +36,8 @@ namespace FileCabinetApp
             new Tuple<string, Func<IRecordValidator, IFileCabinetService>>("file", GetFileCabinetFilesystemServiceObject),
         };
 
-        private static IFileCabinetService fileCabinetService = MemorySystems[0].Item2(Validators[0].Item2());
+        private static IRecordValidator validator = new CompositeValidator(new List<IRecordValidator>());
+        private static IFileCabinetService fileCabinetService = new FileCabinetMemoryService(validator);
         private static bool isRunning = true;
 
         /// <summary>
@@ -39,11 +46,11 @@ namespace FileCabinetApp
         /// <param name="args">The <see cref="string"/> array instance of input arguments.</param>
         public static void Main(string[] args)
         {
-            Init(args);
-
             Console.WriteLine($"File Cabinet Application, developed by {Program.DeveloperName}");
             Console.WriteLine(Program.HintMessage);
             Console.WriteLine();
+
+            Init(args);
 
             var commandHandler = CreateCommandHandlers(fileCabinetService);
 
@@ -67,6 +74,81 @@ namespace FileCabinetApp
                 commandHandler.Handle(new AppCommandRequest(command, parameters));
             }
             while (isRunning);
+        }
+
+        /// <summary>
+        /// Gets input data from console and creates a new record with id = 0.
+        /// </summary>
+        /// <returns>The <see cref="FileCabinetRecord"/> instance with id = 0.</returns>
+        public static FileCabinetRecord GetInputData()
+        {
+            FileCabinetRecord record;
+
+            do
+            {
+                Console.Write("First name: ");
+                string firstName = ReadInput(Converter.StringConverter);
+
+                Console.Write("Last name: ");
+                string lastName = ReadInput(Converter.StringConverter);
+
+                Console.Write("Date of birth: ");
+                DateTime dateOfBirth = ReadInput(Converter.DateConverter);
+
+                Console.Write("Work Place Number: ");
+                short workPlaceNumber = ReadInput(Converter.ShortConverter);
+
+                Console.Write("SalaryType: ");
+                decimal salary = ReadInput(Converter.DecimalConverter);
+
+                Console.Write("DepartmentType (one letter): ");
+                char department = ReadInput(Converter.CharConverter);
+
+                record = new FileCabinetRecord()
+                {
+                    Id = 1,
+                    FirstName = firstName,
+                    LastName = lastName,
+                    DateOfBirth = dateOfBirth,
+                    WorkPlaceNumber = workPlaceNumber,
+                    Salary = salary,
+                    Department = department.ToString().ToUpper(CultureInfo.InvariantCulture)[0],
+                };
+
+                var validationResult = validator.ValidateParameters(record);
+                if (!validationResult.Item1)
+                {
+                    Console.WriteLine("Validation failed: {0}", validationResult.Item2);
+                    continue;
+                }
+
+                return record;
+            }
+            while (true);
+        }
+
+        /// <summary>
+        /// Reads input in a loop until the input data is acquired and validated.
+        /// </summary>
+        /// <typeparam name="T">The type to be read to.</typeparam>
+        /// <param name="converter">Converts a string into a needed type.</param>
+        /// <returns>The <c>T</c>-type instance of input data.</returns>
+        private static T ReadInput<T>(Func<string?, Tuple<bool, string, T>> converter)
+        {
+            do
+            {
+                var input = Console.ReadLine();
+                var conversionResult = converter(input);
+
+                if (!conversionResult.Item1)
+                {
+                    Console.WriteLine($"Conversion failed: {conversionResult.Item2}. Please, correct your input.");
+                    continue;
+                }
+
+                return conversionResult.Item3;
+            }
+            while (true);
         }
 
         /// <summary>
@@ -125,7 +207,7 @@ namespace FileCabinetApp
                 }
             }
 
-            var validator = Validators[validatorIndex].Item2();
+            validator = Validators[validatorIndex].Item2();
 
             int memoryIndex = 0;
             foreach (var flag in StorageFlags)
@@ -142,6 +224,16 @@ namespace FileCabinetApp
             }
 
             fileCabinetService = MemorySystems[memoryIndex].Item2(validator);
+
+            if (parsedArgsDictionary.TryGetValue(UseStopwatch, out var _))
+            {
+                fileCabinetService = new ServiceMeter(fileCabinetService);
+            }
+
+            if (parsedArgsDictionary.TryGetValue(UseLogger, out var _))
+            {
+                fileCabinetService = new ServiceLogger(fileCabinetService);
+            }
         }
 
         private static IFileCabinetService GetFileCabinetFilesystemServiceObject(IRecordValidator validator)
@@ -156,12 +248,12 @@ namespace FileCabinetApp
 
         private static IRecordValidator GetCustomValidatorObject()
         {
-            return new ValidatorBuilder().CreateDefaultValidator();
+            return new ValidatorBuilder().CreateCustomValidator();
         }
 
         private static IRecordValidator GetDefaultValidatorObject()
         {
-            return new ValidatorBuilder().CreateCustomValidator();
+            return new ValidatorBuilder().CreateDefaultValidator();
         }
 
         /// <summary>
@@ -175,15 +267,30 @@ namespace FileCabinetApp
             int i = 0;
             while (i < args.Length)
             {
-                var splitedArg = args[i].Split("=");
-                if (splitedArg.Length == 2)
+                args[i] = args[i].ToLower(CultureInfo.InvariantCulture);
+                if (args[i].StartsWith("--", StringComparison.InvariantCulture))
                 {
-                    result.Add(splitedArg[0].ToLower(CultureInfo.InvariantCulture), splitedArg[1].ToLower(CultureInfo.InvariantCulture));
+                    var arg = args[i].Split("=");
+                    if (arg.Length >= 2)
+                    {
+                        result.Add(arg[0], arg[1]);
+                    }
+                    else
+                    {
+                        result.Add(arg[0], string.Empty);
+                    }
                 }
-                else if (splitedArg.Length == 1 && i + 1 < args.Length)
+                else if (args[i].StartsWith("-", StringComparison.InvariantCulture))
                 {
-                    result.Add(args[i].ToLower(CultureInfo.InvariantCulture), args[i + 1].ToLower(CultureInfo.InvariantCulture));
-                    i++;
+                    if (i + 1 < args.Length && !args[i + 1].StartsWith("-", StringComparison.InvariantCulture))
+                    {
+                        result.Add(args[i], args[i + 1]);
+                        i++;
+                    }
+                    else
+                    {
+                        result.Add(args[i], string.Empty);
+                    }
                 }
 
                 i++;
