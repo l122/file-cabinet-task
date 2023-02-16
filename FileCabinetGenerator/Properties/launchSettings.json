@@ -2,7 +2,7 @@
   "profiles": {
     "FileCabinetGenerator": {
       "commandName": "Project",
-      "commandLineArgs": "-t csv -o C:\\Users\\Me\\source\\repos\\file-cabinet-task\\db\\records.csv -a 20"
+      "commandLineArgs": "-t csv -o records.csv -a 10000 -v custom"
     }
   }
 }
