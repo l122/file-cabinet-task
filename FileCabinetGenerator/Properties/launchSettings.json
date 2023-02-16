@@ -2,7 +2,7 @@
   "profiles": {
     "FileCabinetGenerator": {
       "commandName": "Project",
-      "commandLineArgs": "-t csv -o records.csv -a 10000 -v custom"
+      "commandLineArgs": "-t csv -o records.csv -a 1000 -v custom"
     }
   }
 }

@@ -2,10 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using FileCabinetApp.StaticClasses;
 using FileCabinetApp.Validators;
 
 namespace FileCabinetApp.FileCabinetService
@@ -16,9 +16,13 @@ namespace FileCabinetApp.FileCabinetService
     public class FileCabinetFilesystemService : IFileCabinetService, IDisposable
     {
         private const string FileName = "cabinet-records.db";
+        private const string DateMask = "yyyy-MMM-dd";
         private const int RecordSize = 278;
         private const int StringBufferSize = 120;
         private readonly IRecordValidator validator;
+        private readonly Dictionary<string, List<long>> firstNameDictionary;
+        private readonly Dictionary<string, List<long>> lastNameDictionary;
+        private readonly Dictionary<string, List<long>> dateOfBirthDictionary;
         private FileStream fileStream;
 
         /// <summary>
@@ -29,6 +33,11 @@ namespace FileCabinetApp.FileCabinetService
         {
             this.validator = validator;
             this.fileStream = File.Open(FileName, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            this.firstNameDictionary = new Dictionary<string, List<long>>();
+            this.lastNameDictionary = new Dictionary<string, List<long>>();
+            this.dateOfBirthDictionary = new Dictionary<string, List<long>>();
+
+            this.UpdateSearchDictionaries();
         }
 
         private enum Status : short
@@ -45,6 +54,8 @@ namespace FileCabinetApp.FileCabinetService
 
             if (this.WriteToFile(record, this.fileStream.Length))
             {
+                var pos = this.GetPosition(record.Id);
+                this.AddRecordToSearchDictionaries(record, pos);
                 return record.Id;
             }
 
@@ -116,7 +127,19 @@ namespace FileCabinetApp.FileCabinetService
                 return false;
             }
 
-            return this.WriteToFile(record, pos);
+            var oldRecord = this.ReadRecord(pos);
+            if (oldRecord != null)
+            {
+                this.RemoveRecordFromSearchDictionaries(oldRecord, pos);
+            }
+
+            var result = this.WriteToFile(record, pos);
+            if (result)
+            {
+                this.AddRecordToSearchDictionaries(record, pos);
+            }
+
+            return result;
         }
 
         /// <inheritdoc/>
@@ -137,63 +160,38 @@ namespace FileCabinetApp.FileCabinetService
         /// <inheritdoc/>
         public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
         {
-            List<FileCabinetRecord> result = new ();
-
-            // Loop over file and count the records with the status "NotDelete"
-            for (long i = 0; i < this.fileStream.Length; i += RecordSize)
+            if (this.firstNameDictionary.TryGetValue(firstName.ToUpperInvariant(), out var list))
             {
-                var record = this.ReadRecord(i);
-                if (record != null && record.FirstName.Equals(firstName.Trim(), StringComparison.OrdinalIgnoreCase))
-                {
-                    result.Add(record);
-                }
+                return this.ReadRecords(list);
             }
 
-            return new ReadOnlyCollection<FileCabinetRecord>(result);
+            return new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
         }
 
         /// <inheritdoc/>
         public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
         {
-            List<FileCabinetRecord> result = new ();
-
-            // Loop over file and count the records with the status "NotDelete"
-            for (long i = 0; i < this.fileStream.Length; i += RecordSize)
+            if (this.lastNameDictionary.TryGetValue(lastName.ToUpperInvariant(), out var list))
             {
-                var record = this.ReadRecord(i);
-                if (record != null && record.LastName.Equals(lastName.Trim(), StringComparison.OrdinalIgnoreCase))
-                {
-                    result.Add(record);
-                }
+                return this.ReadRecords(list);
             }
 
-            return new ReadOnlyCollection<FileCabinetRecord>(result);
+            return new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
         }
 
         /// <inheritdoc/>
         public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirthString)
         {
-            List<FileCabinetRecord> result = new ();
-            DateTime? date;
-            var conversionResult = Converter.DateConverter(dateOfBirthString);
-            if (!conversionResult.Item1)
+            if (DateTime.TryParse(dateOfBirthString, CultureInfo.InvariantCulture, out var value))
             {
-                Console.WriteLine($"Conversion failed: {conversionResult.Item2}. Please, correct your input.");
-            }
-
-            date = conversionResult.Item3;
-
-            // Loop over file and count the records with the status "NotDelete"
-            for (long i = 0; i < this.fileStream.Length; i += RecordSize)
-            {
-                var record = this.ReadRecord(i);
-                if (record != null && date.Equals(record.DateOfBirth))
+                string date = value.ToString(DateMask, CultureInfo.InvariantCulture);
+                if (this.dateOfBirthDictionary.TryGetValue(date, out var list))
                 {
-                    result.Add(record);
+                    return this.ReadRecords(list);
                 }
             }
 
-            return new ReadOnlyCollection<FileCabinetRecord>(result);
+            return new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
         }
 
         /// <inheritdoc/>
@@ -209,13 +207,20 @@ namespace FileCabinetApp.FileCabinetService
                 }
 
                 var position = this.GetPosition(record.Id);
+                bool recordWriten;
                 if (position != -1)
                 {
-                    this.WriteToFile(record, position);
+                    recordWriten = this.WriteToFile(record, position);
                 }
                 else
                 {
-                    this.WriteToFile(record, this.fileStream.Length);
+                    position = this.fileStream.Length;
+                    recordWriten = this.WriteToFile(record, position);
+                }
+
+                if (recordWriten)
+                {
+                    this.AddRecordToSearchDictionaries(record, position);
                 }
             }
         }
@@ -235,6 +240,12 @@ namespace FileCabinetApp.FileCabinetService
             {
                 this.fileStream.Write(BitConverter.GetBytes((short)Status.Deleted), 0, sizeof(short));
                 this.fileStream.Flush();
+
+                var record = this.ReadRecord(position);
+                if (record != null)
+                {
+                    this.RemoveRecordFromSearchDictionaries(record, position);
+                }
             }
             catch (Exception e)
             {
@@ -263,8 +274,14 @@ namespace FileCabinetApp.FileCabinetService
                 var position = 0;
                 foreach (var record in records)
                 {
-                    this.WriteToFile(record, position);
-                    position += RecordSize;
+                    if (this.WriteToFile(record, position))
+                    {
+                        position += RecordSize;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Error writing a record id#{0} to the database at the file position {1}", record.Id, position);
+                    }
                 }
             }
             catch (Exception e)
@@ -272,6 +289,8 @@ namespace FileCabinetApp.FileCabinetService
                 Console.WriteLine("Error while clearing file {0} : {1}", FileName, e.ToString());
                 return (-1, -1);
             }
+
+            this.UpdateSearchDictionaries();
 
             int newQuantity = (int)(this.fileStream.Length / RecordSize);
             int purgedQuantity = oldQuantity - newQuantity;
@@ -585,6 +604,103 @@ namespace FileCabinetApp.FileCabinetService
             }
 
             return true;
+        }
+
+        private void AddRecordToSearchDictionaries(in FileCabinetRecord record, in long pos)
+        {
+            // Add record to firstNameDictionary
+            if (this.firstNameDictionary.TryGetValue(record.FirstName.ToUpperInvariant(), out var value))
+            {
+                value.Add(pos);
+            }
+            else
+            {
+                this.firstNameDictionary.Add(record.FirstName.ToUpperInvariant(), new List<long> { pos });
+            }
+
+            // Add record to lastNameDictionary
+            if (this.lastNameDictionary.TryGetValue(record.LastName.ToUpperInvariant(), out value))
+            {
+                value.Add(pos);
+            }
+            else
+            {
+                this.lastNameDictionary.Add(record.LastName.ToUpperInvariant(), new List<long> { pos });
+            }
+
+            // Add record to dateOfBirthDictionary
+            string dateOfBirthString = record.DateOfBirth.ToString(DateMask, CultureInfo.InvariantCulture);
+            if (this.dateOfBirthDictionary.TryGetValue(dateOfBirthString, out value))
+            {
+                value.Add(pos);
+            }
+            else
+            {
+                this.dateOfBirthDictionary.Add(dateOfBirthString, new List<long> { pos });
+            }
+        }
+
+        private void RemoveRecordFromSearchDictionaries(FileCabinetRecord record, in long pos)
+        {
+            // Update firstNameDictionary
+            var recordList = this.firstNameDictionary[record.FirstName.ToUpperInvariant()];
+            recordList.Remove(pos);
+            if (recordList.Count == 0)
+            {
+                this.firstNameDictionary.Remove(record.FirstName.ToUpperInvariant());
+            }
+
+            // Update lastNameDictionary
+            recordList = this.lastNameDictionary[record.LastName.ToUpperInvariant()];
+            recordList.Remove(pos);
+            if (recordList.Count == 0)
+            {
+                this.lastNameDictionary.Remove(record.LastName.ToUpperInvariant());
+            }
+
+            // Update dateOfBirthDictionary
+            string dateOfBirthString = record.DateOfBirth.ToString(DateMask, CultureInfo.InvariantCulture);
+            recordList = this.dateOfBirthDictionary[dateOfBirthString];
+            recordList.Remove(pos);
+            if (recordList.Count == 0)
+            {
+                this.dateOfBirthDictionary.Remove(dateOfBirthString);
+            }
+        }
+
+        private ReadOnlyCollection<FileCabinetRecord> ReadRecords(List<long> list)
+        {
+            List<FileCabinetRecord> result = new ();
+
+            foreach (var pos in list)
+            {
+                var record = this.ReadRecord(pos);
+                if (record != null)
+                {
+                    result.Add(record);
+                }
+            }
+
+            return new ReadOnlyCollection<FileCabinetRecord>(result);
+        }
+
+        private void UpdateSearchDictionaries()
+        {
+            this.firstNameDictionary.Clear();
+            this.lastNameDictionary.Clear();
+            this.dateOfBirthDictionary.Clear();
+
+            long position = 0;
+            while (position < this.fileStream.Length)
+            {
+                var record = this.ReadRecord(position);
+                if (record != null)
+                {
+                    this.AddRecordToSearchDictionaries(record, position);
+                }
+
+                position += RecordSize;
+            }
         }
     }
 }
