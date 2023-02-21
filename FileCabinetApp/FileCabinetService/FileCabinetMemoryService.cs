@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using FileCabinetApp.Validators;
@@ -12,6 +11,7 @@ namespace FileCabinetApp.FileCabinetService
     /// </summary>
     public class FileCabinetMemoryService : IFileCabinetService
     {
+        private const string DateMask = "yyyy-MMM-dd";
         private readonly Dictionary<string, List<FileCabinetRecord>> firstNameDictionary;
         private readonly Dictionary<string, List<FileCabinetRecord>> lastNameDictionary;
         private readonly Dictionary<string, List<FileCabinetRecord>> dateOfBirthDictionary;
@@ -47,9 +47,9 @@ namespace FileCabinetApp.FileCabinetService
         }
 
         /// <inheritdoc/>
-        public ReadOnlyCollection<FileCabinetRecord> GetRecords()
+        public IRecordIterator GetRecords()
         {
-            return new ReadOnlyCollection<FileCabinetRecord>(this.list);
+            return new MemoryIterator(this.list);
         }
 
         /// <inheritdoc/>
@@ -85,45 +85,45 @@ namespace FileCabinetApp.FileCabinetService
         /// <inheritdoc/>
         public IFileCabinetServiceSnapshot MakeSnapshot()
         {
-            return new FileCabinetServiceSnapshot(this.list.ToArray());
+            return new FileCabinetServiceSnapshot(new MemoryIterator(this.list));
         }
 
         /// <inheritdoc/>
-        public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
+        public IRecordIterator FindByFirstName(string firstName)
         {
             if (this.firstNameDictionary.TryGetValue(firstName.ToUpperInvariant(), out List<FileCabinetRecord>? result))
             {
-                return new ReadOnlyCollection<FileCabinetRecord>(result);
+                return new MemoryIterator(result);
             }
 
-            return new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
+            return new MemoryIterator(new List<FileCabinetRecord>());
         }
 
         /// <inheritdoc/>
-        public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
+        public IRecordIterator FindByLastName(string lastName)
         {
             if (this.lastNameDictionary.TryGetValue(lastName.ToUpperInvariant(), out List<FileCabinetRecord>? result))
             {
-                return new ReadOnlyCollection<FileCabinetRecord>(result);
+                return new MemoryIterator(result);
             }
 
-            return new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
+            return new MemoryIterator(new List<FileCabinetRecord>());
         }
 
         /// <inheritdoc/>
-        public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirthString)
+        public IRecordIterator FindByDateOfBirth(string dateOfBirthString)
         {
             if (DateTime.TryParse(dateOfBirthString, out DateTime dateOfBirth))
             {
-                dateOfBirthString = dateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture);
+                dateOfBirthString = dateOfBirth.ToString(DateMask,CultureInfo.InvariantCulture);
             }
 
             if (this.dateOfBirthDictionary.TryGetValue(dateOfBirthString, out List<FileCabinetRecord>? result))
             {
-                return new ReadOnlyCollection<FileCabinetRecord>(result);
+                return new MemoryIterator(result);
             }
 
-            return new ReadOnlyCollection<FileCabinetRecord>(new List<FileCabinetRecord>());
+            return new MemoryIterator(new List<FileCabinetRecord>());
         }
 
         /// <inheritdoc/>
@@ -213,7 +213,7 @@ namespace FileCabinetApp.FileCabinetService
             }
 
             // Add record to dateOfBirthDictionary
-            string dateOfBirthString = record.DateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture);
+            string dateOfBirthString = record.DateOfBirth.ToString(DateMask, CultureInfo.InvariantCulture);
             if (this.dateOfBirthDictionary.TryGetValue(dateOfBirthString, out value))
             {
                 value.Add(record);
@@ -231,26 +231,26 @@ namespace FileCabinetApp.FileCabinetService
         private void RemoveRecordFromSearchDictionaries(FileCabinetRecord record)
         {
             // Update firstNameDictionary
-            var recordList = this.firstNameDictionary[record.FirstName.ToUpperInvariant()];
-            recordList.RemoveAll(p => p.Id == record.Id);
-            if (recordList.Count == 0)
+            var valueList = this.firstNameDictionary[record.FirstName.ToUpperInvariant()];
+            valueList.RemoveAll(p => p.Id == record.Id);
+            if (valueList.Count == 0)
             {
                 this.firstNameDictionary.Remove(record.FirstName.ToUpperInvariant());
             }
 
             // Update lastNameDictionary
-            recordList = this.lastNameDictionary[record.LastName.ToUpperInvariant()];
-            recordList.RemoveAll(p => p.Id == record.Id);
-            if (recordList.Count == 0)
+            valueList = this.lastNameDictionary[record.LastName.ToUpperInvariant()];
+            valueList.RemoveAll(p => p.Id == record.Id);
+            if (valueList.Count == 0)
             {
                 this.lastNameDictionary.Remove(record.LastName.ToUpperInvariant());
             }
 
             // Update dateOfBirthDictionary
             string dateOfBirthString = record.DateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture);
-            recordList = this.dateOfBirthDictionary[dateOfBirthString];
-            recordList.RemoveAll(p => p.Id == record.Id);
-            if (recordList.Count == 0)
+            valueList = this.dateOfBirthDictionary[dateOfBirthString];
+            valueList.RemoveAll(p => p.Id == record.Id);
+            if (valueList.Count == 0)
             {
                 this.dateOfBirthDictionary.Remove(dateOfBirthString);
             }

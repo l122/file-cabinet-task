@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FileCabinetApp.StaticClasses
 {
@@ -19,7 +16,7 @@ namespace FileCabinetApp.StaticClasses
         /// <returns>The <see cref="Dictionary{TKey, TValue}"/> object.</returns>
         public static Dictionary<string, string> ParseArgs(string[] args)
         {
-            Dictionary<string, string> result = new();
+            Dictionary<string, string> result = new ();
             int i = 0;
             while (i < args.Length)
             {

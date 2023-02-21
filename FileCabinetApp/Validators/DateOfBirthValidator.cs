@@ -9,6 +9,7 @@ namespace FileCabinetApp.Validators
     /// </summary>
     public class DateOfBirthValidator : IRecordValidator
     {
+        private const string DateMask = "dd.MMM.yyyy";
         private readonly DateTime fromDate;
         private readonly DateTime toDate;
 
@@ -33,8 +34,8 @@ namespace FileCabinetApp.Validators
             {
                 return Tuple.Create(
                     false,
-                    new string($"Date of birth should be within {this.fromDate.ToString("dd.MMM.yyyy", CultureInfo.InvariantCulture)}"
-                            + $" and {this.toDate.ToString("dd.MMM.yyyy", CultureInfo.InvariantCulture)}."));
+                    new string($"Date of birth should be within {this.fromDate.ToString(DateMask, CultureInfo.InvariantCulture)}"
+                            + $" and {this.toDate.ToString(DateMask, CultureInfo.InvariantCulture)}."));
             }
 
             return Tuple.Create(true, string.Empty);

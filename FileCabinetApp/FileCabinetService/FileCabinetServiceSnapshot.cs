@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -10,23 +11,24 @@ namespace FileCabinetApp.FileCabinetService
     /// </summary>
     public class FileCabinetServiceSnapshot : IFileCabinetServiceSnapshot
     {
-        private FileCabinetRecord[] records;
+        private readonly IRecordIterator iterator;
+        private FileCabinetRecord[] records = Array.Empty<FileCabinetRecord>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileCabinetServiceSnapshot"/> class.
         /// </summary>
         public FileCabinetServiceSnapshot()
         {
-            this.records = Array.Empty<FileCabinetRecord>();
+            this.iterator = new MemoryIterator(new List<FileCabinetRecord>(this.records));
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileCabinetServiceSnapshot"/> class.
         /// </summary>
-        /// <param name="param">The <see cref="FileCabinetRecord"/> array instance.</param>
-        public FileCabinetServiceSnapshot(FileCabinetRecord[] param)
+        /// <param name="iterator">An <see cref="IRecordIterator"/> specialized instance.</param>
+        public FileCabinetServiceSnapshot(IRecordIterator iterator)
         {
-            this.records = param;
+            this.iterator = iterator;
         }
 
         /// <inheritdoc/>
@@ -50,9 +52,9 @@ namespace FileCabinetApp.FileCabinetService
         public void SaveToCsv(StreamWriter sw)
         {
             var writer = new FileCabinetRecordCsvWriter(sw);
-            foreach (var record in this.records)
+            while (this.iterator.HasMore())
             {
-                writer.Write(record);
+                writer.Write(this.iterator.GetNext());
             }
         }
 
@@ -60,9 +62,9 @@ namespace FileCabinetApp.FileCabinetService
         public void SaveToXml(StreamWriter sw)
         {
             using var writer = new FileCabinetRecordXmlWriter(sw);
-            foreach (var record in this.records)
+            while (this.iterator.HasMore())
             {
-                writer.Write(record);
+                writer.Write(this.iterator.GetNext());
             }
         }
     }

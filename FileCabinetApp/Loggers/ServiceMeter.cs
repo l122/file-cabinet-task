@@ -46,7 +46,7 @@ namespace FileCabinetApp.Loggers
         }
 
         /// <inheritdoc/>
-        public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirthString)
+        public IRecordIterator FindByDateOfBirth(string dateOfBirthString)
         {
             this.stopwatch.Restart();
             var result = this.service.FindByDateOfBirth(dateOfBirthString);
@@ -57,7 +57,7 @@ namespace FileCabinetApp.Loggers
         }
 
         /// <inheritdoc/>
-        public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
+        public IRecordIterator FindByFirstName(string firstName)
         {
             this.stopwatch.Restart();
             var result = this.service.FindByFirstName(firstName);
@@ -68,7 +68,7 @@ namespace FileCabinetApp.Loggers
         }
 
         /// <inheritdoc/>
-        public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
+        public IRecordIterator FindByLastName(string lastName)
         {
             this.stopwatch.Restart();
             var result = this.service.FindByLastName(lastName);
@@ -79,7 +79,7 @@ namespace FileCabinetApp.Loggers
         }
 
         /// <inheritdoc/>
-        public ReadOnlyCollection<FileCabinetRecord> GetRecords()
+        public IRecordIterator GetRecords()
         {
             this.stopwatch.Restart();
             var result = this.service.GetRecords();

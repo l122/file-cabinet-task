@@ -18,8 +18,8 @@ namespace FileCabinetApp.FileCabinetService
         /// <summary>
         /// Returns all records.
         /// </summary>
-        /// <returns>A read-only instance of all records.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> GetRecords();
+        /// <returns>An <see cref="IRecordIterator"/> specialized instance.</returns>
+        public IRecordIterator GetRecords();
 
         /// <summary>
         /// Returns a pair of (total, deleted) number of records.
@@ -38,22 +38,22 @@ namespace FileCabinetApp.FileCabinetService
         /// Searches for a record by first name.
         /// </summary>
         /// <param name="firstName">The <see cref="string"/> instance of the first name.</param>
-        /// <returns>A read-only instance of all matched records.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName);
+        /// <returns>An <see cref="IRecordIterator"/> specialized instance.</returns>
+        public IRecordIterator FindByFirstName(string firstName);
 
         /// <summary>
         /// Searches for a record by last name.
         /// </summary>
         /// <param name="lastName">The <see cref="string"/> instance of the last name.</param>
-        /// <returns>A read-only instance of all matched records.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName);
+        /// <returns>An <see cref="IRecordIterator"/> specialized instance.</returns>
+        public IRecordIterator FindByLastName(string lastName);
 
         /// <summary>
         /// Searches for a record by date of birth.
         /// </summary>
         /// <param name="dateOfBirthString">The <see cref="string"/> instance of the date of birth.</param>
-        /// <returns>A read-only instance of all matched records.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirthString);
+        /// <returns>An <see cref="IRecordIterator"/> specialized instance.</returns>
+        public IRecordIterator FindByDateOfBirth(string dateOfBirthString);
 
         /// <summary>
         /// Creates an instance of <see cref="IFileCabinetServiceSnapshot"/>.

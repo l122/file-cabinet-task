@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using FileCabinetApp.FileCabinetService;
-using FileCabinetApp.Validators;
 
 namespace FileCabinetApp.Loggers
 {
@@ -68,7 +67,7 @@ namespace FileCabinetApp.Loggers
         }
 
         /// <inheritdoc/>
-        public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirthString)
+        public IRecordIterator FindByDateOfBirth(string dateOfBirthString)
         {
             this.sw.Write("{0} - Calling FindByDateOfBirth() with ", GetCurrentTime());
             this.sw.WriteLine("DateOfBirth = '{0}'.", dateOfBirthString);
@@ -76,14 +75,15 @@ namespace FileCabinetApp.Loggers
 
             var result = this.service.FindByDateOfBirth(dateOfBirthString);
 
-            this.sw.WriteLine("{0} - FindByDateOfBirth() returned a collection of {1} records.", GetCurrentTime(), result.Count);
-            this.sw.Flush();
+            // TODO
+            //this.sw.WriteLine("{0} - FindByDateOfBirth() returned a collection of {1} records.", GetCurrentTime(), result.Collection.Count);
+            //this.sw.Flush();
 
             return result;
         }
 
         /// <inheritdoc/>
-        public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
+        public IRecordIterator FindByFirstName(string firstName)
         {
             this.sw.Write("{0} - Calling FindByFirstName() with ", GetCurrentTime());
             this.sw.WriteLine("FirstName = '{0}'.", firstName);
@@ -91,8 +91,9 @@ namespace FileCabinetApp.Loggers
 
             var result = this.service.FindByFirstName(firstName);
 
-            this.sw.WriteLine("{0} - FindByFirstName() returned a collection of {1} records.", GetCurrentTime(), result.Count);
-            this.sw.Flush();
+            // TODO
+            //this.sw.WriteLine("{0} - FindByFirstName() returned a collection of {1} records.", GetCurrentTime(), result.Collection.Count);
+            //this.sw.Flush();
 
             return result;
         }
@@ -105,7 +106,7 @@ namespace FileCabinetApp.Loggers
         }
 
         /// <inheritdoc/>
-        public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
+        public IRecordIterator FindByLastName(string lastName)
         {
             this.sw.Write("{0} - Calling FindByLastName() with ", GetCurrentTime());
             this.sw.WriteLine("LastName = '{0}'.", lastName);
@@ -113,22 +114,24 @@ namespace FileCabinetApp.Loggers
 
             var result = this.service.FindByLastName(lastName);
 
-            this.sw.WriteLine("{0} - FindByLastName() returned a collection of {1} records.", GetCurrentTime(), result.Count);
-            this.sw.Flush();
+            // TODO
+            //this.sw.WriteLine("{0} - FindByLastName() returned a collection of {1} records.", GetCurrentTime(), result.Collection.Count);
+            //this.sw.Flush();
 
             return result;
         }
 
         /// <inheritdoc/>
-        public ReadOnlyCollection<FileCabinetRecord> GetRecords()
+        public IRecordIterator GetRecords()
         {
             this.sw.WriteLine("{0} - Calling GetRecords().", GetCurrentTime());
             this.sw.Flush();
 
             var result = this.service.GetRecords();
 
-            this.sw.WriteLine("{0} - GetRecords() returned a collection of {1} records.", GetCurrentTime(), result.Count);
-            this.sw.Flush();
+            // TODO
+            //this.sw.WriteLine("{0} - GetRecords() returned a collection of {1} records.", GetCurrentTime(), result.Count);
+            //this.sw.Flush();
 
             return result;
         }
@@ -186,8 +189,13 @@ namespace FileCabinetApp.Loggers
         /// <inheritdoc/>
         public void Restore(IFileCabinetServiceSnapshot snapshot)
         {
-            // No need to log it, because this method is always called by the other logged methods.
+            this.sw.WriteLine("{0} - Calling Restore().", GetCurrentTime());
+            this.sw.Flush();
+
             this.service.Restore(snapshot);
+
+            this.sw.WriteLine("{0} - Restore() restored '{1}' records.", GetCurrentTime(), snapshot.Records.Count);
+            this.sw.Flush();
         }
 
         /// <summary>

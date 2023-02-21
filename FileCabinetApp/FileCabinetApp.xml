@@ -112,7 +112,7 @@
             Handles the Find Command Request.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.CommandHandlers.FindCommandHandler.#ctor(FileCabinetApp.FileCabinetService.IFileCabinetService,System.Action{System.Collections.Generic.IEnumerable{FileCabinetApp.FileCabinetService.FileCabinetRecord}})">
+        <member name="M:FileCabinetApp.CommandHandlers.FindCommandHandler.#ctor(FileCabinetApp.FileCabinetService.IFileCabinetService,System.Action{FileCabinetApp.FileCabinetService.IRecordIterator})">
             <summary>
             Initializes a new instance of the <see cref="T:FileCabinetApp.CommandHandlers.FindCommandHandler"/> class.
             </summary>
@@ -166,7 +166,7 @@
             Handles the List Command Request.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.CommandHandlers.ListCommandHandler.#ctor(FileCabinetApp.FileCabinetService.IFileCabinetService,System.Action{System.Collections.Generic.IEnumerable{FileCabinetApp.FileCabinetService.FileCabinetRecord}})">
+        <member name="M:FileCabinetApp.CommandHandlers.ListCommandHandler.#ctor(FileCabinetApp.FileCabinetService.IFileCabinetService,System.Action{FileCabinetApp.FileCabinetService.IRecordIterator})">
             <summary>
             Initializes a new instance of the <see cref="T:FileCabinetApp.CommandHandlers.ListCommandHandler"/> class.
             </summary>
@@ -321,11 +321,13 @@
             Finds the position of the record in a binary file by record's id.
             </summary>
             <param name="id">An <see cref="T:System.Int32"/> instance.</param>
-            <returns>A <see cref="T:System.Int64"/> instance.</returns>
+            <returns>A <see cref="T:System.Int64"/> instance of the record's position in the file, or -1 if not found.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService.WriteToFile(FileCabinetApp.FileCabinetService.FileCabinetRecord,System.Int64)">
             <summary>
             Writes the <see cref="T:FileCabinetApp.FileCabinetService.FileCabinetRecord"/> instance to a binary file.
+            If the input position is equal to the file size, then the record is
+            appended to the end of the file.
             </summary>
             <param name="record">A <see cref="T:FileCabinetApp.FileCabinetService.FileCabinetRecord"/> instance.</param>
             <returns>true if success, false otherwise.</returns>
@@ -334,13 +336,13 @@
             <summary>
             Return the id of the last non-deleted record.
             </summary>
-            <returns>The <see cref="T:System.Int32"/> instance of id.</returns>
+            <returns>The <see cref="T:System.Int32"/> instance of the last record's id, or -1 if no record is found.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService.ReadRecord(System.Int64)">
             <summary>
             Reads a record from the binary file at current position.
             </summary>
-            <returns>A Nullable <see cref="T:FileCabinetApp.FileCabinetService.FileCabinetRecord"/> instance.</returns>
+            <returns>A <see cref="T:FileCabinetApp.FileCabinetService.FileCabinetRecord"/> instance of the found record, null - if not found.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService.IsValidRecord(FileCabinetApp.FileCabinetService.FileCabinetRecord)">
             <summary>
@@ -565,11 +567,11 @@
             Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetService.FileCabinetServiceSnapshot"/> class.
             </summary>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetService.FileCabinetServiceSnapshot.#ctor(FileCabinetApp.FileCabinetService.FileCabinetRecord[])">
+        <member name="M:FileCabinetApp.FileCabinetService.FileCabinetServiceSnapshot.#ctor(FileCabinetApp.FileCabinetService.IRecordIterator)">
             <summary>
             Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetService.FileCabinetServiceSnapshot"/> class.
             </summary>
-            <param name="param">The <see cref="T:FileCabinetApp.FileCabinetService.FileCabinetRecord"/> array instance.</param>
+            <param name="iterator">An <see cref="T:FileCabinetApp.FileCabinetService.IRecordIterator"/> specialized instance.</param>
         </member>
         <member name="P:FileCabinetApp.FileCabinetService.FileCabinetServiceSnapshot.Records">
             <inheritdoc/>
@@ -584,6 +586,33 @@
             <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetServiceSnapshot.SaveToXml(System.IO.StreamWriter)">
+            <inheritdoc/>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetService.FilesystemIterator">
+            <summary>
+            The iterator for FileCabinetFilesystemService.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FilesystemIterator.#ctor(System.IO.FileStream)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetService.FilesystemIterator"/> class.
+            </summary>
+            <param name="fileStream">A <see cref="T:System.IO.FileStream"/> instance.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FilesystemIterator.#ctor(System.IO.FileStream,System.Collections.Generic.List{System.Int64})">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetService.FilesystemIterator"/> class.
+            </summary>
+            <param name="fileStream">A <see cref="T:System.IO.FileStream"/> instance.</param>
+            <param name="list">A <see cref="T:System.Collections.Generic.List`1"/> instance.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FilesystemIterator.GetNext">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FilesystemIterator.HasMore">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FilesystemIterator.GetPosition">
             <inheritdoc/>
         </member>
         <member name="T:FileCabinetApp.FileCabinetService.IFileCabinetService">
@@ -602,7 +631,7 @@
             <summary>
             Returns all records.
             </summary>
-            <returns>A read-only instance of all records.</returns>
+            <returns>An <see cref="T:FileCabinetApp.FileCabinetService.IRecordIterator"/> specialized instance.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.IFileCabinetService.GetStat">
             <summary>
@@ -622,21 +651,21 @@
             Searches for a record by first name.
             </summary>
             <param name="firstName">The <see cref="T:System.String"/> instance of the first name.</param>
-            <returns>A read-only instance of all matched records.</returns>
+            <returns>An <see cref="T:FileCabinetApp.FileCabinetService.IRecordIterator"/> specialized instance.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.IFileCabinetService.FindByLastName(System.String)">
             <summary>
             Searches for a record by last name.
             </summary>
             <param name="lastName">The <see cref="T:System.String"/> instance of the last name.</param>
-            <returns>A read-only instance of all matched records.</returns>
+            <returns>An <see cref="T:FileCabinetApp.FileCabinetService.IRecordIterator"/> specialized instance.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.IFileCabinetService.FindByDateOfBirth(System.String)">
             <summary>
             Searches for a record by date of birth.
             </summary>
             <param name="dateOfBirthString">The <see cref="T:System.String"/> instance of the date of birth.</param>
-            <returns>A read-only instance of all matched records.</returns>
+            <returns>An <see cref="T:FileCabinetApp.FileCabinetService.IRecordIterator"/> specialized instance.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.IFileCabinetService.MakeSnapshot">
             <summary>
@@ -704,6 +733,49 @@
             Loads data from csv.
             </summary>
             <param name="fileStream">A <see cref="T:System.IO.FileStream"/> instance.</param>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetService.IRecordIterator">
+            <summary>
+            Iterator for FileCabinetService.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.IRecordIterator.GetNext">
+            <summary>
+            Gets next element.
+            </summary>
+            <returns>A nullable <see cref="T:FileCabinetApp.FileCabinetService.FileCabinetRecord"/> instance.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.IRecordIterator.HasMore">
+            <summary>
+            Checks if next element is available.
+            </summary>
+            <returns>true if next element is available, false otherwise.</returns>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.IRecordIterator.GetPosition">
+            <summary>
+            Return record's position.
+            </summary>
+            <returns>A <see cref="T:System.Int64"/> instance.</returns>
+        </member>
+        <member name="T:FileCabinetApp.FileCabinetService.MemoryIterator">
+            <summary>
+            The Iterator for FileCabinetMemoryService.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.MemoryIterator.#ctor(System.Collections.Generic.List{FileCabinetApp.FileCabinetService.FileCabinetRecord})">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetService.MemoryIterator"/> class.
+            </summary>
+            <param name="list">A <see cref="T:System.Collections.Generic.List`1"/> instance.</param>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.MemoryIterator.GetNext">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.MemoryIterator.GetPosition">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.MemoryIterator.HasMore">
+            <inheritdoc/>
         </member>
         <member name="T:FileCabinetApp.Loggers.ServiceLogger">
             <summary>

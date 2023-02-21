@@ -256,16 +256,11 @@ namespace FileCabinetApp
             return new ValidatorBuilder().CreateDefaultValidator();
         }
 
-        private static void DefaultRecordPrint(IEnumerable<FileCabinetRecord> records)
+        private static void DefaultRecordPrint(IRecordIterator iterator)
         {
-            if (records == null)
+            while (iterator.HasMore())
             {
-                return;
-            }
-
-            foreach (var record in records)
-            {
-                Console.WriteLine(record.ToString());
+                Console.WriteLine(iterator.GetNext().ToString());
             }
         }
     }
