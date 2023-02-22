@@ -23,7 +23,11 @@ namespace FileCabinetApp.FileCabinetService
         private readonly Dictionary<string, List<long>> firstNameDictionary;
         private readonly Dictionary<string, List<long>> lastNameDictionary;
         private readonly Dictionary<string, List<long>> dateOfBirthDictionary;
-        private FileStream fileStream;
+        private readonly FileStream fileStream;
+
+        // TODO: make private field lastId.
+        // TODO: make another dictionary to replace searchById and getPositionById.
+        // TODO: remove IDisposable, because we don't need to finalize the class anymore.
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileCabinetFilesystemService"/> class.
