@@ -24,8 +24,8 @@ namespace FileCabinetApp.FileCabinetService
         private readonly Dictionary<string, List<long>> lastNameDictionary;
         private readonly Dictionary<string, List<long>> dateOfBirthDictionary;
         private readonly FileStream fileStream;
+        private int lastId;
 
-        // TODO: make private field lastId.
         // TODO: make another dictionary to replace searchById and getPositionById.
         // TODO: remove IDisposable, because we don't need to finalize the class anymore.
 
@@ -40,7 +40,7 @@ namespace FileCabinetApp.FileCabinetService
             this.firstNameDictionary = new Dictionary<string, List<long>>();
             this.lastNameDictionary = new Dictionary<string, List<long>>();
             this.dateOfBirthDictionary = new Dictionary<string, List<long>>();
-
+            this.lastId = this.GetLastId();
             this.UpdateSearchDictionaries();
         }
 
@@ -54,7 +54,8 @@ namespace FileCabinetApp.FileCabinetService
         public int CreateRecord(FileCabinetRecord record)
         {
             // Assign id
-            record.Id = this.GetLastId() + 1;
+            record.Id = this.lastId + 1;
+            this.lastId++;
 
             if (this.WriteToFile(record, this.fileStream.Length))
             {
@@ -202,7 +203,7 @@ namespace FileCabinetApp.FileCabinetService
             }
 
             // Increase the file by the number of nun-duplicates.
-            long left = this.GetPosition(this.GetLastId());
+            long left = this.GetPosition(this.lastId);
             this.fileStream.SetLength((indices.Count * RecordSize) + this.fileStream.Length);
 
             // Merge to the end of the file.
@@ -234,6 +235,7 @@ namespace FileCabinetApp.FileCabinetService
             }
 
             this.UpdateSearchDictionaries();
+            this.lastId = this.GetLastId();
 
             // return restored quantity
         }
@@ -256,6 +258,11 @@ namespace FileCabinetApp.FileCabinetService
                 this.fileStream.Position = position;
                 this.fileStream.Write(BitConverter.GetBytes((short)Status.Deleted), 0, sizeof(short));
                 this.fileStream.Flush();
+
+                if (id == this.lastId)
+                {
+                    this.lastId = this.GetLastId();
+                }
             }
             catch (Exception e)
             {
@@ -529,7 +536,7 @@ namespace FileCabinetApp.FileCabinetService
         /// <summary>
         /// Return the id of the last non-deleted record.
         /// </summary>
-        /// <returns>The <see cref="int"/> instance of the last record's id, or -1 if no record is found.</returns>
+        /// <returns>The <see cref="int"/> instance of the last record's id, or 0 if no record is found.</returns>
         private int GetLastId()
         {
             int id = 0;
@@ -547,7 +554,7 @@ namespace FileCabinetApp.FileCabinetService
                 catch (Exception e)
                 {
                     Console.WriteLine("Error in reading data in {0} : {1}", FileName, e.ToString());
-                    return -1;
+                    return 0;
                 }
 
                 var status = BitConverter.ToInt16(bufferStatus, 0);

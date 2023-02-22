@@ -336,7 +336,7 @@
             <summary>
             Return the id of the last non-deleted record.
             </summary>
-            <returns>The <see cref="T:System.Int32"/> instance of the last record's id, or -1 if no record is found.</returns>
+            <returns>The <see cref="T:System.Int32"/> instance of the last record's id, or 0 if no record is found.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService.ReadRecord(System.Int64)">
             <summary>
