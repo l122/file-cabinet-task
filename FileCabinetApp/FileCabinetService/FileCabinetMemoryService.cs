@@ -133,18 +133,22 @@ namespace FileCabinetApp.FileCabinetService
 
             foreach (var record in records)
             {
-                this.AddRecordToSearchDictionaries(record);
-
                 var listId = this.list.FindIndex(p => p.Id == record.Id);
                 if (listId != -1)
                 {
+                    this.RemoveRecordFromSearchDictionaries(record);
                     this.list[listId] = record;
                 }
                 else
                 {
                     this.list.Add(record);
                 }
+
+                this.AddRecordToSearchDictionaries(record);
             }
+
+            // Sort the list.
+            this.list.Sort((x, y) => x.Id.CompareTo(y.Id));
 
             return records.Length;
         }
