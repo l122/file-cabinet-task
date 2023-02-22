@@ -12,7 +12,7 @@ namespace FileCabinetApp.FileCabinetService
     /// <summary>
     /// Helper class for storing data in a binary file.
     /// </summary>
-    public class FileCabinetFilesystemService : IFileCabinetService, IDisposable
+    public class FileCabinetFilesystemService : IFileCabinetService
     {
         private const string FileName = "cabinet-records.db";
         private const string DateMask = "yyyy-MMM-dd";
@@ -24,9 +24,6 @@ namespace FileCabinetApp.FileCabinetService
         private readonly Dictionary<string, List<long>> dateOfBirthDictionary;
         private readonly Dictionary<int, long> idsDictionary;
         private readonly FileStream fileStream;
-
-        // TODO: make another dictionary to replace searchById and getPositionById.
-        // TODO: remove IDisposable, because we don't need to finalize the class anymore.
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileCabinetFilesystemService"/> class.
@@ -133,15 +130,6 @@ namespace FileCabinetApp.FileCabinetService
         public IFileCabinetServiceSnapshot MakeSnapshot()
         {
             return new FileCabinetServiceSnapshot(this.GetRecords());
-        }
-
-        /// <summary>
-        /// Releases resourses.
-        /// </summary>
-        public void Dispose()
-        {
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         /// <inheritdoc/>
@@ -362,18 +350,6 @@ namespace FileCabinetApp.FileCabinetService
             }
 
             return null;
-        }
-
-        /// <summary>
-        /// Releases resourses.
-        /// </summary>
-        /// <param name="disposing">The <see cref="bool"/> instance parameter.</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            if (this.fileStream != null)
-            {
-                this.fileStream.Dispose();
-            }
         }
 
         /// <summary>

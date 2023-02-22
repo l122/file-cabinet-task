@@ -268,11 +268,6 @@
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService.MakeSnapshot">
             <inheritdoc/>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService.Dispose">
-            <summary>
-            Releases resourses.
-            </summary>
-        </member>
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService.FindByFirstName(System.String)">
             <inheritdoc/>
         </member>
@@ -293,12 +288,6 @@
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService.FindById(System.Int32)">
             <inheritdoc/>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService.Dispose(System.Boolean)">
-            <summary>
-            Releases resourses.
-            </summary>
-            <param name="disposing">The <see cref="T:System.Boolean"/> instance parameter.</param>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService.CopyToBuffer(System.Byte[]@,System.Byte[],System.Int32@)">
             <summary>
