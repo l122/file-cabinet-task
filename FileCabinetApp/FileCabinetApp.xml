@@ -316,13 +316,6 @@
             <param name="buffer">A <see cref="T:System.Byte"/> destination array.</param>
             <param name="offset">A <see cref="T:System.Int32"/> start index of the destination array.</param>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService.GetPosition(System.Int32)">
-            <summary>
-            Finds the position of the record in a binary file by record's id.
-            </summary>
-            <param name="id">An <see cref="T:System.Int32"/> instance.</param>
-            <returns>A <see cref="T:System.Int64"/> instance of the record's position in the file, or -1 if not found.</returns>
-        </member>
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService.WriteToFile(FileCabinetApp.FileCabinetService.FileCabinetRecord,System.Int64)">
             <summary>
             Writes the <see cref="T:FileCabinetApp.FileCabinetService.FileCabinetRecord"/> instance to a binary file.
@@ -331,12 +324,6 @@
             </summary>
             <param name="record">A <see cref="T:FileCabinetApp.FileCabinetService.FileCabinetRecord"/> instance.</param>
             <returns>true if success, false otherwise.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService.GetLastId">
-            <summary>
-            Return the id of the last non-deleted record.
-            </summary>
-            <returns>The <see cref="T:System.Int32"/> instance of the last record's id, or 0 if no record is found.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService.ReadRecord(System.Int64)">
             <summary>

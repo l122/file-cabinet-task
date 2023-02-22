@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -23,8 +22,8 @@ namespace FileCabinetApp.FileCabinetService
         private readonly Dictionary<string, List<long>> firstNameDictionary;
         private readonly Dictionary<string, List<long>> lastNameDictionary;
         private readonly Dictionary<string, List<long>> dateOfBirthDictionary;
+        private readonly Dictionary<int, long> idsDictionary;
         private readonly FileStream fileStream;
-        private int lastId;
 
         // TODO: make another dictionary to replace searchById and getPositionById.
         // TODO: remove IDisposable, because we don't need to finalize the class anymore.
@@ -37,10 +36,10 @@ namespace FileCabinetApp.FileCabinetService
         {
             this.validator = validator;
             this.fileStream = File.Open(FileName, FileMode.OpenOrCreate, FileAccess.ReadWrite);
-            this.firstNameDictionary = new Dictionary<string, List<long>>();
-            this.lastNameDictionary = new Dictionary<string, List<long>>();
-            this.dateOfBirthDictionary = new Dictionary<string, List<long>>();
-            this.lastId = this.GetLastId();
+            this.firstNameDictionary = new ();
+            this.lastNameDictionary = new ();
+            this.dateOfBirthDictionary = new ();
+            this.idsDictionary = new ();
             this.UpdateSearchDictionaries();
         }
 
@@ -54,12 +53,18 @@ namespace FileCabinetApp.FileCabinetService
         public int CreateRecord(FileCabinetRecord record)
         {
             // Assign id
-            record.Id = this.lastId + 1;
-            this.lastId++;
-
-            if (this.WriteToFile(record, this.fileStream.Length))
+            if (this.idsDictionary.Count > 0)
             {
-                var pos = this.GetPosition(record.Id);
+                record.Id = this.idsDictionary.Last().Key + 1;
+            }
+            else
+            {
+                record.Id = 1;
+            }
+
+            var pos = this.fileStream.Length;
+            if (this.WriteToFile(record, pos))
+            {
                 this.AddRecordToSearchDictionaries(record, pos);
                 return record.Id;
             }
@@ -107,8 +112,7 @@ namespace FileCabinetApp.FileCabinetService
         /// <inheritdoc/>
         public bool EditRecord(FileCabinetRecord record)
         {
-            var pos = this.GetPosition(record.Id);
-            if (pos == -1)
+            if (!this.idsDictionary.TryGetValue(record.Id, out var pos))
             {
                 return false;
             }
@@ -191,8 +195,7 @@ namespace FileCabinetApp.FileCabinetService
             Stack<int> indices = new ();
             for (int i = 0; i < records.Length; i++)
             {
-                var pos = this.GetPosition(records[i].Id);
-                if (pos >= 0)
+                if (this.idsDictionary.TryGetValue(records[i].Id, out var pos))
                 {
                     this.WriteToFile(records[i], pos);
                 }
@@ -202,8 +205,18 @@ namespace FileCabinetApp.FileCabinetService
                 }
             }
 
+            // Get the position of the last record in the initial database.
+            long left;
+            if (this.idsDictionary.Count > 0)
+            {
+                left = this.idsDictionary.Last().Value;
+            }
+            else
+            {
+                left = -1;
+            }
+
             // Increase the file by the number of nun-duplicates.
-            long left = this.GetPosition(this.lastId);
             this.fileStream.SetLength((indices.Count * RecordSize) + this.fileStream.Length);
 
             // Merge to the end of the file.
@@ -235,17 +248,15 @@ namespace FileCabinetApp.FileCabinetService
             }
 
             this.UpdateSearchDictionaries();
-            this.lastId = this.GetLastId();
 
-            // return restored quantity
+            // TODO: return restored quantity
         }
 
         /// <inheritdoc/>
         public bool RemoveRecord(int id)
         {
             // find id
-            var position = this.GetPosition(id);
-            if (position == -1)
+            if (!this.idsDictionary.TryGetValue(id, out var position))
             {
                 return false;
             }
@@ -258,11 +269,6 @@ namespace FileCabinetApp.FileCabinetService
                 this.fileStream.Position = position;
                 this.fileStream.Write(BitConverter.GetBytes((short)Status.Deleted), 0, sizeof(short));
                 this.fileStream.Flush();
-
-                if (id == this.lastId)
-                {
-                    this.lastId = this.GetLastId();
-                }
             }
             catch (Exception e)
             {
@@ -342,17 +348,15 @@ namespace FileCabinetApp.FileCabinetService
             this.fileStream.SetLength(left);
             this.UpdateSearchDictionaries();
 
-            var oldQuantity = this.GetRecordQuantity(oldSize);
-            var purgedQuantity = this.GetRecordQuantity(oldSize - this.fileStream.Length);
+            var oldQuantity = GetRecordQuantity(oldSize);
+            var purgedQuantity = GetRecordQuantity(oldSize - this.fileStream.Length);
             return (purgedQuantity, oldQuantity);
         }
 
         /// <inheritdoc/>
         public FileCabinetRecord? FindById(int id)
         {
-            var pos = this.GetPosition(id);
-
-            if (pos >= 0)
+            if (this.idsDictionary.TryGetValue(id, out var pos))
             {
                 return new FilesystemIterator(this.fileStream, new List<long>() { pos }).GetNext();
             }
@@ -398,39 +402,9 @@ namespace FileCabinetApp.FileCabinetService
             offset += bitArray.Count / 8;
         }
 
-        /// <summary>
-        /// Finds the position of the record in a binary file by record's id.
-        /// </summary>
-        /// <param name="id">An <see cref="int"/> instance.</param>
-        /// <returns>A <see cref="long"/> instance of the record's position in the file, or -1 if not found.</returns>
-        private long GetPosition(int id)
+        private static int GetRecordQuantity(long value)
         {
-            byte[] bufferStatus = new byte[2];
-            byte[] bufferId = new byte[4];
-
-            // Loop over file and count the records with the status "NotDelete"
-            for (long i = 0; i < this.fileStream.Length; i += RecordSize)
-            {
-                this.fileStream.Position = i;
-                try
-                {
-                    this.fileStream.Read(bufferStatus, 0, bufferStatus.Length);
-                    this.fileStream.Read(bufferId, 0, bufferId.Length);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Error in reading data in {0} : {1}", FileName, e.ToString());
-                    return -1;
-                }
-
-                var status = BitConverter.ToInt16(bufferStatus, 0);
-                if (status == (short)Status.NotDeleted && id == BitConverter.ToInt16(bufferId, 0))
-                {
-                    return i;
-                }
-            }
-
-            return -1;
+            return (int)(value / RecordSize);
         }
 
         /// <summary>
@@ -531,42 +505,6 @@ namespace FileCabinetApp.FileCabinetService
             }
 
             return true;
-        }
-
-        /// <summary>
-        /// Return the id of the last non-deleted record.
-        /// </summary>
-        /// <returns>The <see cref="int"/> instance of the last record's id, or 0 if no record is found.</returns>
-        private int GetLastId()
-        {
-            int id = 0;
-            byte[] bufferStatus = new byte[2];
-            byte[] bufferId = new byte[4];
-
-            // Loop over file and count the records with the status "NotDelete"
-            for (long i = this.fileStream.Length - RecordSize; i > 0; i -= RecordSize)
-            {
-                this.fileStream.Position = i;
-                try
-                {
-                    this.fileStream.Read(bufferStatus, 0, bufferStatus.Length);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("Error in reading data in {0} : {1}", FileName, e.ToString());
-                    return 0;
-                }
-
-                var status = BitConverter.ToInt16(bufferStatus, 0);
-                if (status == (short)Status.NotDeleted)
-                {
-                    this.fileStream.Read(bufferId, 0, bufferId.Length);
-                    id = BitConverter.ToInt16(bufferId, 0);
-                    break;
-                }
-            }
-
-            return id;
         }
 
         /// <summary>
@@ -674,6 +612,9 @@ namespace FileCabinetApp.FileCabinetService
 
         private void AddRecordToSearchDictionaries(in FileCabinetRecord record, in long pos)
         {
+            // Add record's id to idsDictionary
+            this.idsDictionary[record.Id] = pos;
+
             // Add record to firstNameDictionary
             if (this.firstNameDictionary.TryGetValue(record.FirstName.ToUpperInvariant(), out var value))
             {
@@ -708,6 +649,9 @@ namespace FileCabinetApp.FileCabinetService
 
         private void RemoveRecordFromSearchDictionaries(FileCabinetRecord record, in long pos)
         {
+            // Update idsDictionary
+            this.idsDictionary.Remove(record.Id);
+
             // Update firstNameDictionary
             var recordList = this.firstNameDictionary[record.FirstName.ToUpperInvariant()];
             recordList.Remove(pos);
@@ -734,27 +678,12 @@ namespace FileCabinetApp.FileCabinetService
             }
         }
 
-        private ReadOnlyCollection<FileCabinetRecord> ReadRecords(List<long> list)
-        {
-            List<FileCabinetRecord> result = new ();
-
-            foreach (var pos in list)
-            {
-                var record = this.ReadRecord(pos);
-                if (record != null)
-                {
-                    result.Add(record);
-                }
-            }
-
-            return new ReadOnlyCollection<FileCabinetRecord>(result);
-        }
-
         private void UpdateSearchDictionaries()
         {
             this.firstNameDictionary.Clear();
             this.lastNameDictionary.Clear();
             this.dateOfBirthDictionary.Clear();
+            this.idsDictionary.Clear();
 
             var iterator = new FilesystemIterator(this.fileStream);
 
@@ -764,11 +693,6 @@ namespace FileCabinetApp.FileCabinetService
                 var pos = iterator.GetPosition();
                 this.AddRecordToSearchDictionaries(record, pos);
             }
-        }
-
-        private int GetRecordQuantity(long value)
-        {
-            return (int)(value / RecordSize);
         }
     }
 }
