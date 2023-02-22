@@ -171,12 +171,12 @@ namespace FileCabinetApp.FileCabinetService
         }
 
         /// <inheritdoc/>
-        public void Restore(IFileCabinetServiceSnapshot snapshot)
+        public int Restore(IFileCabinetServiceSnapshot snapshot)
         {
             var records = snapshot.Records.Where(p => this.IsValidRecord(p)).OrderBy(p => p.Id).ToArray();
             if (records == null)
             {
-                return;
+                return 0;
             }
 
             // Paste all duplicate records and store all ids of nun-duplicates.
@@ -237,7 +237,7 @@ namespace FileCabinetApp.FileCabinetService
 
             this.UpdateSearchDictionaries();
 
-            // TODO: return restored quantity
+            return records.Length;
         }
 
         /// <inheritdoc/>

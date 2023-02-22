@@ -132,12 +132,13 @@ namespace FileCabinetApp.Loggers
         }
 
         /// <inheritdoc/>
-        public void Restore(IFileCabinetServiceSnapshot snapshot)
+        public int Restore(IFileCabinetServiceSnapshot snapshot)
         {
             this.stopwatch.Restart();
-            this.service.Restore(snapshot);
+            var result = this.service.Restore(snapshot);
             this.stopwatch.Stop();
             Log(this.stopwatch.ElapsedTicks, "Restore");
+            return result;
         }
 
         /// <inheritdoc/>

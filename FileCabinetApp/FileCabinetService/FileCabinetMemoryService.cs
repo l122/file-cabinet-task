@@ -127,17 +127,12 @@ namespace FileCabinetApp.FileCabinetService
         }
 
         /// <inheritdoc/>
-        public void Restore(IFileCabinetServiceSnapshot snapshot)
+        public int Restore(IFileCabinetServiceSnapshot snapshot)
         {
-            var records = snapshot.Records;
+            var records = snapshot.Records.Where(p => this.IsValidRecord(p)).ToArray();
 
             foreach (var record in records)
             {
-                if (!this.IsValidRecord(record))
-                {
-                    continue;
-                }
-
                 this.AddRecordToSearchDictionaries(record);
 
                 var listId = this.list.FindIndex(p => p.Id == record.Id);
@@ -150,6 +145,8 @@ namespace FileCabinetApp.FileCabinetService
                     this.list.Add(record);
                 }
             }
+
+            return records.Length;
         }
 
         /// <inheritdoc/>

@@ -653,7 +653,8 @@
             <summary>
             Restores a <see cref="T:FileCabinetApp.FileCabinetService.FileCabinetServiceSnapshot"/> instance.
             </summary>
-            <param name="snapshot">A <see cref="T:FileCabinetApp.FileCabinetService.IFileCabinetServiceSnapshot"/> specialized instance.</param>
+            <param name="snapshot">A <see cref="T:FileCabinetApp.FileCabinetService.IFileCabinetServiceSnapshot"/> specialized instance with data to be restored from.</param>
+            <returns>an <see cref="T:System.Int32"/> of restored number of records.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.IFileCabinetService.RemoveRecord(System.Int32)">
             <summary>

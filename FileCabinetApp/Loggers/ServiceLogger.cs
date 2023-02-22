@@ -187,15 +187,17 @@ namespace FileCabinetApp.Loggers
         }
 
         /// <inheritdoc/>
-        public void Restore(IFileCabinetServiceSnapshot snapshot)
+        public int Restore(IFileCabinetServiceSnapshot snapshot)
         {
             this.sw.WriteLine("{0} - Calling Restore().", GetCurrentTime());
             this.sw.Flush();
 
-            this.service.Restore(snapshot);
+            var result = this.service.Restore(snapshot);
 
-            this.sw.WriteLine("{0} - Restore() restored '{1}' records.", GetCurrentTime(), snapshot.Records.Count);
+            this.sw.WriteLine("{0} - Restore() restored '{1}' records.", GetCurrentTime(), result);
             this.sw.Flush();
+
+            return result;
         }
 
         /// <summary>

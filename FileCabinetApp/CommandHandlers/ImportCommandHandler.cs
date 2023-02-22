@@ -37,7 +37,7 @@ namespace FileCabinetApp.CommandHandlers
         {
             const string csvParameter = "csv";
             const string xmlParameter = "xml";
-            int oldQuantity = this.service.GetStat().Item1;
+            int restoredQuantity = 0;
 
             var input = parameters.Split(" ");
             if (input.Length != 2)
@@ -74,7 +74,7 @@ namespace FileCabinetApp.CommandHandlers
                         break;
                 }
 
-                this.service.Restore(snapshot);
+                restoredQuantity = this.service.Restore(snapshot);
             }
             catch (Exception e)
             {
@@ -82,7 +82,7 @@ namespace FileCabinetApp.CommandHandlers
                 return;
             }
 
-            Console.WriteLine("{0} records were imported from {1}", snapshot.Records.Count, file);
+            Console.WriteLine("{0} records were imported from {1}", restoredQuantity, file);
         }
     }
 }

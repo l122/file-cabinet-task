@@ -64,8 +64,9 @@ namespace FileCabinetApp.FileCabinetService
         /// <summary>
         /// Restores a <see cref="FileCabinetServiceSnapshot"/> instance.
         /// </summary>
-        /// <param name="snapshot">A <see cref="IFileCabinetServiceSnapshot"/> specialized instance.</param>
-        public void Restore(IFileCabinetServiceSnapshot snapshot);
+        /// <param name="snapshot">A <see cref="IFileCabinetServiceSnapshot"/> specialized instance with data to be restored from.</param>
+        /// <returns>an <see cref="int"/> of restored number of records.</returns>
+        public int Restore(IFileCabinetServiceSnapshot snapshot);
 
         /// <summary>
         /// Removes a record.
