@@ -75,9 +75,8 @@ namespace FileCabinetApp.Loggers
 
             var result = this.service.FindByDateOfBirth(dateOfBirthString);
 
-            // TODO
-            //this.sw.WriteLine("{0} - FindByDateOfBirth() returned a collection of {1} records.", GetCurrentTime(), result.Collection.Count);
-            //this.sw.Flush();
+            this.sw.WriteLine("{0} - FindByDateOfBirth() returned an iterator.", GetCurrentTime());
+            this.sw.Flush();
 
             return result;
         }
@@ -91,9 +90,8 @@ namespace FileCabinetApp.Loggers
 
             var result = this.service.FindByFirstName(firstName);
 
-            // TODO
-            //this.sw.WriteLine("{0} - FindByFirstName() returned a collection of {1} records.", GetCurrentTime(), result.Collection.Count);
-            //this.sw.Flush();
+            this.sw.WriteLine("{0} - FindByFirstName() returned an iterator.", GetCurrentTime());
+            this.sw.Flush();
 
             return result;
         }
@@ -114,9 +112,8 @@ namespace FileCabinetApp.Loggers
 
             var result = this.service.FindByLastName(lastName);
 
-            // TODO
-            //this.sw.WriteLine("{0} - FindByLastName() returned a collection of {1} records.", GetCurrentTime(), result.Collection.Count);
-            //this.sw.Flush();
+            this.sw.WriteLine("{0} - FindByLastName() returned an iterator.", GetCurrentTime());
+            this.sw.Flush();
 
             return result;
         }
@@ -129,9 +126,8 @@ namespace FileCabinetApp.Loggers
 
             var result = this.service.GetRecords();
 
-            // TODO
-            //this.sw.WriteLine("{0} - GetRecords() returned a collection of {1} records.", GetCurrentTime(), result.Count);
-            //this.sw.Flush();
+            this.sw.WriteLine("{0} - GetRecords() returned an iterator.", GetCurrentTime());
+            this.sw.Flush();
 
             return result;
         }

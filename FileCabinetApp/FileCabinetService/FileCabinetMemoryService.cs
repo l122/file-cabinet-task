@@ -115,7 +115,7 @@ namespace FileCabinetApp.FileCabinetService
         {
             if (DateTime.TryParse(dateOfBirthString, out DateTime dateOfBirth))
             {
-                dateOfBirthString = dateOfBirth.ToString(DateMask,CultureInfo.InvariantCulture);
+                dateOfBirthString = dateOfBirth.ToString(DateMask, CultureInfo.InvariantCulture);
             }
 
             if (this.dateOfBirthDictionary.TryGetValue(dateOfBirthString, out List<FileCabinetRecord>? result))

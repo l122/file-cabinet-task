@@ -258,10 +258,16 @@ namespace FileCabinetApp
 
         private static void DefaultRecordPrint(IRecordIterator iterator)
         {
+            int counter = 0;
+            Console.WriteLine("--------------------------------------");
             while (iterator.HasMore())
             {
-                Console.WriteLine(iterator.GetNext().ToString());
+                Console.WriteLine("  {0}", iterator.GetNext().ToString());
+                counter++;
             }
+
+            Console.WriteLine("--------------------------------------");
+            Console.WriteLine("Total records displayed: {0}", counter);
         }
     }
 }
