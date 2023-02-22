@@ -132,43 +132,58 @@ namespace FileCabinetApp.FileCabinetService
             return new FileCabinetServiceSnapshot(this.GetRecords());
         }
 
-        /// <inheritdoc/>
-        public IRecordIterator FindByFirstName(string firstName)
+        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
-            if (this.firstNameDictionary.TryGetValue(firstName.ToUpperInvariant(), out var list))
-            {
-                return new FilesystemIterator(this.fileStream, list);
-            }
-
-            return new FilesystemIterator(this.fileStream, new List<long>());
+            throw new NotImplementedException();
         }
 
-        /// <inheritdoc/>
-        public IRecordIterator FindByLastName(string lastName)
+        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
         {
-            if (this.lastNameDictionary.TryGetValue(lastName.ToUpperInvariant(), out var list))
-            {
-                return new FilesystemIterator(this.fileStream, list);
-            }
-
-            return new FilesystemIterator(this.fileStream, new List<long>());
+            throw new NotImplementedException();
         }
 
-        /// <inheritdoc/>
-        public IRecordIterator FindByDateOfBirth(string dateOfBirthString)
+        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(string dateOfBirthString)
         {
-            if (DateTime.TryParse(dateOfBirthString, out DateTime dateOfBirth))
-            {
-                dateOfBirthString = dateOfBirth.ToString(DateMask, CultureInfo.InvariantCulture);
-            }
-
-            if (this.dateOfBirthDictionary.TryGetValue(dateOfBirthString, out var result))
-            {
-                return new FilesystemIterator(this.fileStream, result);
-            }
-
-            return new FilesystemIterator(this.fileStream, new List<long>());
+            throw new NotImplementedException();
         }
+
+        ///// <inheritdoc/>
+        //public IRecordIterator FindByFirstName(string firstName)
+        //{
+        //    if (this.firstNameDictionary.TryGetValue(firstName.ToUpperInvariant(), out var list))
+        //    {
+        //        return new FilesystemIterator(this.fileStream, list);
+        //    }
+
+        //    return new FilesystemIterator(this.fileStream, new List<long>());
+        //}
+
+        ///// <inheritdoc/>
+        //public IRecordIterator FindByLastName(string lastName)
+        //{
+        //    if (this.lastNameDictionary.TryGetValue(lastName.ToUpperInvariant(), out var list))
+        //    {
+        //        return new FilesystemIterator(this.fileStream, list);
+        //    }
+
+        //    return new FilesystemIterator(this.fileStream, new List<long>());
+        //}
+
+        ///// <inheritdoc/>
+        //public IRecordIterator FindByDateOfBirth(string dateOfBirthString)
+        //{
+        //    if (DateTime.TryParse(dateOfBirthString, out DateTime dateOfBirth))
+        //    {
+        //        dateOfBirthString = dateOfBirth.ToString(DateMask, CultureInfo.InvariantCulture);
+        //    }
+
+        //    if (this.dateOfBirthDictionary.TryGetValue(dateOfBirthString, out var result))
+        //    {
+        //        return new FilesystemIterator(this.fileStream, result);
+        //    }
+
+        //    return new FilesystemIterator(this.fileStream, new List<long>());
+        //}
 
         /// <inheritdoc/>
         public int Restore(IFileCabinetServiceSnapshot snapshot)
@@ -669,6 +684,11 @@ namespace FileCabinetApp.FileCabinetService
                 var pos = iterator.GetPosition();
                 this.AddRecordToSearchDictionaries(record, pos);
             }
+        }
+
+        IEnumerable<FileCabinetRecord> IFileCabinetService.GetRecords()
+        {
+            throw new NotImplementedException();
         }
     }
 }

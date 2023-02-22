@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 
 namespace FileCabinetApp.FileCabinetService
 {
@@ -18,8 +18,8 @@ namespace FileCabinetApp.FileCabinetService
         /// <summary>
         /// Returns all records.
         /// </summary>
-        /// <returns>An <see cref="IRecordIterator"/> specialized instance.</returns>
-        public IRecordIterator GetRecords();
+        /// <returns>An <see cref="IEnumerable{T}"/> specialized instance.</returns>
+        public IEnumerable<FileCabinetRecord> GetRecords();
 
         /// <summary>
         /// Returns a pair of (total, deleted) number of records.
@@ -38,22 +38,22 @@ namespace FileCabinetApp.FileCabinetService
         /// Searches for a record by first name.
         /// </summary>
         /// <param name="firstName">The <see cref="string"/> instance of the first name.</param>
-        /// <returns>An <see cref="IRecordIterator"/> specialized instance.</returns>
-        public IRecordIterator FindByFirstName(string firstName);
+        /// <returns>An <see cref="IEnumerable{T}"/> specialized instance.</returns>
+        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName);
 
         /// <summary>
         /// Searches for a record by last name.
         /// </summary>
         /// <param name="lastName">The <see cref="string"/> instance of the last name.</param>
-        /// <returns>An <see cref="IRecordIterator"/> specialized instance.</returns>
-        public IRecordIterator FindByLastName(string lastName);
+        /// <returns>An <see cref="IEnumerable{T}"/> specialized instance.</returns>
+        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName);
 
         /// <summary>
         /// Searches for a record by date of birth.
         /// </summary>
         /// <param name="dateOfBirthString">The <see cref="string"/> instance of the date of birth.</param>
-        /// <returns>An <see cref="IRecordIterator"/> specialized instance.</returns>
-        public IRecordIterator FindByDateOfBirth(string dateOfBirthString);
+        /// <returns>An <see cref="IEnumerable{T}"/> specialized instance.</returns>
+        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(string dateOfBirthString);
 
         /// <summary>
         /// Creates an instance of <see cref="IFileCabinetServiceSnapshot"/>.

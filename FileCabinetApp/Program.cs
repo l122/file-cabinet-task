@@ -256,13 +256,14 @@ namespace FileCabinetApp
             return new ValidatorBuilder().CreateDefaultValidator();
         }
 
-        private static void DefaultRecordPrint(IRecordIterator iterator)
+        private static void DefaultRecordPrint(IEnumerable<FileCabinetRecord> records)
         {
+            var recordsEnumerator = records.GetEnumerator();
             int counter = 0;
             Console.WriteLine("--------------------------------------");
-            while (iterator.HasMore())
+            while (recordsEnumerator.MoveNext())
             {
-                Console.WriteLine("  {0}", iterator.GetNext().ToString());
+                Console.WriteLine("  {0}", recordsEnumerator.Current.ToString());
                 counter++;
             }
 

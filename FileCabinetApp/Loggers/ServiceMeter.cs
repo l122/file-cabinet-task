@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Diagnostics;
 using FileCabinetApp.FileCabinetService;
-using FileCabinetApp.Validators;
 
 namespace FileCabinetApp.Loggers
 {
@@ -46,18 +45,7 @@ namespace FileCabinetApp.Loggers
         }
 
         /// <inheritdoc/>
-        public IRecordIterator FindByDateOfBirth(string dateOfBirthString)
-        {
-            this.stopwatch.Restart();
-            var result = this.service.FindByDateOfBirth(dateOfBirthString);
-            this.stopwatch.Stop();
-            Log(this.stopwatch.ElapsedTicks, "FindByDateOfBirth");
-
-            return result;
-        }
-
-        /// <inheritdoc/>
-        public IRecordIterator FindByFirstName(string firstName)
+        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
             this.stopwatch.Restart();
             var result = this.service.FindByFirstName(firstName);
@@ -68,7 +56,7 @@ namespace FileCabinetApp.Loggers
         }
 
         /// <inheritdoc/>
-        public IRecordIterator FindByLastName(string lastName)
+        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
         {
             this.stopwatch.Restart();
             var result = this.service.FindByLastName(lastName);
@@ -79,7 +67,18 @@ namespace FileCabinetApp.Loggers
         }
 
         /// <inheritdoc/>
-        public IRecordIterator GetRecords()
+        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(string dateOfBirthString)
+        {
+            this.stopwatch.Restart();
+            var result = this.service.FindByDateOfBirth(dateOfBirthString);
+            this.stopwatch.Stop();
+            Log(this.stopwatch.ElapsedTicks, "FindByDateOfBirth");
+
+            return result;
+        }
+
+        /// <inheritdoc/>
+        public IEnumerable<FileCabinetRecord> GetRecords()
         {
             this.stopwatch.Restart();
             var result = this.service.GetRecords();

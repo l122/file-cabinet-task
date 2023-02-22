@@ -47,9 +47,9 @@ namespace FileCabinetApp.FileCabinetService
         }
 
         /// <inheritdoc/>
-        public IRecordIterator GetRecords()
+        public IEnumerable<FileCabinetRecord> GetRecords()
         {
-            return new MemoryIterator(this.list);
+            return new MemoryEnumerable(this.list);
         }
 
         /// <inheritdoc/>
@@ -89,29 +89,29 @@ namespace FileCabinetApp.FileCabinetService
         }
 
         /// <inheritdoc/>
-        public IRecordIterator FindByFirstName(string firstName)
+        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
             if (this.firstNameDictionary.TryGetValue(firstName.ToUpperInvariant(), out List<FileCabinetRecord>? result))
             {
-                return new MemoryIterator(result);
+                return new MemoryEnumerable(result);
             }
 
-            return new MemoryIterator(new List<FileCabinetRecord>());
+            return new MemoryEnumerable();
         }
 
         /// <inheritdoc/>
-        public IRecordIterator FindByLastName(string lastName)
+        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
         {
             if (this.lastNameDictionary.TryGetValue(lastName.ToUpperInvariant(), out List<FileCabinetRecord>? result))
             {
-                return new MemoryIterator(result);
+                return new MemoryEnumerable(result);
             }
 
-            return new MemoryIterator(new List<FileCabinetRecord>());
+            return new MemoryEnumerable();
         }
 
         /// <inheritdoc/>
-        public IRecordIterator FindByDateOfBirth(string dateOfBirthString)
+        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(string dateOfBirthString)
         {
             if (DateTime.TryParse(dateOfBirthString, out DateTime dateOfBirth))
             {
@@ -120,10 +120,10 @@ namespace FileCabinetApp.FileCabinetService
 
             if (this.dateOfBirthDictionary.TryGetValue(dateOfBirthString, out List<FileCabinetRecord>? result))
             {
-                return new MemoryIterator(result);
+                return new MemoryEnumerable(result);
             }
 
-            return new MemoryIterator(new List<FileCabinetRecord>());
+            return new MemoryEnumerable();
         }
 
         /// <inheritdoc/>
