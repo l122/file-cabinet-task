@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using FileCabinetApp.StaticClasses;
 
 namespace FileCabinetApp.FileCabinetService
 {
@@ -45,7 +46,13 @@ namespace FileCabinetApp.FileCabinetService
         /// <inheritdoc/>
         public IEnumerator<FileCabinetRecord> GetEnumerator()
         {
-            return new FilesystemEnumerator(this.fileStream, this.list);
+            foreach (var pos in this.list)
+            {
+                this.fileStream.Position = pos;
+                byte[] buffer = new byte[RecordSize];
+                this.fileStream.Read(buffer, 0, buffer.Length);
+                yield return Parser.ParseRecord(buffer);
+            }
         }
 
         /// <inheritdoc/>

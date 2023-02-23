@@ -593,44 +593,6 @@
             Searches for non-deleted records and stores their positions in the list.
             </summary>
         </member>
-        <member name="T:FileCabinetApp.FileCabinetService.FilesystemEnumerator">
-            <summary>
-            The Enumerator Class for FileCabinetFilesystemService.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.FilesystemEnumerator.#ctor(System.IO.FileStream,System.Collections.Generic.List{System.Int64})">
-            <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetService.FilesystemEnumerator"/> class.
-            </summary>
-            <param name="fileStream">A <see cref="T:System.IO.FileStream"/> instance.</param>
-            <param name="list">A <see cref="F:FileCabinetApp.FileCabinetService.FilesystemEnumerator.list"/> instance of records' positions in the fileStream.</param>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.FilesystemEnumerator.Finalize">
-            <summary>
-            Finalizes an instance of the <see cref="T:FileCabinetApp.FileCabinetService.FilesystemEnumerator"/> class.
-            </summary>
-        </member>
-        <member name="P:FileCabinetApp.FileCabinetService.FilesystemEnumerator.Current">
-            <inheritdoc/>
-        </member>
-        <member name="P:FileCabinetApp.FileCabinetService.FilesystemEnumerator.System#Collections#IEnumerator#Current">
-            <inheritdoc/>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.FilesystemEnumerator.MoveNext">
-            <inheritdoc/>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.FilesystemEnumerator.Reset">
-            <inheritdoc/>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.FilesystemEnumerator.Dispose">
-            <inheritdoc/>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.FilesystemEnumerator.Dispose(System.Boolean)">
-            <summary>
-            Desposes resources.
-            </summary>
-            <param name="disposing">A <see cref="T:System.Boolean"/> parameter instance.</param>
-        </member>
         <member name="T:FileCabinetApp.FileCabinetService.IFileCabinetService">
             <summary>
             Helper class that contains method implementations.
@@ -772,43 +734,6 @@
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.MemoryEnumerable.System#Collections#IEnumerable#GetEnumerator">
             <inheritdoc/>
-        </member>
-        <member name="T:FileCabinetApp.FileCabinetService.MemoryEnumerator">
-            <summary>
-            The Enumerator Class for FileCabinetMemoryService.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.MemoryEnumerator.#ctor(System.Collections.Generic.IList{FileCabinetApp.FileCabinetService.FileCabinetRecord})">
-            <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.FileCabinetService.MemoryEnumerator"/> class.
-            </summary>
-            <param name="list">An <see cref="T:System.Collections.Generic.IList`1"/> specialized instance of records.</param>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.MemoryEnumerator.Finalize">
-            <summary>
-            Finalizes an instance of the <see cref="T:FileCabinetApp.FileCabinetService.MemoryEnumerator"/> class.
-            </summary>
-        </member>
-        <member name="P:FileCabinetApp.FileCabinetService.MemoryEnumerator.Current">
-            <inheritdoc/>
-        </member>
-        <member name="P:FileCabinetApp.FileCabinetService.MemoryEnumerator.System#Collections#IEnumerator#Current">
-            <inheritdoc/>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.MemoryEnumerator.MoveNext">
-            <inheritdoc/>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.MemoryEnumerator.Reset">
-            <inheritdoc/>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.MemoryEnumerator.Dispose">
-            <inheritdoc/>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.MemoryEnumerator.Dispose(System.Boolean)">
-            <summary>
-            Desposes resources.
-            </summary>
-            <param name="disposing">A <see cref="T:System.Boolean"/> parameter instance.</param>
         </member>
         <member name="T:FileCabinetApp.Loggers.ServiceLogger">
             <summary>
@@ -1150,6 +1075,13 @@
             </summary>
             <param name="args">The <see cref="T:System.String"/> array instance.</param>
             <returns>The <see cref="T:System.Collections.Generic.Dictionary`2"/> object.</returns>
+        </member>
+        <member name="M:FileCabinetApp.StaticClasses.Parser.ParseRecord(System.Byte[])">
+            <summary>
+            Parses a record from array of bytes.
+            </summary>
+            <param name="buffer">A <see cref="T:System.Byte"/> type input array.</param>
+            <returns>A <see cref="T:FileCabinetApp.FileCabinetService.FileCabinetRecord"/> instance.</returns>
         </member>
         <member name="T:FileCabinetApp.Validators.CompositeValidator">
             <summary>

@@ -30,7 +30,10 @@ namespace FileCabinetApp.FileCabinetService
         /// <inheritdoc/>
         public IEnumerator<FileCabinetRecord> GetEnumerator()
         {
-            return new MemoryEnumerator(this.list);
+            foreach (var record in this.list)
+            {
+                yield return record;
+            }
         }
 
         /// <inheritdoc/>
