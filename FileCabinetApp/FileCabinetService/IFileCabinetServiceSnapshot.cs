@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 
 namespace FileCabinetApp.FileCabinetService
@@ -12,7 +13,7 @@ namespace FileCabinetApp.FileCabinetService
         /// Gets records.
         /// </summary>
         /// <value>Records.</value>
-        public ReadOnlyCollection<FileCabinetRecord> Records { get; }
+        public IEnumerable<FileCabinetRecord> Records { get; }
 
         /// <summary>
         /// Saves a snapshot to a csv file.

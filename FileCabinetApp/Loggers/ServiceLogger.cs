@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using FileCabinetApp.FileCabinetService;
-using FileCabinetApp.Validators;
 
 namespace FileCabinetApp.Loggers
 {
@@ -68,22 +68,7 @@ namespace FileCabinetApp.Loggers
         }
 
         /// <inheritdoc/>
-        public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirthString)
-        {
-            this.sw.Write("{0} - Calling FindByDateOfBirth() with ", GetCurrentTime());
-            this.sw.WriteLine("DateOfBirth = '{0}'.", dateOfBirthString);
-            this.sw.Flush();
-
-            var result = this.service.FindByDateOfBirth(dateOfBirthString);
-
-            this.sw.WriteLine("{0} - FindByDateOfBirth() returned a collection of {1} records.", GetCurrentTime(), result.Count);
-            this.sw.Flush();
-
-            return result;
-        }
-
-        /// <inheritdoc/>
-        public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
+        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
             this.sw.Write("{0} - Calling FindByFirstName() with ", GetCurrentTime());
             this.sw.WriteLine("FirstName = '{0}'.", firstName);
@@ -91,21 +76,14 @@ namespace FileCabinetApp.Loggers
 
             var result = this.service.FindByFirstName(firstName);
 
-            this.sw.WriteLine("{0} - FindByFirstName() returned a collection of {1} records.", GetCurrentTime(), result.Count);
+            this.sw.WriteLine("{0} - FindByFirstName() returned an iterator.", GetCurrentTime());
             this.sw.Flush();
 
             return result;
         }
 
         /// <inheritdoc/>
-        public FileCabinetRecord? FindById(int id)
-        {
-            // No need to log it, because this method is always called by the other logged methods.
-            return this.service.FindById(id);
-        }
-
-        /// <inheritdoc/>
-        public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
+        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
         {
             this.sw.Write("{0} - Calling FindByLastName() with ", GetCurrentTime());
             this.sw.WriteLine("LastName = '{0}'.", lastName);
@@ -113,21 +91,43 @@ namespace FileCabinetApp.Loggers
 
             var result = this.service.FindByLastName(lastName);
 
-            this.sw.WriteLine("{0} - FindByLastName() returned a collection of {1} records.", GetCurrentTime(), result.Count);
+            this.sw.WriteLine("{0} - FindByLastName() returned an iterator.", GetCurrentTime());
             this.sw.Flush();
 
             return result;
         }
 
         /// <inheritdoc/>
-        public ReadOnlyCollection<FileCabinetRecord> GetRecords()
+        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(string dateOfBirthString)
+        {
+            this.sw.Write("{0} - Calling FindByDateOfBirth() with ", GetCurrentTime());
+            this.sw.WriteLine("DateOfBirth = '{0}'.", dateOfBirthString);
+            this.sw.Flush();
+
+            var result = this.service.FindByDateOfBirth(dateOfBirthString);
+
+            this.sw.WriteLine("{0} - FindByDateOfBirth() returned an iterator.", GetCurrentTime());
+            this.sw.Flush();
+
+            return result;
+        }
+
+        /// <inheritdoc/>
+        public IEnumerable<FileCabinetRecord> FindById(int id)
+        {
+            // No need to log it, because this method is always called by the other logged methods.
+            return this.service.FindById(id);
+        }
+
+        /// <inheritdoc/>
+        public IEnumerable<FileCabinetRecord> GetRecords()
         {
             this.sw.WriteLine("{0} - Calling GetRecords().", GetCurrentTime());
             this.sw.Flush();
 
             var result = this.service.GetRecords();
 
-            this.sw.WriteLine("{0} - GetRecords() returned a collection of {1} records.", GetCurrentTime(), result.Count);
+            this.sw.WriteLine("{0} - GetRecords() returned an iterator.", GetCurrentTime());
             this.sw.Flush();
 
             return result;
@@ -184,10 +184,17 @@ namespace FileCabinetApp.Loggers
         }
 
         /// <inheritdoc/>
-        public void Restore(IFileCabinetServiceSnapshot snapshot)
+        public int Restore(IFileCabinetServiceSnapshot snapshot)
         {
-            // No need to log it, because this method is always called by the other logged methods.
-            this.service.Restore(snapshot);
+            this.sw.WriteLine("{0} - Calling Restore().", GetCurrentTime());
+            this.sw.Flush();
+
+            var result = this.service.Restore(snapshot);
+
+            this.sw.WriteLine("{0} - Restore() restored '{1}' records.", GetCurrentTime(), result);
+            this.sw.Flush();
+
+            return result;
         }
 
         /// <summary>

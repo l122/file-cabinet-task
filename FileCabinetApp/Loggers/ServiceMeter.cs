@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Diagnostics;
 using FileCabinetApp.FileCabinetService;
-using FileCabinetApp.Validators;
 
 namespace FileCabinetApp.Loggers
 {
@@ -46,18 +45,7 @@ namespace FileCabinetApp.Loggers
         }
 
         /// <inheritdoc/>
-        public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirthString)
-        {
-            this.stopwatch.Restart();
-            var result = this.service.FindByDateOfBirth(dateOfBirthString);
-            this.stopwatch.Stop();
-            Log(this.stopwatch.ElapsedTicks, "FindByDateOfBirth");
-
-            return result;
-        }
-
-        /// <inheritdoc/>
-        public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName)
+        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
             this.stopwatch.Restart();
             var result = this.service.FindByFirstName(firstName);
@@ -68,7 +56,7 @@ namespace FileCabinetApp.Loggers
         }
 
         /// <inheritdoc/>
-        public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName)
+        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
         {
             this.stopwatch.Restart();
             var result = this.service.FindByLastName(lastName);
@@ -79,7 +67,18 @@ namespace FileCabinetApp.Loggers
         }
 
         /// <inheritdoc/>
-        public ReadOnlyCollection<FileCabinetRecord> GetRecords()
+        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(string dateOfBirthString)
+        {
+            this.stopwatch.Restart();
+            var result = this.service.FindByDateOfBirth(dateOfBirthString);
+            this.stopwatch.Stop();
+            Log(this.stopwatch.ElapsedTicks, "FindByDateOfBirth");
+
+            return result;
+        }
+
+        /// <inheritdoc/>
+        public IEnumerable<FileCabinetRecord> GetRecords()
         {
             this.stopwatch.Restart();
             var result = this.service.GetRecords();
@@ -132,16 +131,17 @@ namespace FileCabinetApp.Loggers
         }
 
         /// <inheritdoc/>
-        public void Restore(IFileCabinetServiceSnapshot snapshot)
+        public int Restore(IFileCabinetServiceSnapshot snapshot)
         {
             this.stopwatch.Restart();
-            this.service.Restore(snapshot);
+            var result = this.service.Restore(snapshot);
             this.stopwatch.Stop();
             Log(this.stopwatch.ElapsedTicks, "Restore");
+            return result;
         }
 
         /// <inheritdoc/>
-        public FileCabinetRecord? FindById(int id)
+        public IEnumerable<FileCabinetRecord> FindById(int id)
         {
             return this.service.FindById(id);
         }

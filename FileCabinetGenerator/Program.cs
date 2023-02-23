@@ -1,7 +1,9 @@
 ﻿using FileCabinetApp.FileCabinetService;
+using FileCabinetApp.Models;
+using FileCabinetApp.StaticClasses;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
@@ -10,6 +12,7 @@ using System.Xml.Serialization;
 
 namespace FileCabinetGenerator
 {
+
     /// <summary>
     /// The class that contains the Main method.
     /// </summary>
@@ -19,6 +22,7 @@ namespace FileCabinetGenerator
         private static readonly string[] OutputFileFlags = { "--output", "-o" };
         private static readonly string[] RecordsAmountFlags = { "--records-amount", "-a" };
         private static readonly string[] StartIdFlags = { "--start-id", "-i" };
+        private static readonly string[] ValidationRulesFlags = { "--validation-rules", "-v" };
 
         private static readonly List<FileCabinetRecord> list = new ();
         
@@ -28,6 +32,8 @@ namespace FileCabinetGenerator
         private static string outputFile = "data.csv";
         private static int recordsAmount = 0;
         private static int startId = 0;
+        private const string ValidationRulesFile = "validation-rules.json";
+        private static string ValidationRulesSection = "default";
 
         /// <summary>
         /// The main method.
@@ -102,6 +108,14 @@ namespace FileCabinetGenerator
         /// </summary>
         private static void GenerateData()
         {
+            var rules = GetValidationRules(ValidationRulesSection);
+
+            if (rules == null)
+            {
+                Console.WriteLine("Error: validation-rules.json is not found.");
+                return;
+            }
+
             Random random = new ();
 
 
@@ -110,14 +124,14 @@ namespace FileCabinetGenerator
                 FileCabinetRecord record = new ()
                 {
                     Id = startId,
-                    FirstName = RandomString(random.Next(2, 60)),
-                    LastName = RandomString(random.Next(2, 60)),
-                    DateOfBirth = new DateTime(random.Next(1950, DateTime.Today.Year),
-                    random.Next(1, DateTime.Today.Month),
-                    random.Next(1, DateTime.Today.Day)),
-                    WorkPlaceNumber = (short)random.Next(short.MaxValue),
-                    Salary = Convert.ToDecimal(random.Next()),
-                    Department = Convert.ToChar(random.Next(26) + 65)
+                    FirstName = RandomString(random.Next(rules.FirstName.Min, rules.FirstName.Max)),
+                    LastName = RandomString(random.Next(rules.LastName.Min, rules.LastName.Max)),
+                    DateOfBirth = new DateTime(random.Next(rules.DateOfBirth.From.Year, rules.DateOfBirth.To.Year),
+                    random.Next(rules.DateOfBirth.From.Month, rules.DateOfBirth.To.Month),
+                    random.Next(rules.DateOfBirth.From.Day, rules.DateOfBirth.To.Day)),
+                    WorkPlaceNumber = (short)random.Next(rules.Workplace.Min, rules.Workplace.Max),
+                    Salary = Convert.ToDecimal(random.Next(Convert.ToInt32(rules.Salary.Min), Convert.ToInt32(rules.Salary.Max))),
+                    Department = Convert.ToChar(random.Next(rules.Department.Start, rules.Department.End))
                 };
 
                 list.Add(record);
@@ -137,7 +151,7 @@ namespace FileCabinetGenerator
         /// <param name="args">The <see cref="string"/> array instance input parameters.</param>
         private static void Init(string[] args)
         {
-            var parsedArgsDictionary = ParseArgs(args);
+            var parsedArgsDictionary = Parser.ParseArgs(args);
 
             foreach (var flag in OutputTypeFlags)
             {
@@ -176,34 +190,24 @@ namespace FileCabinetGenerator
                     startId = value;
                 }
             }
+
+            foreach (var flag in ValidationRulesFlags)
+            {
+                if (parsedArgsDictionary.TryGetValue(flag, out string? strValue)
+                    && (strValue != null))
+                {
+                    ValidationRulesSection = strValue;
+                }
+            }
         }
 
-        /// <summary>
-        /// Parses input arguments input a <see cref="Dictionary{TKey, TValue}"/>.
-        /// </summary>
-        /// <param name="args">The <see cref="string"/> array instance.</param>
-        /// <returns>The <see cref="Dictionary{TKey, TValue}"/> object.</returns>
-        private static Dictionary<string, string> ParseArgs(string[] args)
+        private static ValidationRules? GetValidationRules(string section)
         {
-            Dictionary<string, string> result = new();
-            int i = 0;
-            while (i < args.Length)
-            {
-                var splitedArg = args[i].Split("=");
-                if (splitedArg.Length == 2)
-                {
-                    result.Add(splitedArg[0].ToLower(CultureInfo.InvariantCulture), splitedArg[1].ToLower(CultureInfo.InvariantCulture));
-                }
-                else if (splitedArg.Length == 1 && i + 1 < args.Length)
-                {
-                    result.Add(args[i].ToLower(CultureInfo.InvariantCulture), args[i + 1].ToLower(CultureInfo.InvariantCulture));
-                    i++;
-                }
+            var configuration = new ConfigurationBuilder()
+                .AddJsonFile(ValidationRulesFile, true, true)
+                .Build();
 
-                i++;
-            }
-
-            return result;
+            return configuration.GetSection(section).Get<ValidationRules>();
         }
     }
 }

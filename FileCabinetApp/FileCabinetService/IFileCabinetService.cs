@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 
 namespace FileCabinetApp.FileCabinetService
 {
@@ -18,8 +18,8 @@ namespace FileCabinetApp.FileCabinetService
         /// <summary>
         /// Returns all records.
         /// </summary>
-        /// <returns>A read-only instance of all records.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> GetRecords();
+        /// <returns>An <see cref="IEnumerable{T}"/> specialized instance.</returns>
+        public IEnumerable<FileCabinetRecord> GetRecords();
 
         /// <summary>
         /// Returns a pair of (total, deleted) number of records.
@@ -38,22 +38,22 @@ namespace FileCabinetApp.FileCabinetService
         /// Searches for a record by first name.
         /// </summary>
         /// <param name="firstName">The <see cref="string"/> instance of the first name.</param>
-        /// <returns>A read-only instance of all matched records.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> FindByFirstName(string firstName);
+        /// <returns>An <see cref="IEnumerable{T}"/> specialized instance.</returns>
+        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName);
 
         /// <summary>
         /// Searches for a record by last name.
         /// </summary>
         /// <param name="lastName">The <see cref="string"/> instance of the last name.</param>
-        /// <returns>A read-only instance of all matched records.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> FindByLastName(string lastName);
+        /// <returns>An <see cref="IEnumerable{T}"/> specialized instance.</returns>
+        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName);
 
         /// <summary>
         /// Searches for a record by date of birth.
         /// </summary>
         /// <param name="dateOfBirthString">The <see cref="string"/> instance of the date of birth.</param>
-        /// <returns>A read-only instance of all matched records.</returns>
-        public ReadOnlyCollection<FileCabinetRecord> FindByDateOfBirth(string dateOfBirthString);
+        /// <returns>An <see cref="IEnumerable{T}"/> specialized instance.</returns>
+        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(string dateOfBirthString);
 
         /// <summary>
         /// Creates an instance of <see cref="IFileCabinetServiceSnapshot"/>.
@@ -64,8 +64,9 @@ namespace FileCabinetApp.FileCabinetService
         /// <summary>
         /// Restores a <see cref="FileCabinetServiceSnapshot"/> instance.
         /// </summary>
-        /// <param name="snapshot">A <see cref="IFileCabinetServiceSnapshot"/> specialized instance.</param>
-        public void Restore(IFileCabinetServiceSnapshot snapshot);
+        /// <param name="snapshot">A <see cref="IFileCabinetServiceSnapshot"/> specialized instance with data to be restored from.</param>
+        /// <returns>an <see cref="int"/> of restored number of records.</returns>
+        public int Restore(IFileCabinetServiceSnapshot snapshot);
 
         /// <summary>
         /// Removes a record.
@@ -84,7 +85,7 @@ namespace FileCabinetApp.FileCabinetService
         /// Finds a record by id.
         /// </summary>
         /// <param name="id">An <see cref="int"/> instance.</param>
-        /// <returns>A nullable <see cref="FileCabinetRecord"/> instance if found, null - otherwise.</returns>
-        public FileCabinetRecord? FindById(int id);
+        /// <returns>An <see cref="IEnumerable{T}"/> specialized instance of found record.</returns>
+        public IEnumerable<FileCabinetRecord> FindById(int id);
     }
 }

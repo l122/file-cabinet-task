@@ -191,7 +191,7 @@ namespace FileCabinetApp
         /// <param name="args">The <see cref="string"/> array instance input parameters.</param>
         private static void Init(string[] args)
         {
-            var parsedArgsDictionary = ParseArgs(args);
+            var parsedArgsDictionary = Parser.ParseArgs(args);
 
             int validatorIndex = 0;
             foreach (var flag in ValidationRulesFlags)
@@ -256,60 +256,18 @@ namespace FileCabinetApp
             return new ValidatorBuilder().CreateDefaultValidator();
         }
 
-        /// <summary>
-        /// Parses input arguments input a <see cref="Dictionary{TKey, TValue}"/>.
-        /// </summary>
-        /// <param name="args">The <see cref="string"/> array instance.</param>
-        /// <returns>The <see cref="Dictionary{TKey, TValue}"/> object.</returns>
-        private static Dictionary<string, string> ParseArgs(string[] args)
-        {
-            Dictionary<string, string> result = new ();
-            int i = 0;
-            while (i < args.Length)
-            {
-                args[i] = args[i].ToLower(CultureInfo.InvariantCulture);
-                if (args[i].StartsWith("--", StringComparison.InvariantCulture))
-                {
-                    var arg = args[i].Split("=");
-                    if (arg.Length >= 2)
-                    {
-                        result.Add(arg[0], arg[1]);
-                    }
-                    else
-                    {
-                        result.Add(arg[0], string.Empty);
-                    }
-                }
-                else if (args[i].StartsWith("-", StringComparison.InvariantCulture))
-                {
-                    if (i + 1 < args.Length && !args[i + 1].StartsWith("-", StringComparison.InvariantCulture))
-                    {
-                        result.Add(args[i], args[i + 1]);
-                        i++;
-                    }
-                    else
-                    {
-                        result.Add(args[i], string.Empty);
-                    }
-                }
-
-                i++;
-            }
-
-            return result;
-        }
-
         private static void DefaultRecordPrint(IEnumerable<FileCabinetRecord> records)
         {
-            if (records == null)
-            {
-                return;
-            }
-
+            int counter = 0;
+            Console.WriteLine("--------------------------------------");
             foreach (var record in records)
             {
-                Console.WriteLine(record.ToString());
+                Console.WriteLine("  {0}", record.ToString());
+                counter++;
             }
+
+            Console.WriteLine("--------------------------------------");
+            Console.WriteLine("Total records displayed: {0}", counter);
         }
     }
 }
