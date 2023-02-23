@@ -70,9 +70,9 @@ namespace FileCabinetApp.FileCabinetService
         }
 
         /// <inheritdoc/>
-        public IRecordIterator GetRecords()
+        public IEnumerable<FileCabinetRecord> GetRecords()
         {
-            return new FilesystemIterator(this.fileStream);
+            return new FilesystemEnumerable(this.fileStream);
         }
 
         /// <inheritdoc/>
@@ -114,8 +114,11 @@ namespace FileCabinetApp.FileCabinetService
                 return false;
             }
 
-            var oldRecord = new FilesystemIterator(this.fileStream, new List<long>() { pos }).GetNext();
-            this.RemoveRecordFromSearchDictionaries(oldRecord, pos);
+            var oldRecord = new FilesystemEnumerable(this.fileStream, new List<long>() { pos }).GetEnumerator();
+            if (oldRecord.MoveNext())
+            {
+                this.RemoveRecordFromSearchDictionaries(oldRecord.Current, pos);
+            }
 
             var result = this.WriteToFile(record, pos);
             if (result)
@@ -132,58 +135,54 @@ namespace FileCabinetApp.FileCabinetService
             return new FileCabinetServiceSnapshot(this.GetRecords());
         }
 
+        /// <inheritdoc/>
         public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
-            throw new NotImplementedException();
+            if (this.firstNameDictionary.TryGetValue(firstName.ToUpperInvariant(), out var list))
+            {
+                return new FilesystemEnumerable(this.fileStream, list);
+            }
+
+            return new FilesystemEnumerable(this.fileStream, new List<long>());
         }
 
+        /// <inheritdoc/>
         public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
         {
-            throw new NotImplementedException();
+            if (this.lastNameDictionary.TryGetValue(lastName.ToUpperInvariant(), out var list))
+            {
+                return new FilesystemEnumerable(this.fileStream, list);
+            }
+
+            return new FilesystemEnumerable(this.fileStream, new List<long>());
         }
 
+        /// <inheritdoc/>
         public IEnumerable<FileCabinetRecord> FindByDateOfBirth(string dateOfBirthString)
         {
-            throw new NotImplementedException();
+            if (DateTime.TryParse(dateOfBirthString, out DateTime dateOfBirth))
+            {
+                dateOfBirthString = dateOfBirth.ToString(DateMask, CultureInfo.InvariantCulture);
+            }
+
+            if (this.dateOfBirthDictionary.TryGetValue(dateOfBirthString, out var list))
+            {
+                return new FilesystemEnumerable(this.fileStream, list);
+            }
+
+            return new FilesystemEnumerable(this.fileStream, new List<long>());
         }
 
-        ///// <inheritdoc/>
-        //public IRecordIterator FindByFirstName(string firstName)
-        //{
-        //    if (this.firstNameDictionary.TryGetValue(firstName.ToUpperInvariant(), out var list))
-        //    {
-        //        return new FilesystemIterator(this.fileStream, list);
-        //    }
+        /// <inheritdoc/>
+        public IEnumerable<FileCabinetRecord> FindById(int id)
+        {
+            if (this.idsDictionary.TryGetValue(id, out var pos))
+            {
+                return new FilesystemEnumerable(this.fileStream, new List<long>() { pos });
+            }
 
-        //    return new FilesystemIterator(this.fileStream, new List<long>());
-        //}
-
-        ///// <inheritdoc/>
-        //public IRecordIterator FindByLastName(string lastName)
-        //{
-        //    if (this.lastNameDictionary.TryGetValue(lastName.ToUpperInvariant(), out var list))
-        //    {
-        //        return new FilesystemIterator(this.fileStream, list);
-        //    }
-
-        //    return new FilesystemIterator(this.fileStream, new List<long>());
-        //}
-
-        ///// <inheritdoc/>
-        //public IRecordIterator FindByDateOfBirth(string dateOfBirthString)
-        //{
-        //    if (DateTime.TryParse(dateOfBirthString, out DateTime dateOfBirth))
-        //    {
-        //        dateOfBirthString = dateOfBirth.ToString(DateMask, CultureInfo.InvariantCulture);
-        //    }
-
-        //    if (this.dateOfBirthDictionary.TryGetValue(dateOfBirthString, out var result))
-        //    {
-        //        return new FilesystemIterator(this.fileStream, result);
-        //    }
-
-        //    return new FilesystemIterator(this.fileStream, new List<long>());
-        //}
+            return new FilesystemEnumerable(this.fileStream, new List<long>());
+        }
 
         /// <inheritdoc/>
         public int Restore(IFileCabinetServiceSnapshot snapshot)
@@ -266,12 +265,15 @@ namespace FileCabinetApp.FileCabinetService
 
             try
             {
-                var oldRecord = new FilesystemIterator(this.fileStream, new List<long>() { position }).GetNext();
-                this.RemoveRecordFromSearchDictionaries(oldRecord, position);
+                var oldRecord = new FilesystemEnumerable(this.fileStream, new List<long>() { position }).GetEnumerator();
+                if (oldRecord.MoveNext())
+                {
+                    this.RemoveRecordFromSearchDictionaries(oldRecord.Current, position);
 
-                this.fileStream.Position = position;
-                this.fileStream.Write(BitConverter.GetBytes((short)Status.Deleted), 0, sizeof(short));
-                this.fileStream.Flush();
+                    this.fileStream.Position = position;
+                    this.fileStream.Write(BitConverter.GetBytes((short)Status.Deleted), 0, sizeof(short));
+                    this.fileStream.Flush();
+                }
             }
             catch (Exception e)
             {
@@ -354,17 +356,6 @@ namespace FileCabinetApp.FileCabinetService
             var oldQuantity = GetRecordQuantity(oldSize);
             var purgedQuantity = GetRecordQuantity(oldSize - this.fileStream.Length);
             return (purgedQuantity, oldQuantity);
-        }
-
-        /// <inheritdoc/>
-        public FileCabinetRecord? FindById(int id)
-        {
-            if (this.idsDictionary.TryGetValue(id, out var pos))
-            {
-                return new FilesystemIterator(this.fileStream, new List<long>() { pos }).GetNext();
-            }
-
-            return null;
         }
 
         /// <summary>
@@ -676,19 +667,13 @@ namespace FileCabinetApp.FileCabinetService
             this.dateOfBirthDictionary.Clear();
             this.idsDictionary.Clear();
 
-            var iterator = new FilesystemIterator(this.fileStream);
+            var records = new FilesystemEnumerable(this.fileStream);
 
-            while (iterator.HasMore())
+            foreach (var record in records)
             {
-                var record = iterator.GetNext();
-                var pos = iterator.GetPosition();
+                var pos = this.fileStream.Position - RecordSize;
                 this.AddRecordToSearchDictionaries(record, pos);
             }
-        }
-
-        IEnumerable<FileCabinetRecord> IFileCabinetService.GetRecords()
-        {
-            throw new NotImplementedException();
         }
     }
 }

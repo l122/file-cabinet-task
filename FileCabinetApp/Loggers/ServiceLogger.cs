@@ -67,6 +67,7 @@ namespace FileCabinetApp.Loggers
             return result;
         }
 
+        /// <inheritdoc/>
         public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
             this.sw.Write("{0} - Calling FindByFirstName() with ", GetCurrentTime());
@@ -81,6 +82,7 @@ namespace FileCabinetApp.Loggers
             return result;
         }
 
+        /// <inheritdoc/>
         public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
         {
             this.sw.Write("{0} - Calling FindByLastName() with ", GetCurrentTime());
@@ -95,6 +97,7 @@ namespace FileCabinetApp.Loggers
             return result;
         }
 
+        /// <inheritdoc/>
         public IEnumerable<FileCabinetRecord> FindByDateOfBirth(string dateOfBirthString)
         {
             this.sw.Write("{0} - Calling FindByDateOfBirth() with ", GetCurrentTime());
@@ -110,7 +113,7 @@ namespace FileCabinetApp.Loggers
         }
 
         /// <inheritdoc/>
-        public FileCabinetRecord? FindById(int id)
+        public IEnumerable<FileCabinetRecord> FindById(int id)
         {
             // No need to log it, because this method is always called by the other logged methods.
             return this.service.FindById(id);

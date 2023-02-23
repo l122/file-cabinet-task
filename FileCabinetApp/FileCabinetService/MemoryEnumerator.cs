@@ -5,19 +5,19 @@ using System.Collections.Generic;
 namespace FileCabinetApp.FileCabinetService
 {
     /// <summary>
-    /// Enumerator class.
+    /// The Enumerator Class for FileCabinetMemoryService.
     /// </summary>
     public class MemoryEnumerator : IEnumerator<FileCabinetRecord>
     {
-        private readonly List<FileCabinetRecord> list;
+        private readonly IList<FileCabinetRecord> list;
         private FileCabinetRecord? current;
         private int index;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MemoryEnumerator"/> class.
         /// </summary>
-        /// <param name="list">A <see cref="List{T}"/> of records.</param>
-        public MemoryEnumerator(List<FileCabinetRecord> list)
+        /// <param name="list">An <see cref="IList{T}"/> specialized instance of records.</param>
+        public MemoryEnumerator(IList<FileCabinetRecord> list)
         {
             this.list = list;
             this.index = 0;

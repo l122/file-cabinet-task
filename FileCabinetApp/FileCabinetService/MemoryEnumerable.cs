@@ -8,21 +8,21 @@ namespace FileCabinetApp.FileCabinetService
     /// </summary>
     public class MemoryEnumerable : IEnumerable<FileCabinetRecord>
     {
-        private readonly List<FileCabinetRecord> list;
+        private readonly IList<FileCabinetRecord> list;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MemoryEnumerable"/> class.
         /// </summary>
         public MemoryEnumerable()
         {
-            this.list = new ();
+            this.list = new List<FileCabinetRecord>();
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MemoryEnumerable"/> class.
         /// </summary>
-        /// <param name="list">A <see cref="List{T}"/> instance of records.</param>
-        public MemoryEnumerable(List<FileCabinetRecord> list)
+        /// <param name="list">An <see cref="IList{T}"/> specialized instance of records.</param>
+        public MemoryEnumerable(IList<FileCabinetRecord> list)
         {
             this.list = list;
         }

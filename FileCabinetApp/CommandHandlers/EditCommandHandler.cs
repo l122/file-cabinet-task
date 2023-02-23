@@ -40,15 +40,15 @@ namespace FileCabinetApp.CommandHandlers
                 return;
             }
 
-            var oldRecord = this.service.FindById(id);
-            if (oldRecord == null)
+            var oldRecordEnumerator = this.service.FindById(id).GetEnumerator();
+            if (!oldRecordEnumerator.MoveNext())
             {
                 Console.WriteLine("#{0} record is not found.", id);
                 return;
             }
 
             var newRecord = Program.GetInputData();
-            newRecord.Id = oldRecord.Id;
+            newRecord.Id = oldRecordEnumerator.Current.Id;
 
             if (this.service.EditRecord(newRecord))
             {

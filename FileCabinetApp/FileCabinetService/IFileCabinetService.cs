@@ -85,7 +85,7 @@ namespace FileCabinetApp.FileCabinetService
         /// Finds a record by id.
         /// </summary>
         /// <param name="id">An <see cref="int"/> instance.</param>
-        /// <returns>A nullable <see cref="FileCabinetRecord"/> instance if found, null - otherwise.</returns>
-        public FileCabinetRecord? FindById(int id);
+        /// <returns>An <see cref="IEnumerable{T}"/> specialized instance of found record.</returns>
+        public IEnumerable<FileCabinetRecord> FindById(int id);
     }
 }

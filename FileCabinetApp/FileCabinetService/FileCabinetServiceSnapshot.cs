@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
 
 namespace FileCabinetApp.FileCabinetService
 {
@@ -11,50 +9,50 @@ namespace FileCabinetApp.FileCabinetService
     /// </summary>
     public class FileCabinetServiceSnapshot : IFileCabinetServiceSnapshot
     {
-        private readonly IRecordIterator iterator;
-        private FileCabinetRecord[] records = Array.Empty<FileCabinetRecord>();
+        private IEnumerable<FileCabinetRecord> enumerableRecords;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileCabinetServiceSnapshot"/> class.
         /// </summary>
         public FileCabinetServiceSnapshot()
         {
-            this.iterator = new MemoryIterator(new List<FileCabinetRecord>(this.records));
+            this.enumerableRecords = new MemoryEnumerable(new List<FileCabinetRecord>());
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FileCabinetServiceSnapshot"/> class.
         /// </summary>
-        /// <param name="iterator">An <see cref="IRecordIterator"/> specialized instance.</param>
-        public FileCabinetServiceSnapshot(IRecordIterator iterator)
+        /// <param name="enumerable">An <see cref="IEnumerator{T}"/> specialized instance.</param>
+        public FileCabinetServiceSnapshot(IEnumerable<FileCabinetRecord> enumerable)
         {
-            this.iterator = iterator;
+            this.enumerableRecords = enumerable;
         }
 
         /// <inheritdoc/>
-        public ReadOnlyCollection<FileCabinetRecord> Records { get => new (this.records); }
+        public IEnumerable<FileCabinetRecord> Records { get => this.enumerableRecords; }
 
         /// <inheritdoc/>
         public void LoadFromCsv(FileStream fileStream)
         {
             var reader = new FileCabinetRecordCsvReader(new StreamReader(fileStream));
-            this.records = reader.ReadAll().ToArray();
+            this.enumerableRecords = new MemoryEnumerable(reader.ReadAll());
         }
 
         /// <inheritdoc/>
         public void LoadFromXml(FileStream fileStream)
         {
             var reader = new FileCabinetRecordXmlReader(new StreamReader(fileStream));
-            this.records = reader.ReadAll().ToArray();
+            this.enumerableRecords = new MemoryEnumerable(reader.ReadAll());
         }
 
         /// <inheritdoc/>
         public void SaveToCsv(StreamWriter sw)
         {
             var writer = new FileCabinetRecordCsvWriter(sw);
-            while (this.iterator.HasMore())
+            var record = this.enumerableRecords.GetEnumerator();
+            while (record.MoveNext())
             {
-                writer.Write(this.iterator.GetNext());
+                writer.Write(record.Current);
             }
         }
 
@@ -62,9 +60,10 @@ namespace FileCabinetApp.FileCabinetService
         public void SaveToXml(StreamWriter sw)
         {
             using var writer = new FileCabinetRecordXmlWriter(sw);
-            while (this.iterator.HasMore())
+            var record = this.enumerableRecords.GetEnumerator();
+            while (record.MoveNext())
             {
-                writer.Write(this.iterator.GetNext());
+                writer.Write(record.Current);
             }
         }
     }

@@ -25,10 +25,10 @@ namespace FileCabinetApp.FileCabinetService
         public FileCabinetMemoryService(IRecordValidator validator)
         {
             this.validator = validator;
-            this.list = new List<FileCabinetRecord>();
-            this.firstNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
-            this.lastNameDictionary = new Dictionary<string, List<FileCabinetRecord>>();
-            this.dateOfBirthDictionary = new Dictionary<string, List<FileCabinetRecord>>();
+            this.list = new ();
+            this.firstNameDictionary = new ();
+            this.lastNameDictionary = new ();
+            this.dateOfBirthDictionary = new ();
         }
 
         /// <inheritdoc/>
@@ -85,7 +85,7 @@ namespace FileCabinetApp.FileCabinetService
         /// <inheritdoc/>
         public IFileCabinetServiceSnapshot MakeSnapshot()
         {
-            return new FileCabinetServiceSnapshot(new MemoryIterator(this.list));
+            return new FileCabinetServiceSnapshot(new MemoryEnumerable(this.list));
         }
 
         /// <inheritdoc/>
@@ -124,6 +124,18 @@ namespace FileCabinetApp.FileCabinetService
             }
 
             return new MemoryEnumerable();
+        }
+
+        /// <inheritdoc/>
+        public IEnumerable<FileCabinetRecord> FindById(int id)
+        {
+            var listId = this.GetListId(id);
+            if (listId == -1)
+            {
+                return new MemoryEnumerable();
+            }
+
+            return new MemoryEnumerable(new List<FileCabinetRecord>() { this.list[listId] });
         }
 
         /// <inheritdoc/>
@@ -173,18 +185,6 @@ namespace FileCabinetApp.FileCabinetService
         public (int, int) Purge()
         {
             return (0, this.list.Count);
-        }
-
-        /// <inheritdoc/>
-        public FileCabinetRecord? FindById(int id)
-        {
-            var listId = this.GetListId(id);
-            if (listId == -1)
-            {
-                return null;
-            }
-
-            return this.list[listId];
         }
 
         /// <summary>

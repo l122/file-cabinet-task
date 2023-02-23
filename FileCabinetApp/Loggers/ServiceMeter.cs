@@ -141,7 +141,7 @@ namespace FileCabinetApp.Loggers
         }
 
         /// <inheritdoc/>
-        public FileCabinetRecord? FindById(int id)
+        public IEnumerable<FileCabinetRecord> FindById(int id)
         {
             return this.service.FindById(id);
         }

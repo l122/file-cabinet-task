@@ -258,12 +258,11 @@ namespace FileCabinetApp
 
         private static void DefaultRecordPrint(IEnumerable<FileCabinetRecord> records)
         {
-            var recordsEnumerator = records.GetEnumerator();
             int counter = 0;
             Console.WriteLine("--------------------------------------");
-            while (recordsEnumerator.MoveNext())
+            foreach (var record in records)
             {
-                Console.WriteLine("  {0}", recordsEnumerator.Current.ToString());
+                Console.WriteLine("  {0}", record.ToString());
                 counter++;
             }
 
