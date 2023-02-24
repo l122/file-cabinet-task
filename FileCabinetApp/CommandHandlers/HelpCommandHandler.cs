@@ -25,6 +25,7 @@ namespace FileCabinetApp.CommandHandlers
             new string[] { "import", "imports records from csv or xml", "The 'import <csv, xml> <file_name>' command imports records from a csv or xml file." },
             new string[] { "remove", "removes a record", "The 'remove #id' command removes a records." },
             new string[] { "purge", "removes records marked as deleted from the database", "The 'purge' command removes records marked as deleted from the database." },
+            new string[] { "insert", "inserts a record", "The 'insert (id, firstname, lastname, dateofbirth, workplace, salary, department) values ('id#', 'firstname', 'lastname', 'dd.mm.yyyy', 'place#', 'salary', 'department')' command inserts a record." },
         };
 
         /// <inheritdoc/>

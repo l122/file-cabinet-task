@@ -130,6 +130,58 @@ namespace FileCabinetApp.FileCabinetService
         }
 
         /// <inheritdoc/>
+        public bool Insert(FileCabinetRecord record)
+        {
+            // validate record
+            var validationResult = this.validator.ValidateParameters(record);
+            if (!validationResult.Item1)
+            {
+                Console.WriteLine("Validation failed: {0}", validationResult.Item2);
+                return false;
+            }
+
+            if (this.idsDictionary.TryGetValue(record.Id, out var _))
+            {
+                Console.WriteLine("Record #{0} already exists. To update the record use command 'update'.", record.Id);
+                return false;
+            }
+
+            // Increase file size by one record.
+            this.fileStream.SetLength(this.fileStream.Length + RecordSize);
+
+            // If there were no entries in the file, just add record to the beginning of the file
+            List<int> keyList = new (this.idsDictionary.Keys);
+            if (keyList.Count == 0)
+            {
+                this.WriteToFile(record, 0);
+                return true;
+            }
+
+            // Iterate over records from the end moving them one down the file
+            // until find the position for the inserted record.
+            var pos = this.fileStream.Length - RecordSize;
+            for (int i = keyList.Count - 1; i >= 0; i--)
+            {
+                var it = this.FindById(keyList[i]).GetEnumerator();
+                if (it.MoveNext() && it.Current.Id > record.Id)
+                {
+                    this.WriteToFile(it.Current, pos);
+                }
+                else
+                {
+                    this.WriteToFile(record, pos);
+                    break;
+                }
+
+                pos -= RecordSize;
+            }
+
+            this.UpdateSearchDictionaries();
+
+            return true;
+        }
+
+        /// <inheritdoc/>
         public IFileCabinetServiceSnapshot MakeSnapshot()
         {
             return new FileCabinetServiceSnapshot(this.GetRecords());

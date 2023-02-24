@@ -161,6 +161,20 @@
         <member name="M:FileCabinetApp.CommandHandlers.ImportCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
             <inheritdoc/>
         </member>
+        <member name="T:FileCabinetApp.CommandHandlers.InsertCommandHandler">
+            <summary>
+            Handles the Insert Command Request.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.InsertCommandHandler.#ctor(FileCabinetApp.FileCabinetService.IFileCabinetService)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.CommandHandlers.InsertCommandHandler"/> class.
+            </summary>
+            <param name="fileCabinetService">A <see cref="T:FileCabinetApp.FileCabinetService.IFileCabinetService"/> specialized instance.</param>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.InsertCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <inheritdoc/>
+        </member>
         <member name="T:FileCabinetApp.CommandHandlers.ListCommandHandler">
             <summary>
             Handles the List Command Request.
@@ -265,6 +279,9 @@
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService.EditRecord(FileCabinetApp.FileCabinetService.FileCabinetRecord)">
             <inheritdoc/>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService.Insert(FileCabinetApp.FileCabinetService.FileCabinetRecord)">
+            <inheritdoc/>
+        </member>
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService.MakeSnapshot">
             <inheritdoc/>
         </member>
@@ -348,6 +365,9 @@
             <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetMemoryService.EditRecord(FileCabinetApp.FileCabinetService.FileCabinetRecord)">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FileCabinetMemoryService.Insert(FileCabinetApp.FileCabinetService.FileCabinetRecord)">
             <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetMemoryService.MakeSnapshot">
@@ -678,6 +698,13 @@
             <param name="id">An <see cref="T:System.Int32"/> instance.</param>
             <returns>An <see cref="T:System.Collections.Generic.IEnumerable`1"/> specialized instance of found record.</returns>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetService.IFileCabinetService.Insert(FileCabinetApp.FileCabinetService.FileCabinetRecord)">
+            <summary>
+            Inserts a record.
+            </summary>
+            <param name="record">A <see cref="T:FileCabinetApp.FileCabinetService.FileCabinetRecord"/> instance.</param>
+            <returns>true if record is inserted; false otherwise.</returns>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetService.IFileCabinetServiceSnapshot">
             <summary>
             File Cabinet Service Snapshot interface.
@@ -752,6 +779,9 @@
         <member name="M:FileCabinetApp.Loggers.ServiceLogger.EditRecord(FileCabinetApp.FileCabinetService.FileCabinetRecord)">
             <inheritdoc/>
         </member>
+        <member name="M:FileCabinetApp.Loggers.ServiceLogger.Insert(FileCabinetApp.FileCabinetService.FileCabinetRecord)">
+            <inheritdoc/>
+        </member>
         <member name="M:FileCabinetApp.Loggers.ServiceLogger.FindByFirstName(System.String)">
             <inheritdoc/>
         </member>
@@ -805,6 +835,9 @@
         <member name="M:FileCabinetApp.Loggers.ServiceMeter.EditRecord(FileCabinetApp.FileCabinetService.FileCabinetRecord)">
             <inheritdoc/>
         </member>
+        <member name="M:FileCabinetApp.Loggers.ServiceMeter.Insert(FileCabinetApp.FileCabinetService.FileCabinetRecord)">
+            <inheritdoc/>
+        </member>
         <member name="M:FileCabinetApp.Loggers.ServiceMeter.FindByFirstName(System.String)">
             <inheritdoc/>
         </member>
@@ -846,6 +879,12 @@
             <summary>
             A model class for validation rules.
             </summary>
+        </member>
+        <member name="P:FileCabinetApp.Models.ValidationRules.Id">
+            <summary>
+            Gets or sets and sets Id.
+            </summary>
+            <value>And sets Id.</value>
         </member>
         <member name="P:FileCabinetApp.Models.ValidationRules.FirstName">
             <summary>
@@ -968,6 +1007,23 @@
             </summary>
             <value>And sets End.</value>
         </member>
+        <member name="T:FileCabinetApp.Models.ValidationRules.IdType">
+            <summary>
+            Id type.
+            </summary>
+        </member>
+        <member name="P:FileCabinetApp.Models.ValidationRules.IdType.Min">
+            <summary>
+            Gets or sets and sets Min.
+            </summary>
+            <value>And sets Min.</value>
+        </member>
+        <member name="P:FileCabinetApp.Models.ValidationRules.IdType.Max">
+            <summary>
+            Gets or sets and sets Max.
+            </summary>
+            <value>And sets Max.</value>
+        </member>
         <member name="T:FileCabinetApp.Program">
             <summary>
             The class that contains the Main method.
@@ -1014,28 +1070,35 @@
             <summary>
             Converts a <see cref="T:System.String"/> argument into a <see cref="T:System.Char"/>.
             </summary>
-            <param name="arg">The nullable <see cref="T:System.Char"/> argument.</param>
+            <param name="arg">The nullable <see cref="T:System.String"/> argument.</param>
             <returns>The <see cref="T:System.Tuple`3"/> value.</returns>
         </member>
         <member name="M:FileCabinetApp.StaticClasses.Converter.DateConverter(System.String)">
             <summary>
             Converts a <see cref="T:System.String"/> argument into a <see cref="T:System.DateTime"/>.
             </summary>
-            <param name="arg">The nullable <see cref="T:System.DateTime"/> argument.</param>
+            <param name="arg">The nullable <see cref="T:System.String"/> argument.</param>
             <returns>The <see cref="T:System.Tuple`3"/> value.</returns>
         </member>
         <member name="M:FileCabinetApp.StaticClasses.Converter.DecimalConverter(System.String)">
             <summary>
             Converts a <see cref="T:System.String"/> argument into a <see cref="T:System.Decimal"/>.
             </summary>
-            <param name="arg">The nullable <see cref="T:System.Decimal"/> argument.</param>
+            <param name="arg">The nullable <see cref="T:System.String"/> argument.</param>
             <returns>The <see cref="T:System.Tuple`3"/> value.</returns>
         </member>
         <member name="M:FileCabinetApp.StaticClasses.Converter.ShortConverter(System.String)">
             <summary>
             Converts a <see cref="T:System.String"/> argument into a <see cref="T:System.Int16"/>.
             </summary>
-            <param name="arg">The nullable <see cref="T:System.Int16"/> argument.</param>
+            <param name="arg">The nullable <see cref="T:System.String"/> argument.</param>
+            <returns>The <see cref="T:System.Tuple`3"/> value.</returns>
+        </member>
+        <member name="M:FileCabinetApp.StaticClasses.Converter.IntConverter(System.String)">
+            <summary>
+            Converts a <see cref="T:System.String"/> argument into a <see cref="T:System.Int32"/>.
+            </summary>
+            <param name="arg">The nullable <see cref="T:System.String"/> argument.</param>
             <returns>The <see cref="T:System.Tuple`3"/> value.</returns>
         </member>
         <member name="M:FileCabinetApp.StaticClasses.Converter.StringConverter(System.String)">
@@ -1142,6 +1205,21 @@
         <member name="M:FileCabinetApp.Validators.FirstNameValidator.ValidateParameters(FileCabinetApp.FileCabinetService.FileCabinetRecord)">
             <inheritdoc/>
         </member>
+        <member name="T:FileCabinetApp.Validators.IdentificationValidator">
+            <summary>
+            Id Validator.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.Validators.IdentificationValidator.#ctor(System.Int32,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.Validators.IdentificationValidator"/> class.
+            </summary>
+            <param name="identificationMin">A <see cref="T:System.String"/> instance of minimum id value.</param>
+            <param name="identificationMax">A <see cref="T:System.String"/> instance of maximum id value.</param>
+        </member>
+        <member name="M:FileCabinetApp.Validators.IdentificationValidator.ValidateParameters(FileCabinetApp.FileCabinetService.FileCabinetRecord)">
+            <inheritdoc/>
+        </member>
         <member name="T:FileCabinetApp.Validators.IRecordValidator">
             <summary>
             Strategy interface for choosing a validator object.
@@ -1188,6 +1266,14 @@
             <summary>
             The Validator Builder Class.
             </summary>
+        </member>
+        <member name="M:FileCabinetApp.Validators.ValidatorBuilder.ValidateIdentification(System.Int32,System.Int32)">
+            <summary>
+            Validates record's identification number.
+            </summary>
+            <param name="min">An <see cref="T:System.Int32"/> instance of minimum id value.</param>
+            <param name="max">An <see cref="T:System.Int32"/> instance of maximum id value.</param>
+            <returns>The <see cref="T:FileCabinetApp.Validators.ValidatorBuilder"/> instance.</returns>
         </member>
         <member name="M:FileCabinetApp.Validators.ValidatorBuilder.ValidateFirstName(System.Int32,System.Int32)">
             <summary>

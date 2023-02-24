@@ -44,6 +44,7 @@ namespace FileCabinetApp.StaticClasses
             if (rules != null)
             {
                 validator = new ValidatorBuilder()
+                    .ValidateIdentification(rules.Id.Min, rules.Id.Max)
                     .ValidateFirstName(rules.FirstName.Min, rules.FirstName.Max)
                     .ValidateLastName(rules.LastName.Min, rules.LastName.Max)
                     .ValidateDateOfBirth(rules.DateOfBirth.From, rules.DateOfBirth.To)

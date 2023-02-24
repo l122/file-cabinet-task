@@ -83,6 +83,32 @@ namespace FileCabinetApp.FileCabinetService
         }
 
         /// <inheritdoc/>
+        public bool Insert(FileCabinetRecord record)
+        {
+            int listId = this.GetListId(record.Id);
+            if (listId != -1)
+            {
+                Console.WriteLine("Record #{0} already exists. To update the record use command 'update'.", record.Id);
+                return false;
+            }
+
+            // validate record
+            var validationResult = this.validator.ValidateParameters(record);
+            if (!validationResult.Item1)
+            {
+                Console.WriteLine("Validation failed: {0}", validationResult.Item2);
+                return false;
+            }
+
+            this.list.Add(record);
+            this.list.Sort((x, y) => x.Id.CompareTo(y.Id));
+
+            this.AddRecordToSearchDictionaries(record);
+
+            return true;
+        }
+
+        /// <inheritdoc/>
         public IFileCabinetServiceSnapshot MakeSnapshot()
         {
             return new FileCabinetServiceSnapshot(new MemoryEnumerable(this.list));

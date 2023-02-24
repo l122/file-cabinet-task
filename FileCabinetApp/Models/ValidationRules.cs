@@ -10,6 +10,13 @@ namespace FileCabinetApp.Models
     public class ValidationRules
     {
         /// <summary>
+        /// Gets or sets and sets Id.
+        /// </summary>
+        /// <value>And sets Id.</value>
+        [JsonProperty("id")]
+        public IdType Id { get; set; }
+
+        /// <summary>
         /// Gets or sets and sets FirstName.
         /// </summary>
         /// <value>And sets FirstName.</value>
@@ -149,6 +156,26 @@ namespace FileCabinetApp.Models
             /// <value>And sets End.</value>
             [JsonProperty("end")]
             public char End { get; set; }
+        }
+
+        /// <summary>
+        /// Id type.
+        /// </summary>
+        public struct IdType
+        {
+            /// <summary>
+            /// Gets or sets and sets Min.
+            /// </summary>
+            /// <value>And sets Min.</value>
+            [JsonProperty("min")]
+            public int Min { get; set; }
+
+            /// <summary>
+            /// Gets or sets and sets Max.
+            /// </summary>
+            /// <value>And sets Max.</value>
+            [JsonProperty("max")]
+            public int Max { get; set; }
         }
     }
 }

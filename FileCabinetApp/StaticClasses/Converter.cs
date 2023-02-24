@@ -11,7 +11,7 @@ namespace FileCabinetApp.StaticClasses
         /// <summary>
         /// Converts a <see cref="string"/> argument into a <see cref="char"/>.
         /// </summary>
-        /// <param name="arg">The nullable <see cref="char"/> argument.</param>
+        /// <param name="arg">The nullable <see cref="string"/> argument.</param>
         /// <returns>The <see cref="Tuple{T1, T2, T3}"/> value.</returns>
         public static Tuple<bool, string, char> CharConverter(string? arg)
         {
@@ -26,7 +26,7 @@ namespace FileCabinetApp.StaticClasses
         /// <summary>
         /// Converts a <see cref="string"/> argument into a <see cref="DateTime"/>.
         /// </summary>
-        /// <param name="arg">The nullable <see cref="DateTime"/> argument.</param>
+        /// <param name="arg">The nullable <see cref="string"/> argument.</param>
         /// <returns>The <see cref="Tuple{T1, T2, T3}"/> value.</returns>
         public static Tuple<bool, string, DateTime> DateConverter(string? arg)
         {
@@ -41,7 +41,7 @@ namespace FileCabinetApp.StaticClasses
         /// <summary>
         /// Converts a <see cref="string"/> argument into a <see cref="decimal"/>.
         /// </summary>
-        /// <param name="arg">The nullable <see cref="decimal"/> argument.</param>
+        /// <param name="arg">The nullable <see cref="string"/> argument.</param>
         /// <returns>The <see cref="Tuple{T1, T2, T3}"/> value.</returns>
         public static Tuple<bool, string, decimal> DecimalConverter(string? arg)
         {
@@ -56,13 +56,28 @@ namespace FileCabinetApp.StaticClasses
         /// <summary>
         /// Converts a <see cref="string"/> argument into a <see cref="short"/>.
         /// </summary>
-        /// <param name="arg">The nullable <see cref="short"/> argument.</param>
+        /// <param name="arg">The nullable <see cref="string"/> argument.</param>
         /// <returns>The <see cref="Tuple{T1, T2, T3}"/> value.</returns>
         public static Tuple<bool, string, short> ShortConverter(string? arg)
         {
             if (!short.TryParse(arg, CultureInfo.InvariantCulture, out short result))
             {
                 return Tuple.Create(false, $"{arg} is not a valid short number.", result);
+            }
+
+            return Tuple.Create(true, string.Empty, result);
+        }
+
+        /// <summary>
+        /// Converts a <see cref="string"/> argument into a <see cref="int"/>.
+        /// </summary>
+        /// <param name="arg">The nullable <see cref="string"/> argument.</param>
+        /// <returns>The <see cref="Tuple{T1, T2, T3}"/> value.</returns>
+        public static Tuple<bool, string, int> IntConverter(string? arg)
+        {
+            if (!int.TryParse(arg, CultureInfo.InvariantCulture, out int result))
+            {
+                return Tuple.Create(false, $"{arg} is not a valid int number.", result);
             }
 
             return Tuple.Create(true, string.Empty, result);

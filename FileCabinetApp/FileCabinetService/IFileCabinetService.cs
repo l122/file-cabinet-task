@@ -87,5 +87,12 @@ namespace FileCabinetApp.FileCabinetService
         /// <param name="id">An <see cref="int"/> instance.</param>
         /// <returns>An <see cref="IEnumerable{T}"/> specialized instance of found record.</returns>
         public IEnumerable<FileCabinetRecord> FindById(int id);
+
+        /// <summary>
+        /// Inserts a record.
+        /// </summary>
+        /// <param name="record">A <see cref="FileCabinetRecord"/> instance.</param>
+        /// <returns>true if record is inserted; false otherwise.</returns>
+        public bool Insert(FileCabinetRecord record);
     }
 }

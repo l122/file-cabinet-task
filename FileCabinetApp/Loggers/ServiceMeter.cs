@@ -45,6 +45,16 @@ namespace FileCabinetApp.Loggers
         }
 
         /// <inheritdoc/>
+        public bool Insert(FileCabinetRecord record)
+        {
+            this.stopwatch.Restart();
+            var result = this.service.Insert(record);
+            this.stopwatch.Stop();
+            Log(this.stopwatch.ElapsedTicks, "Insert");
+            return result;
+        }
+
+        /// <inheritdoc/>
         public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
             this.stopwatch.Restart();

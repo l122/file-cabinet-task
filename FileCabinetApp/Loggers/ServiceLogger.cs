@@ -68,6 +68,26 @@ namespace FileCabinetApp.Loggers
         }
 
         /// <inheritdoc/>
+        public bool Insert(FileCabinetRecord record)
+        {
+            this.sw.Write("{0} - Calling Insert() with ", GetCurrentTime());
+            this.sw.Write("FirstName = '{0}', ", record.FirstName);
+            this.sw.Write("LastName = '{0}', ", record.LastName);
+            this.sw.Write("DateOfBirth = '{0}', ", record.DateOfBirth.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture));
+            this.sw.Write("Workplace = '{0}', ", record.WorkPlaceNumber);
+            this.sw.Write("Salary = '{0}', ", record.Salary);
+            this.sw.WriteLine("Department = '{0}'.", record.Department);
+            this.sw.Flush();
+
+            var result = this.service.Insert(record);
+
+            this.sw.WriteLine("{0} - Insert() returned '{1}'", GetCurrentTime(), result.ToString());
+            this.sw.Flush();
+
+            return result;
+        }
+
+        /// <inheritdoc/>
         public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
         {
             this.sw.Write("{0} - Calling FindByFirstName() with ", GetCurrentTime());
