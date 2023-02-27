@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using FileCabinetApp.StaticClasses;
 using FileCabinetApp.Validators;
 
 namespace FileCabinetApp.FileCabinetService
@@ -23,6 +24,7 @@ namespace FileCabinetApp.FileCabinetService
         private readonly Dictionary<string, List<long>> lastNameDictionary;
         private readonly Dictionary<string, List<long>> dateOfBirthDictionary;
         private readonly Dictionary<int, long> idsDictionary;
+
         private readonly FileStream fileStream;
 
         /// <summary>
@@ -304,6 +306,59 @@ namespace FileCabinetApp.FileCabinetService
             this.UpdateSearchDictionaries();
 
             return records.Length;
+        }
+
+        /// <inheritdoc/>
+        public string Delete(string expression)
+        {
+            const string whereStr = "where ";
+
+            if (!expression.StartsWith(whereStr, StringComparison.InvariantCultureIgnoreCase))
+            {
+                return "Invalid parameters. Call 'help delete' for help.";
+            }
+
+            var recordsForDeletion = Parser.ParseWhereExpression(new FilesystemEnumerable(this.fileStream), expression);
+
+            StringBuilder returnMessage = new ();
+            var counter = 0;
+            foreach (var id in recordsForDeletion.Select(p => p.Id))
+            {
+                if (counter == 0)
+                {
+                    returnMessage.Append('#');
+                }
+                else
+                {
+                    returnMessage.Append(", #");
+                }
+
+                counter++;
+                returnMessage.Append(id);
+                this.RemoveRecord(id);
+            }
+
+            this.UpdateSearchDictionaries();
+
+            if (returnMessage.Length == 0)
+            {
+                return "No record is deleted." + Environment.NewLine;
+            }
+
+            if (counter == 1)
+            {
+                returnMessage.Insert(0, "Record ");
+                returnMessage.Append(" is deleted.");
+            }
+            else
+            {
+                returnMessage.Insert(0, "Records ");
+                returnMessage.Append(" are deleted.");
+            }
+
+            returnMessage.Append(Environment.NewLine);
+
+            return returnMessage.ToString();
         }
 
         /// <inheritdoc/>
@@ -687,26 +742,26 @@ namespace FileCabinetApp.FileCabinetService
             this.idsDictionary.Remove(record.Id);
 
             // Update firstNameDictionary
-            var recordList = this.firstNameDictionary[record.FirstName.ToUpperInvariant()];
-            recordList.Remove(pos);
-            if (recordList.Count == 0)
+            this.firstNameDictionary.TryGetValue(record.FirstName.ToUpperInvariant(), out var recordList);
+            recordList!.Remove(pos);
+            if (recordList!.Count == 0)
             {
                 this.firstNameDictionary.Remove(record.FirstName.ToUpperInvariant());
             }
 
             // Update lastNameDictionary
-            recordList = this.lastNameDictionary[record.LastName.ToUpperInvariant()];
-            recordList.Remove(pos);
-            if (recordList.Count == 0)
+            this.lastNameDictionary.TryGetValue(record.LastName.ToUpperInvariant(), out recordList);
+            recordList!.Remove(pos);
+            if (recordList!.Count == 0)
             {
                 this.lastNameDictionary.Remove(record.LastName.ToUpperInvariant());
             }
 
             // Update dateOfBirthDictionary
             string dateOfBirthString = record.DateOfBirth.ToString(DateMask, CultureInfo.InvariantCulture);
-            recordList = this.dateOfBirthDictionary[dateOfBirthString];
-            recordList.Remove(pos);
-            if (recordList.Count == 0)
+            this.dateOfBirthDictionary.TryGetValue(dateOfBirthString, out recordList);
+            recordList!.Remove(pos);
+            if (recordList!.Count == 0)
             {
                 this.dateOfBirthDictionary.Remove(dateOfBirthString);
             }

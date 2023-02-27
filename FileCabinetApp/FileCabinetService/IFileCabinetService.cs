@@ -94,5 +94,12 @@ namespace FileCabinetApp.FileCabinetService
         /// <param name="record">A <see cref="FileCabinetRecord"/> instance.</param>
         /// <returns>true if record is inserted; false otherwise.</returns>
         public bool Insert(FileCabinetRecord record);
+
+        /// <summary>
+        /// Deletes the record(s) that satisfy the expression.
+        /// </summary>
+        /// <param name="expression">A <see cref="string"/> instance of input expression.</param>
+        /// <returns>A <see cref="string"/> confirmation of deleted records.</returns>
+        public string Delete(string expression);
     }
 }

@@ -65,6 +65,20 @@
         <member name="M:FileCabinetApp.CommandHandlers.CreateCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
             <inheritdoc/>
         </member>
+        <member name="T:FileCabinetApp.CommandHandlers.DeleteCommandHandler">
+            <summary>
+            Handles the Delete Command Request.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.DeleteCommandHandler.#ctor(FileCabinetApp.FileCabinetService.IFileCabinetService)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.CommandHandlers.DeleteCommandHandler"/> class.
+            </summary>
+            <param name="fileCabinetService">A <see cref="T:FileCabinetApp.FileCabinetService.IFileCabinetService"/> specialized instance.</param>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.DeleteCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <inheritdoc/>
+        </member>
         <member name="T:FileCabinetApp.CommandHandlers.EditCommandHandler">
             <summary>
             Handles the Edit Command Request.
@@ -300,6 +314,9 @@
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService.Restore(FileCabinetApp.FileCabinetService.IFileCabinetServiceSnapshot)">
             <inheritdoc/>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService.Delete(System.String)">
+            <inheritdoc/>
+        </member>
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService.RemoveRecord(System.Int32)">
             <inheritdoc/>
         </member>
@@ -392,6 +409,9 @@
             <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetMemoryService.Purge">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FileCabinetMemoryService.Delete(System.String)">
             <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetMemoryService.AddRecordToSearchDictionaries(FileCabinetApp.FileCabinetService.FileCabinetRecord@)">
@@ -705,6 +725,13 @@
             <param name="record">A <see cref="T:FileCabinetApp.FileCabinetService.FileCabinetRecord"/> instance.</param>
             <returns>true if record is inserted; false otherwise.</returns>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetService.IFileCabinetService.Delete(System.String)">
+            <summary>
+            Deletes the record(s) that satisfy the expression.
+            </summary>
+            <param name="expression">A <see cref="T:System.String"/> instance of input expression.</param>
+            <returns>A <see cref="T:System.String"/> confirmation of deleted records.</returns>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetService.IFileCabinetServiceSnapshot">
             <summary>
             File Cabinet Service Snapshot interface.
@@ -812,6 +839,9 @@
         <member name="M:FileCabinetApp.Loggers.ServiceLogger.Restore(FileCabinetApp.FileCabinetService.IFileCabinetServiceSnapshot)">
             <inheritdoc/>
         </member>
+        <member name="M:FileCabinetApp.Loggers.ServiceLogger.Delete(System.String)">
+            <inheritdoc/>
+        </member>
         <member name="M:FileCabinetApp.Loggers.ServiceLogger.GetCurrentTime">
             <summary>
             Return a string of the current date and time.
@@ -866,6 +896,9 @@
             <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.Loggers.ServiceMeter.FindById(System.Int32)">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.Loggers.ServiceMeter.Delete(System.String)">
             <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.Loggers.ServiceMeter.Log(System.Int64,System.String)">
@@ -1145,6 +1178,26 @@
             </summary>
             <param name="buffer">A <see cref="T:System.Byte"/> type input array.</param>
             <returns>A <see cref="T:FileCabinetApp.FileCabinetService.FileCabinetRecord"/> instance.</returns>
+        </member>
+        <member name="M:FileCabinetApp.StaticClasses.Parser.ParseWhereExpression(System.Collections.Generic.IEnumerable{FileCabinetApp.FileCabinetService.FileCabinetRecord},System.String)">
+            <summary>
+            Parses a string with the 'where' expression into an enumerable object.
+            </summary>
+            <param name="enumerable">An <see cref="T:System.Collections.Generic.IEnumerable`1"/> specialized instance of source data.</param>
+            <param name="expression">A <see cref="T:System.String"/> instance expression.</param>
+            <returns>An <see cref="T:System.Collections.Generic.IEnumerable`1"/> specialized instance of parsed expression.</returns>
+        </member>
+        <member name="M:FileCabinetApp.StaticClasses.Parser.CreateQuery(System.Collections.Generic.IEnumerable{FileCabinetApp.FileCabinetService.FileCabinetRecord},System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            Creates a query expression.
+            </summary>
+            <param name="inputQuery">An <see cref="T:System.Collections.Generic.IEnumerable`1"/> specialized instance of an input query.</param>
+            <param name="op">A <see cref="T:System.String"/> instance of the comparison operator.</param>
+            <param name="field">A <see cref="T:System.String"/> name of the record's field.</param>
+            <param name="value">A <see cref="T:System.String"/> value of the record's field.</param>
+            <param name="negation">A <see cref="T:System.Boolean"/> value that indicates if 'Not' operator encountered.</param>
+            <returns>An <see cref="T:System.Collections.Generic.IEnumerable`1"/> specialized instance of a query expression.</returns>
+            <exception cref="T:System.ArgumentException">if operator is not supported.</exception>
         </member>
         <member name="T:FileCabinetApp.Validators.CompositeValidator">
             <summary>

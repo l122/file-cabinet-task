@@ -97,8 +97,7 @@ namespace FileCabinetApp.CommandHandlers
             var record = ParseArgs(args);
             if (record == null)
             {
-                Console.WriteLine("Incorrect insert parameters. Example of correct parameters: ");
-                Console.WriteLine($"insert ({Id}, {FirstName}, {LastName}, {DateOfBirth}, {Workplace}, {Salary}, {Department}) values ('1', 'John', 'Doe', '01.01.2000', '5', '1000', 'A')");
+                Console.WriteLine("Incorrect insert parameters. Call 'help insert' for help.");
                 return;
             }
 

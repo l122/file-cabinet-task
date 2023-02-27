@@ -217,6 +217,20 @@ namespace FileCabinetApp.Loggers
             return result;
         }
 
+        /// <inheritdoc/>
+        public string Delete(string expression)
+        {
+            this.sw.WriteLine("{0} - Calling Delete().", GetCurrentTime());
+            this.sw.Flush();
+
+            var result = this.service.Delete(expression);
+
+            this.sw.WriteLine("{0} - Delete() return the following message: {1}", GetCurrentTime(), result);
+            this.sw.Flush();
+
+            return result;
+        }
+
         /// <summary>
         /// Return a string of the current date and time.
         /// </summary>

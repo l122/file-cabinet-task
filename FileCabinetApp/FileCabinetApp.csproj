@@ -11,7 +11,13 @@
 	  <EnableNETAnalyzers>true</EnableNETAnalyzers>
 	  <AnalysisMode>AllEnabledByDefault</AnalysisMode>
 	  <CodeAnalysisTreatWarningsAsErrors>false</CodeAnalysisTreatWarningsAsErrors>
+	  <BaseOutputPath></BaseOutputPath>
+	  <ApplicationIcon>icons\program_icon.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="icons\program_icon.ico" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />

@@ -156,6 +156,16 @@ namespace FileCabinetApp.Loggers
             return this.service.FindById(id);
         }
 
+        /// <inheritdoc/>
+        public string Delete(string expression)
+        {
+            this.stopwatch.Restart();
+            var result = this.service.Delete(expression);
+            this.stopwatch.Stop();
+            Log(this.stopwatch.ElapsedTicks, "Delete");
+            return result;
+        }
+
         /// <summary>
         /// Loging elapsed ticks console.
         /// </summary>

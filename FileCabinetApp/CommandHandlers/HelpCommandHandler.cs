@@ -26,6 +26,15 @@ namespace FileCabinetApp.CommandHandlers
             new string[] { "remove", "removes a record", "The 'remove #id' command removes a records." },
             new string[] { "purge", "removes records marked as deleted from the database", "The 'purge' command removes records marked as deleted from the database." },
             new string[] { "insert", "inserts a record", "The 'insert (id, firstname, lastname, dateofbirth, workplace, salary, department) values ('id#', 'firstname', 'lastname', 'dd.mm.yyyy', 'place#', 'salary', 'department')' command inserts a record." },
+            new string[]
+            {
+                "delete",
+                "deletes records",
+                "The 'delete where <expression>' deletes the records that satisfy the expression."
+                + "\nThe expression should consist of record field names such as id, FirstName, LastName, DateOfBirth, Workplace, Salary, Department, "
+                + "as well as the logical and comparison operators such as 'and', 'or', 'not', '=' and '!='."
+                + "\nExampe: delete where id = 1 or firstname = johny and lastname != doe and not dateofbirth = 01.01.2000",
+            },
         };
 
         /// <inheritdoc/>

@@ -164,6 +164,7 @@ namespace FileCabinetApp
             var listHandler = new ListCommandHandler(fileCabinetService, DefaultRecordPrint);
             var findHandler = new FindCommandHandler(fileCabinetService, DefaultRecordPrint);
             var removeHandler = new RemoveCommandHandler(fileCabinetService);
+            var deleteHandler = new DeleteCommandHandler(fileCabinetService);
             var purgeHandler = new PurgeCommandHandler(fileCabinetService);
             var insertHandler = new InsertCommandHandler(fileCabinetService);
             var exportHandler = new ExportCommandHandler(fileCabinetService);
@@ -177,7 +178,8 @@ namespace FileCabinetApp
             statHandler.SetNext(listHandler);
             listHandler.SetNext(findHandler);
             findHandler.SetNext(removeHandler);
-            removeHandler.SetNext(purgeHandler);
+            removeHandler.SetNext(deleteHandler);
+            deleteHandler.SetNext(purgeHandler);
             purgeHandler.SetNext(insertHandler);
             insertHandler.SetNext(exportHandler);
             exportHandler.SetNext(importHandler);
@@ -270,6 +272,7 @@ namespace FileCabinetApp
 
             Console.WriteLine("--------------------------------------");
             Console.WriteLine("Total records displayed: {0}", counter);
+            Console.WriteLine();
         }
     }
 }

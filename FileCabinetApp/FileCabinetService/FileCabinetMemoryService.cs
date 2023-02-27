@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text;
+using FileCabinetApp.StaticClasses;
 using FileCabinetApp.Validators;
 
 namespace FileCabinetApp.FileCabinetService
@@ -211,6 +213,59 @@ namespace FileCabinetApp.FileCabinetService
         public (int, int) Purge()
         {
             return (0, this.list.Count);
+        }
+
+        /// <inheritdoc/>
+        public string Delete(string expression)
+        {
+            const string whereStr = "where ";
+
+            if (!expression.StartsWith(whereStr, StringComparison.InvariantCultureIgnoreCase))
+            {
+                return "Invalid parameters. Call 'help delete' for help.";
+            }
+
+            var recordsForDeletion = Parser.ParseWhereExpression(new MemoryEnumerable(this.list), expression);
+
+            StringBuilder returnMessage = new ();
+            List<int> deletedIds = new ();
+            foreach (var record in recordsForDeletion)
+            {
+                if (deletedIds.Count == 0)
+                {
+                    returnMessage.Append('#');
+                }
+                else
+                {
+                    returnMessage.Append(", #");
+                }
+
+                returnMessage.Append(record.Id);
+                deletedIds.Add(record.Id);
+                this.RemoveRecordFromSearchDictionaries(record);
+            }
+
+            this.list.RemoveAll(p => deletedIds.Contains(p.Id));
+
+            if (returnMessage.Length == 0)
+            {
+                return "No record is deleted." + Environment.NewLine;
+            }
+
+            if (deletedIds.Count == 1)
+            {
+                returnMessage.Insert(0, "Record ");
+                returnMessage.Append(" is deleted.");
+            }
+            else
+            {
+                returnMessage.Insert(0, "Records ");
+                returnMessage.Append(" are deleted.");
+            }
+
+            returnMessage.Append(Environment.NewLine);
+
+            return returnMessage.ToString();
         }
 
         /// <summary>
