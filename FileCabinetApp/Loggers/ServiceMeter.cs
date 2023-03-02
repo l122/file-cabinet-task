@@ -166,6 +166,16 @@ namespace FileCabinetApp.Loggers
             return result;
         }
 
+        /// <inheritdoc/>
+        public string Update(string expression)
+        {
+            this.stopwatch.Restart();
+            var result = this.service.Update(expression);
+            this.stopwatch.Stop();
+            Log(this.stopwatch.ElapsedTicks, "Update");
+            return result;
+        }
+
         /// <summary>
         /// Loging elapsed ticks console.
         /// </summary>

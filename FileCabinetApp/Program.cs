@@ -164,6 +164,7 @@ namespace FileCabinetApp
             var listHandler = new ListCommandHandler(fileCabinetService, DefaultRecordPrint);
             var findHandler = new FindCommandHandler(fileCabinetService, DefaultRecordPrint);
             var removeHandler = new RemoveCommandHandler(fileCabinetService);
+            var updateHandler = new UpdateCommandHandler(fileCabinetService);
             var deleteHandler = new DeleteCommandHandler(fileCabinetService);
             var purgeHandler = new PurgeCommandHandler(fileCabinetService);
             var insertHandler = new InsertCommandHandler(fileCabinetService);
@@ -178,7 +179,8 @@ namespace FileCabinetApp
             statHandler.SetNext(listHandler);
             listHandler.SetNext(findHandler);
             findHandler.SetNext(removeHandler);
-            removeHandler.SetNext(deleteHandler);
+            removeHandler.SetNext(updateHandler);
+            updateHandler.SetNext(deleteHandler); 
             deleteHandler.SetNext(purgeHandler);
             purgeHandler.SetNext(insertHandler);
             insertHandler.SetNext(exportHandler);

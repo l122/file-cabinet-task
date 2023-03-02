@@ -35,6 +35,15 @@ namespace FileCabinetApp.CommandHandlers
                 + "as well as the logical and comparison operators such as 'and', 'or', 'not', '=' and '!='."
                 + "\nExampe: delete where id = 1 or firstname = johny and lastname != doe and not dateofbirth = 01.01.2000",
             },
+            new string[]
+            {
+                "update",
+                "updates records",
+                "The 'update set field='value' where field='value' update the records that satisfy the where expression."
+                + "\nThe expression should consist of record field names such as id, FirstName, LastName, DateOfBirth, Workplace, Salary, Department, "
+                + "as well as the logical and comparison operators such as 'and', 'or', 'not', '=' and '!='."
+                + "\nExampe: update set firstname = John, lastname = Doe , dateofbirth = 01.01.2000 where id = 1",
+            },
         };
 
         /// <inheritdoc/>

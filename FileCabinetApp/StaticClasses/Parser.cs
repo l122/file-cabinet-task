@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using FileCabinetApp.FileCabinetService;
+using FileCabinetApp.Validators;
 
 namespace FileCabinetApp.StaticClasses
 {
@@ -12,6 +13,13 @@ namespace FileCabinetApp.StaticClasses
     /// </summary>
     public static class Parser
     {
+        private const string Id = "id";
+        private const string FirstName = "firstname";
+        private const string LastName = "lastname";
+        private const string DateOfBirth = "dateofbirth";
+        private const string Workplace = "workplace";
+        private const string Salary = "salary";
+        private const string Department = "department";
         private const string WhereStr = "where";
         private const string AndStr = "and";
         private const string OrStr = "or";
@@ -134,10 +142,18 @@ namespace FileCabinetApp.StaticClasses
         /// <param name="enumerable">An <see cref="IEnumerable{T}"/> specialized instance of source data.</param>
         /// <param name="expression">A <see cref="string"/> instance expression.</param>
         /// <returns>An <see cref="IEnumerable{T}"/> specialized instance of parsed expression.</returns>
+        /// <exception cref="ArgumentException">if invalid invalid expression.</exception>
         public static IEnumerable<FileCabinetRecord> ParseWhereExpression(IEnumerable<FileCabinetRecord> enumerable, string expression)
         {
+            const string whereStr = "where ";
+
             const int minimumParameters = 4;
             char[] splittingChars = new char[] { ' ', ',', '"' };
+
+            if (!expression.StartsWith(whereStr, StringComparison.InvariantCultureIgnoreCase))
+            {
+                throw new ArgumentException("Invalid where-expression.");
+            }
 
             // Insert spaces around '='.
             expression = expression.Replace("=", " = ", StringComparison.OrdinalIgnoreCase);
@@ -216,6 +232,137 @@ namespace FileCabinetApp.StaticClasses
         }
 
         /// <summary>
+        /// Parses record's fields and their values into a dictionary.
+        /// </summary>
+        /// <param name="args">A <see cref="string"/> instance of fields and values.</param>
+        /// <returns>A <see cref="Dictionary{TKey, TValue}"/> instance of parsed fields and their values.</returns>
+        public static Dictionary<string, string> ParseFields(string args)
+        {
+            Dictionary<string, string> result = new ();
+
+            char[] splittingChars = new char[] { ' ', ',', '=', '"' };
+            var splittedArgs = args.Split(splittingChars, StringSplitOptions.RemoveEmptyEntries);
+            for (int i = 0; i < splittedArgs.Length; i += 2)
+            {
+                if (i + 1 < splittedArgs.Length)
+                {
+                    result[splittedArgs[i]] = splittedArgs[i + 1].Trim('\'');
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Updates a record.
+        /// </summary>
+        /// <param name="record">A <see cref="FileCabinetRecord"/> instance of the record to be updated.</param>
+        /// <param name="fieldsToUpdate">A <see cref="Dictionary{TKey, TValue}"/> of record's fields and values that are to be updated.</param>
+        /// <param name="validator">An <see cref="IRecordValidator"/> specialized instance.</param>
+        /// <returns>A <see cref="FileCabinetRecord"/> instance of the updated record.</returns>
+        public static FileCabinetRecord? GetUpdatedRecord(FileCabinetRecord record, Dictionary<string, string> fieldsToUpdate, IRecordValidator validator)
+        {
+            var keys = fieldsToUpdate.Keys.ToList();
+            var newRecord = new FileCabinetRecord()
+            {
+                Id = record.Id,
+                FirstName = record.FirstName,
+                LastName = record.LastName,
+                DateOfBirth = record.DateOfBirth,
+                WorkPlaceNumber = record.WorkPlaceNumber,
+                Salary = record.Salary,
+                Department = record.Department,
+            };
+
+            bool allValid = true;
+            foreach (var key in keys)
+            {
+                switch (key)
+                {
+                    case Id:
+                        Console.WriteLine("Record's id is not allowed to be updated.");
+                        return null;
+                    case FirstName:
+                        newRecord.FirstName = fieldsToUpdate[key];
+                        break;
+                    case LastName:
+                        newRecord.LastName = fieldsToUpdate[key];
+                        break;
+                    case DateOfBirth:
+                        var dateofbirth = Converter.DateConverter(fieldsToUpdate[key]);
+                        if (dateofbirth.Item1)
+                        {
+                            newRecord.DateOfBirth = dateofbirth.Item3;
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Conversion failed: {0}", dateofbirth.Item2);
+                            return null;
+                        }
+
+                    case Workplace:
+                        var workplace = Converter.ShortConverter(fieldsToUpdate[key]);
+                        if (workplace.Item1)
+                        {
+                            newRecord.WorkPlaceNumber = workplace.Item3;
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Conversion failed: {0}", workplace.Item2);
+                            return null;
+                        }
+
+                    case Salary:
+                        var salary = Converter.DecimalConverter(fieldsToUpdate[key]);
+                        if (salary.Item1)
+                        {
+                            newRecord.Salary = salary.Item3;
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Conversion failed: {0}", salary.Item2);
+                            return null;
+                        }
+
+                    case Department:
+                        var department = Converter.CharConverter(fieldsToUpdate[key].ToUpper(CultureInfo.InvariantCulture));
+                        if (department.Item1)
+                        {
+                            newRecord.Department = department.Item3;
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Conversion failed: {0}", department.Item2);
+                            return null;
+                        }
+
+                    default:
+                        Console.WriteLine("Invalid field name: {0}.", key);
+                        return null;
+                }
+
+                // validate record
+                var validationResult = validator.ValidateParameters(newRecord);
+                if (!validationResult.Item1)
+                {
+                    Console.WriteLine("Validation of {0} failed: {1}", key, validationResult.Item2);
+                    allValid = false;
+                }
+            }
+
+            if (allValid)
+            {
+                return newRecord;
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// Creates a query expression.
         /// </summary>
         /// <param name="inputQuery">An <see cref="IEnumerable{T}"/> specialized instance of an input query.</param>
@@ -227,14 +374,6 @@ namespace FileCabinetApp.StaticClasses
         /// <exception cref="ArgumentException">if operator is not supported.</exception>
         private static IEnumerable<FileCabinetRecord> CreateQuery(IEnumerable<FileCabinetRecord> inputQuery, string op, string field, string value, bool negation)
         {
-            const string Id = "id";
-            const string FirstName = "firstname";
-            const string LastName = "lastname";
-            const string DateOfBirth = "dateofbirth";
-            const string Workplace = "workplace";
-            const string Salary = "salary";
-            const string Department = "department";
-
             if (op != EqualsStr && op != NotEqualsStr)
             {
                 throw new ArgumentException("Unsupported comparison operator encountered: {0}", nameof(op));
@@ -304,12 +443,12 @@ namespace FileCabinetApp.StaticClasses
 
                         break;
                     case Department:
-                        var depatment = Converter.CharConverter(value.ToUpper(CultureInfo.InvariantCulture));
-                        if (depatment.Item1)
+                        var department = Converter.CharConverter(value.ToUpper(CultureInfo.InvariantCulture));
+                        if (department.Item1)
                         {
                             result =
                                 from record in result
-                                where record.Department.Equals(depatment.Item3)
+                                where record.Department.Equals(department.Item3)
                                 select record;
                         }
 

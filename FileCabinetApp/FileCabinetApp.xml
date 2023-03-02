@@ -270,6 +270,20 @@
         <member name="M:FileCabinetApp.CommandHandlers.StatCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
             <inheritdoc/>
         </member>
+        <member name="T:FileCabinetApp.CommandHandlers.UpdateCommandHandler">
+            <summary>
+            Handles the Update Command Request.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.UpdateCommandHandler.#ctor(FileCabinetApp.FileCabinetService.IFileCabinetService)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.CommandHandlers.UpdateCommandHandler"/> class.
+            </summary>
+            <param name="fileCabinetService">A <see cref="T:FileCabinetApp.FileCabinetService.IFileCabinetService"/> specialized instance.</param>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.UpdateCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <inheritdoc/>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService">
             <summary>
             Helper class for storing data in a binary file.
@@ -315,6 +329,9 @@
             <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService.Delete(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService.Update(System.String)">
             <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService.RemoveRecord(System.Int32)">
@@ -412,6 +429,9 @@
             <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetMemoryService.Delete(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FileCabinetMemoryService.Update(System.String)">
             <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetMemoryService.AddRecordToSearchDictionaries(FileCabinetApp.FileCabinetService.FileCabinetRecord@)">
@@ -732,6 +752,13 @@
             <param name="expression">A <see cref="T:System.String"/> instance of input expression.</param>
             <returns>A <see cref="T:System.String"/> confirmation of deleted records.</returns>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetService.IFileCabinetService.Update(System.String)">
+            <summary>
+            Updates the record(s) that satisfy the expression.
+            </summary>
+            <param name="expression">A <see cref="T:System.String"/> instance of input fields and expression.</param>
+            <returns>A <see cref="T:System.String"/> convfirmation of updated records.</returns>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetService.IFileCabinetServiceSnapshot">
             <summary>
             File Cabinet Service Snapshot interface.
@@ -842,6 +869,9 @@
         <member name="M:FileCabinetApp.Loggers.ServiceLogger.Delete(System.String)">
             <inheritdoc/>
         </member>
+        <member name="M:FileCabinetApp.Loggers.ServiceLogger.Update(System.String)">
+            <inheritdoc/>
+        </member>
         <member name="M:FileCabinetApp.Loggers.ServiceLogger.GetCurrentTime">
             <summary>
             Return a string of the current date and time.
@@ -899,6 +929,9 @@
             <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.Loggers.ServiceMeter.Delete(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.Loggers.ServiceMeter.Update(System.String)">
             <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.Loggers.ServiceMeter.Log(System.Int64,System.String)">
@@ -1186,6 +1219,23 @@
             <param name="enumerable">An <see cref="T:System.Collections.Generic.IEnumerable`1"/> specialized instance of source data.</param>
             <param name="expression">A <see cref="T:System.String"/> instance expression.</param>
             <returns>An <see cref="T:System.Collections.Generic.IEnumerable`1"/> specialized instance of parsed expression.</returns>
+            <exception cref="T:System.ArgumentException">if invalid invalid expression.</exception>
+        </member>
+        <member name="M:FileCabinetApp.StaticClasses.Parser.ParseFields(System.String)">
+            <summary>
+            Parses record's fields and their values into a dictionary.
+            </summary>
+            <param name="args">A <see cref="T:System.String"/> instance of fields and values.</param>
+            <returns>A <see cref="T:System.Collections.Generic.Dictionary`2"/> instance of parsed fields and their values.</returns>
+        </member>
+        <member name="M:FileCabinetApp.StaticClasses.Parser.GetUpdatedRecord(FileCabinetApp.FileCabinetService.FileCabinetRecord,System.Collections.Generic.Dictionary{System.String,System.String},FileCabinetApp.Validators.IRecordValidator)">
+            <summary>
+            Updates a record.
+            </summary>
+            <param name="record">A <see cref="T:FileCabinetApp.FileCabinetService.FileCabinetRecord"/> instance of the record to be updated.</param>
+            <param name="fieldsToUpdate">A <see cref="T:System.Collections.Generic.Dictionary`2"/> of record's fields and values that are to be updated.</param>
+            <param name="validator">An <see cref="T:FileCabinetApp.Validators.IRecordValidator"/> specialized instance.</param>
+            <returns>A <see cref="T:FileCabinetApp.FileCabinetService.FileCabinetRecord"/> instance of the updated record.</returns>
         </member>
         <member name="M:FileCabinetApp.StaticClasses.Parser.CreateQuery(System.Collections.Generic.IEnumerable{FileCabinetApp.FileCabinetService.FileCabinetRecord},System.String,System.String,System.String,System.Boolean)">
             <summary>

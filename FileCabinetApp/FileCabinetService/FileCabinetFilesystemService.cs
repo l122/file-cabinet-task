@@ -362,6 +362,87 @@ namespace FileCabinetApp.FileCabinetService
         }
 
         /// <inheritdoc/>
+        public string Update(string expression)
+        {
+            const string setStr = "set ";
+            const string errorMessage = "Invalid parameters. Call 'help update' for help.";
+            const string norecordUpdateMessage = "No record is updated.";
+
+            if (string.IsNullOrEmpty(expression))
+            {
+                return errorMessage;
+            }
+
+            var whereIndex = expression.IndexOf("where ", StringComparison.InvariantCultureIgnoreCase);
+            if (!expression.StartsWith(setStr, StringComparison.InvariantCultureIgnoreCase)
+                || whereIndex == -1)
+            {
+                return errorMessage;
+            }
+
+            IEnumerable<FileCabinetRecord> recordsForUpdate;
+            Dictionary<string, string> fieldsToUpdate;
+            try
+            {
+                fieldsToUpdate = Parser.ParseFields(expression[setStr.Length..whereIndex]);
+                recordsForUpdate = Parser.ParseWhereExpression(new FilesystemEnumerable(this.fileStream), expression[whereIndex..]);
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return errorMessage;
+            }
+
+            StringBuilder returnMessage = new ();
+            List<int> updatedIds = new ();
+            foreach (var record in recordsForUpdate.ToArray())
+            {
+                if (updatedIds.Count == 0)
+                {
+                    returnMessage.Append('#');
+                }
+                else
+                {
+                    returnMessage.Append(", #");
+                }
+
+                var newRecord = Parser.GetUpdatedRecord(record, fieldsToUpdate, this.validator);
+                if (newRecord == null)
+                {
+                    return norecordUpdateMessage;
+                }
+
+                if (this.idsDictionary.TryGetValue(newRecord.Id, out var pos))
+                {
+                    this.WriteToFile(newRecord, pos);
+                    returnMessage.Append(record.Id);
+                    updatedIds.Add(record.Id);
+                }
+            }
+
+            if (updatedIds.Count == 0)
+            {
+                return norecordUpdateMessage;
+            }
+
+            this.UpdateSearchDictionaries();
+
+            if (updatedIds.Count == 1)
+            {
+                returnMessage.Insert(0, "Record ");
+                returnMessage.Append(" is updated.");
+            }
+            else
+            {
+                returnMessage.Insert(0, "Records ");
+                returnMessage.Append(" are updated.");
+            }
+
+            returnMessage.Append(Environment.NewLine);
+            return returnMessage.ToString();
+        }
+
+        /// <inheritdoc/>
         public bool RemoveRecord(int id)
         {
             // find id

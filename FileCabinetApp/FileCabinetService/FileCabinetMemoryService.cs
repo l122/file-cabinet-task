@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using FileCabinetApp.StaticClasses;
 using FileCabinetApp.Validators;
+using Newtonsoft.Json.Linq;
 
 namespace FileCabinetApp.FileCabinetService
 {
@@ -218,14 +219,22 @@ namespace FileCabinetApp.FileCabinetService
         /// <inheritdoc/>
         public string Delete(string expression)
         {
-            const string whereStr = "where ";
+            const string errorMessage = "Invalid parameters. Call 'help delete' for help.";
 
-            if (!expression.StartsWith(whereStr, StringComparison.InvariantCultureIgnoreCase))
+            if (string.IsNullOrEmpty(expression))
             {
-                return "Invalid parameters. Call 'help delete' for help.";
+                return errorMessage;
             }
 
-            var recordsForDeletion = Parser.ParseWhereExpression(new MemoryEnumerable(this.list), expression);
+            IEnumerable<FileCabinetRecord> recordsForDeletion;
+            try
+            {
+                recordsForDeletion = Parser.ParseWhereExpression(new MemoryEnumerable(this.list), expression);
+            }
+            catch (ArgumentException)
+            {
+                return errorMessage;
+            }
 
             StringBuilder returnMessage = new ();
             List<int> deletedIds = new ();
@@ -265,6 +274,85 @@ namespace FileCabinetApp.FileCabinetService
 
             returnMessage.Append(Environment.NewLine);
 
+            return returnMessage.ToString();
+        }
+
+        /// <inheritdoc/>
+        public string Update(string expression)
+        {
+            const string setStr = "set ";
+            const string errorMessage = "Invalid parameters. Call 'help update' for help.";
+            const string norecordUpdateMessage = "No record is updated.";
+
+            if (string.IsNullOrEmpty(expression))
+            {
+                return errorMessage;
+            }
+
+            var whereIndex = expression.IndexOf("where ", StringComparison.InvariantCultureIgnoreCase);
+            if (!expression.StartsWith(setStr, StringComparison.InvariantCultureIgnoreCase)
+                || whereIndex == -1)
+            {
+                return errorMessage;
+            }
+
+            IEnumerable<FileCabinetRecord> recordsForUpdate;
+            Dictionary<string, string> fieldsToUpdate;
+            try
+            {
+                fieldsToUpdate = Parser.ParseFields(expression[setStr.Length..whereIndex]);
+                recordsForUpdate = Parser.ParseWhereExpression(new MemoryEnumerable(this.list), expression[whereIndex..]);
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return errorMessage;
+            }
+
+            StringBuilder returnMessage = new ();
+            List<int> updatedIds = new ();
+            foreach (var record in recordsForUpdate.ToArray())
+            {
+                if (updatedIds.Count == 0)
+                {
+                    returnMessage.Append('#');
+                }
+                else
+                {
+                    returnMessage.Append(", #");
+                }
+
+                var newRecord = Parser.GetUpdatedRecord(record, fieldsToUpdate, this.validator);
+                if (newRecord == null)
+                {
+                    return norecordUpdateMessage;
+                }
+
+                this.RemoveRecordFromSearchDictionaries(record);
+                var i = this.list.FindIndex(p => p.Id.Equals(record.Id));
+                this.list[i] = newRecord;
+                this.AddRecordToSearchDictionaries(newRecord);
+                returnMessage.Append(record.Id);
+                updatedIds.Add(record.Id);
+            }
+
+            if (updatedIds.Count == 0)
+            {
+                return norecordUpdateMessage;
+            }
+
+            if (updatedIds.Count == 1)
+            {
+                returnMessage.Insert(0, "Record ");
+                returnMessage.Append(" is updated.");
+            }
+            else
+            {
+                returnMessage.Insert(0, "Records ");
+                returnMessage.Append(" are updated.");
+            }
+
+            returnMessage.Append(Environment.NewLine);
             return returnMessage.ToString();
         }
 
