@@ -29,8 +29,8 @@ namespace FileCabinetApp.Validators
         {
             DateTime value = record.DateOfBirth;
 
-            if (DateTime.Compare(value, this.fromDate) < 01
-                || DateTime.Compare(value, this.toDate) > 0)
+            if (DateTime.Compare(value, this.fromDate) < 0
+                || DateTime.Compare(value, this.toDate) > 1)
             {
                 return Tuple.Create(
                     false,

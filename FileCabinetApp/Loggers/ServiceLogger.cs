@@ -48,9 +48,9 @@ namespace FileCabinetApp.Loggers
         }
 
         /// <inheritdoc/>
-        public bool EditRecord(FileCabinetRecord record)
+        public bool Insert(FileCabinetRecord record)
         {
-            this.sw.Write("{0} - Calling Edit() with ", GetCurrentTime());
+            this.sw.Write("{0} - Calling Insert() with ", GetCurrentTime());
             this.sw.Write("FirstName = '{0}', ", record.FirstName);
             this.sw.Write("LastName = '{0}', ", record.LastName);
             this.sw.Write("DateOfBirth = '{0}', ", record.DateOfBirth.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture));
@@ -59,9 +59,9 @@ namespace FileCabinetApp.Loggers
             this.sw.WriteLine("Department = '{0}'.", record.Department);
             this.sw.Flush();
 
-            var result = this.service.EditRecord(record);
+            var result = this.service.Insert(record);
 
-            this.sw.WriteLine("{0} - Edit() returned '{1}'", GetCurrentTime(), result.ToString());
+            this.sw.WriteLine("{0} - Insert() returned '{1}'", GetCurrentTime(), result.ToString());
             this.sw.Flush();
 
             return result;
@@ -169,21 +169,6 @@ namespace FileCabinetApp.Loggers
         }
 
         /// <inheritdoc/>
-        public bool RemoveRecord(int id)
-        {
-            this.sw.Write("{0} - Calling RemoveRecord() with ", GetCurrentTime());
-            this.sw.WriteLine("id = '{0}'.", id);
-            this.sw.Flush();
-
-            var result = this.service.RemoveRecord(id);
-
-            this.sw.WriteLine("{0} - RemoveRecord() returned '{1}'.", GetCurrentTime(), result.ToString());
-            this.sw.Flush();
-
-            return result;
-        }
-
-        /// <inheritdoc/>
         public int Restore(IFileCabinetServiceSnapshot snapshot)
         {
             this.sw.WriteLine("{0} - Calling Restore().", GetCurrentTime());
@@ -192,6 +177,34 @@ namespace FileCabinetApp.Loggers
             var result = this.service.Restore(snapshot);
 
             this.sw.WriteLine("{0} - Restore() restored '{1}' records.", GetCurrentTime(), result);
+            this.sw.Flush();
+
+            return result;
+        }
+
+        /// <inheritdoc/>
+        public string Delete(string expression)
+        {
+            this.sw.WriteLine("{0} - Calling Delete().", GetCurrentTime());
+            this.sw.Flush();
+
+            var result = this.service.Delete(expression);
+
+            this.sw.WriteLine("{0} - Delete() return the following message: {1}", GetCurrentTime(), result);
+            this.sw.Flush();
+
+            return result;
+        }
+
+        /// <inheritdoc/>
+        public string Update(string expression)
+        {
+            this.sw.WriteLine("{0} - Calling Update().", GetCurrentTime());
+            this.sw.Flush();
+
+            var result = this.service.Update(expression);
+
+            this.sw.WriteLine("{0} - Update() return the following message: {1}", GetCurrentTime(), result);
             this.sw.Flush();
 
             return result;

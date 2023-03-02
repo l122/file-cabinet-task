@@ -121,14 +121,15 @@ namespace FileCabinetGenerator
 
             for (int i = 0; i < recordsAmount; i++)
             {
+                var ticksFrom = rules.DateOfBirth.From.Ticks;
+                var ticksTo = rules.DateOfBirth.To.Ticks;
+
                 FileCabinetRecord record = new ()
                 {
                     Id = startId,
                     FirstName = RandomString(random.Next(rules.FirstName.Min, rules.FirstName.Max)),
                     LastName = RandomString(random.Next(rules.LastName.Min, rules.LastName.Max)),
-                    DateOfBirth = new DateTime(random.Next(rules.DateOfBirth.From.Year, rules.DateOfBirth.To.Year),
-                    random.Next(rules.DateOfBirth.From.Month, rules.DateOfBirth.To.Month),
-                    random.Next(rules.DateOfBirth.From.Day, rules.DateOfBirth.To.Day)),
+                    DateOfBirth = new DateTime(random.NextInt64(ticksFrom, ticksTo)),
                     WorkPlaceNumber = (short)random.Next(rules.Workplace.Min, rules.Workplace.Max),
                     Salary = Convert.ToDecimal(random.Next(Convert.ToInt32(rules.Salary.Min), Convert.ToInt32(rules.Salary.Max))),
                     Department = Convert.ToChar(random.Next(rules.Department.Start, rules.Department.End))

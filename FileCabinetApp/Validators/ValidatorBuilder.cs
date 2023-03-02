@@ -11,6 +11,18 @@ namespace FileCabinetApp.Validators
         private readonly List<IRecordValidator> validators = new ();
 
         /// <summary>
+        /// Validates record's identification number.
+        /// </summary>
+        /// <param name="min">An <see cref="int"/> instance of minimum id value.</param>
+        /// <param name="max">An <see cref="int"/> instance of maximum id value.</param>
+        /// <returns>The <see cref="ValidatorBuilder"/> instance.</returns>
+        public ValidatorBuilder ValidateIdentification(int min, int max)
+        {
+            this.validators.Add(new IdentificationValidator(min, max));
+            return this;
+        }
+
+        /// <summary>
         /// Validates First Name.
         /// </summary>
         /// <param name="min">An <see cref="int"/> instance of minimum length.</param>

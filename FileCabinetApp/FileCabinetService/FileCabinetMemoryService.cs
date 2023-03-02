@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text;
+using FileCabinetApp.StaticClasses;
 using FileCabinetApp.Validators;
+using Newtonsoft.Json.Linq;
 
 namespace FileCabinetApp.FileCabinetService
 {
@@ -59,23 +62,25 @@ namespace FileCabinetApp.FileCabinetService
         }
 
         /// <inheritdoc/>
-        public bool EditRecord(FileCabinetRecord record)
+        public bool Insert(FileCabinetRecord record)
         {
             int listId = this.GetListId(record.Id);
-            if (listId == -1)
+            if (listId != -1)
             {
+                Console.WriteLine("Record #{0} already exists. To update the record use command 'update'.", record.Id);
                 return false;
             }
 
-            this.RemoveRecordFromSearchDictionaries(this.list[listId]);
+            // validate record
+            var validationResult = this.validator.ValidateParameters(record);
+            if (!validationResult.Item1)
+            {
+                Console.WriteLine("Validation failed: {0}", validationResult.Item2);
+                return false;
+            }
 
-            // Update record
-            this.list[listId].FirstName = record.FirstName;
-            this.list[listId].LastName = record.LastName;
-            this.list[listId].DateOfBirth = record.DateOfBirth;
-            this.list[listId].WorkPlaceNumber = record.WorkPlaceNumber;
-            this.list[listId].Salary = record.Salary;
-            this.list[listId].Department = record.Department;
+            this.list.Add(record);
+            this.list.Sort((x, y) => x.Id.CompareTo(y.Id));
 
             this.AddRecordToSearchDictionaries(record);
 
@@ -166,25 +171,149 @@ namespace FileCabinetApp.FileCabinetService
         }
 
         /// <inheritdoc/>
-        public bool RemoveRecord(int id)
-        {
-            var listId = this.list.FindIndex(p => p.Id == id);
-
-            if (listId == -1)
-            {
-                return false;
-            }
-
-            this.RemoveRecordFromSearchDictionaries(this.list[listId]);
-            this.list.RemoveAt(listId);
-
-            return true;
-        }
-
-        /// <inheritdoc/>
         public (int, int) Purge()
         {
             return (0, this.list.Count);
+        }
+
+        /// <inheritdoc/>
+        public string Delete(string expression)
+        {
+            const string errorMessage = "Invalid parameters. Call 'help delete' for help.";
+
+            if (string.IsNullOrEmpty(expression))
+            {
+                return errorMessage;
+            }
+
+            IEnumerable<FileCabinetRecord> recordsForDeletion;
+            try
+            {
+                recordsForDeletion = Parser.ParseWhereExpression(new MemoryEnumerable(this.list), expression);
+            }
+            catch (ArgumentException)
+            {
+                return errorMessage;
+            }
+
+            StringBuilder returnMessage = new ();
+            List<int> deletedIds = new ();
+            foreach (var record in recordsForDeletion)
+            {
+                if (deletedIds.Count == 0)
+                {
+                    returnMessage.Append('#');
+                }
+                else
+                {
+                    returnMessage.Append(", #");
+                }
+
+                returnMessage.Append(record.Id);
+                deletedIds.Add(record.Id);
+                this.RemoveRecordFromSearchDictionaries(record);
+            }
+
+            this.list.RemoveAll(p => deletedIds.Contains(p.Id));
+
+            if (returnMessage.Length == 0)
+            {
+                return "No record is deleted." + Environment.NewLine;
+            }
+
+            if (deletedIds.Count == 1)
+            {
+                returnMessage.Insert(0, "Record ");
+                returnMessage.Append(" is deleted.");
+            }
+            else
+            {
+                returnMessage.Insert(0, "Records ");
+                returnMessage.Append(" are deleted.");
+            }
+
+            returnMessage.Append(Environment.NewLine);
+
+            return returnMessage.ToString();
+        }
+
+        /// <inheritdoc/>
+        public string Update(string expression)
+        {
+            const string setStr = "set ";
+            const string errorMessage = "Invalid parameters. Call 'help update' for help.";
+            const string norecordUpdateMessage = "No record is updated.";
+
+            if (string.IsNullOrEmpty(expression))
+            {
+                return errorMessage;
+            }
+
+            var whereIndex = expression.IndexOf("where ", StringComparison.InvariantCultureIgnoreCase);
+            if (!expression.StartsWith(setStr, StringComparison.InvariantCultureIgnoreCase)
+                || whereIndex == -1)
+            {
+                return errorMessage;
+            }
+
+            IEnumerable<FileCabinetRecord> recordsForUpdate;
+            Dictionary<string, string> fieldsToUpdate;
+            try
+            {
+                fieldsToUpdate = Parser.ParseFields(expression[setStr.Length..whereIndex]);
+                recordsForUpdate = Parser.ParseWhereExpression(new MemoryEnumerable(this.list), expression[whereIndex..]);
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return errorMessage;
+            }
+
+            StringBuilder returnMessage = new ();
+            List<int> updatedIds = new ();
+            foreach (var record in recordsForUpdate.ToArray())
+            {
+                if (updatedIds.Count == 0)
+                {
+                    returnMessage.Append('#');
+                }
+                else
+                {
+                    returnMessage.Append(", #");
+                }
+
+                var newRecord = Parser.GetUpdatedRecord(record, fieldsToUpdate, this.validator);
+                if (newRecord == null)
+                {
+                    return norecordUpdateMessage;
+                }
+
+                this.RemoveRecordFromSearchDictionaries(record);
+                var i = this.list.FindIndex(p => p.Id.Equals(record.Id));
+                this.list[i] = newRecord;
+                this.AddRecordToSearchDictionaries(newRecord);
+                returnMessage.Append(record.Id);
+                updatedIds.Add(record.Id);
+            }
+
+            if (updatedIds.Count == 0)
+            {
+                return norecordUpdateMessage;
+            }
+
+            if (updatedIds.Count == 1)
+            {
+                returnMessage.Insert(0, "Record ");
+                returnMessage.Append(" is updated.");
+            }
+            else
+            {
+                returnMessage.Insert(0, "Records ");
+                returnMessage.Append(" are updated.");
+            }
+
+            returnMessage.Append(Environment.NewLine);
+            return returnMessage.ToString();
         }
 
         /// <summary>

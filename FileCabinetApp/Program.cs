@@ -159,25 +159,27 @@ namespace FileCabinetApp
         {
             var helpHandler = new HelpCommandHandler();
             var createHandler = new CreateCommandHandler(fileCabinetService);
-            var editHandler = new EditCommandHandler(fileCabinetService);
             var statHandler = new StatCommandHandler(fileCabinetService);
             var listHandler = new ListCommandHandler(fileCabinetService, DefaultRecordPrint);
             var findHandler = new FindCommandHandler(fileCabinetService, DefaultRecordPrint);
-            var removeHandler = new RemoveCommandHandler(fileCabinetService);
+            var updateHandler = new UpdateCommandHandler(fileCabinetService);
+            var deleteHandler = new DeleteCommandHandler(fileCabinetService);
             var purgeHandler = new PurgeCommandHandler(fileCabinetService);
+            var insertHandler = new InsertCommandHandler(fileCabinetService);
             var exportHandler = new ExportCommandHandler(fileCabinetService);
             var importHandler = new ImportCommandHandler(fileCabinetService);
             var exitHandler = new ExitCommandHandler(p => isRunning = p);
             var missedCommandHandler = new MissedCommandHandler();
 
             helpHandler.SetNext(createHandler);
-            createHandler.SetNext(editHandler);
-            editHandler.SetNext(statHandler);
+            createHandler.SetNext(statHandler);
             statHandler.SetNext(listHandler);
             listHandler.SetNext(findHandler);
-            findHandler.SetNext(removeHandler);
-            removeHandler.SetNext(purgeHandler);
-            purgeHandler.SetNext(exportHandler);
+            findHandler.SetNext(updateHandler);
+            updateHandler.SetNext(deleteHandler);
+            deleteHandler.SetNext(purgeHandler);
+            purgeHandler.SetNext(insertHandler);
+            insertHandler.SetNext(exportHandler);
             exportHandler.SetNext(importHandler);
             importHandler.SetNext(exitHandler);
             exitHandler.SetNext(missedCommandHandler);
@@ -268,6 +270,7 @@ namespace FileCabinetApp
 
             Console.WriteLine("--------------------------------------");
             Console.WriteLine("Total records displayed: {0}", counter);
+            Console.WriteLine();
         }
     }
 }

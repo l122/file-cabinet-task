@@ -35,12 +35,12 @@ namespace FileCabinetApp.Loggers
         }
 
         /// <inheritdoc/>
-        public bool EditRecord(FileCabinetRecord record)
+        public bool Insert(FileCabinetRecord record)
         {
             this.stopwatch.Restart();
-            var result = this.service.EditRecord(record);
+            var result = this.service.Insert(record);
             this.stopwatch.Stop();
-            Log(this.stopwatch.ElapsedTicks, "Edit");
+            Log(this.stopwatch.ElapsedTicks, "Insert");
             return result;
         }
 
@@ -121,16 +121,6 @@ namespace FileCabinetApp.Loggers
         }
 
         /// <inheritdoc/>
-        public bool RemoveRecord(int id)
-        {
-            this.stopwatch.Restart();
-            var result = this.service.RemoveRecord(id);
-            this.stopwatch.Stop();
-            Log(this.stopwatch.ElapsedTicks, "RemoveRecord");
-            return result;
-        }
-
-        /// <inheritdoc/>
         public int Restore(IFileCabinetServiceSnapshot snapshot)
         {
             this.stopwatch.Restart();
@@ -144,6 +134,26 @@ namespace FileCabinetApp.Loggers
         public IEnumerable<FileCabinetRecord> FindById(int id)
         {
             return this.service.FindById(id);
+        }
+
+        /// <inheritdoc/>
+        public string Delete(string expression)
+        {
+            this.stopwatch.Restart();
+            var result = this.service.Delete(expression);
+            this.stopwatch.Stop();
+            Log(this.stopwatch.ElapsedTicks, "Delete");
+            return result;
+        }
+
+        /// <inheritdoc/>
+        public string Update(string expression)
+        {
+            this.stopwatch.Restart();
+            var result = this.service.Update(expression);
+            this.stopwatch.Stop();
+            Log(this.stopwatch.ElapsedTicks, "Update");
+            return result;
         }
 
         /// <summary>

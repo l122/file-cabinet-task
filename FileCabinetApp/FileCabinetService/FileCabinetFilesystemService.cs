@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using FileCabinetApp.StaticClasses;
 using FileCabinetApp.Validators;
 
 namespace FileCabinetApp.FileCabinetService
@@ -23,6 +24,7 @@ namespace FileCabinetApp.FileCabinetService
         private readonly Dictionary<string, List<long>> lastNameDictionary;
         private readonly Dictionary<string, List<long>> dateOfBirthDictionary;
         private readonly Dictionary<int, long> idsDictionary;
+
         private readonly FileStream fileStream;
 
         /// <summary>
@@ -107,26 +109,55 @@ namespace FileCabinetApp.FileCabinetService
         }
 
         /// <inheritdoc/>
-        public bool EditRecord(FileCabinetRecord record)
+        public bool Insert(FileCabinetRecord record)
         {
-            if (!this.idsDictionary.TryGetValue(record.Id, out var pos))
+            // validate record
+            var validationResult = this.validator.ValidateParameters(record);
+            if (!validationResult.Item1)
             {
+                Console.WriteLine("Validation failed: {0}", validationResult.Item2);
                 return false;
             }
 
-            var oldRecord = new FilesystemEnumerable(this.fileStream, new List<long>() { pos }).GetEnumerator();
-            if (oldRecord.MoveNext())
+            if (this.idsDictionary.TryGetValue(record.Id, out var _))
             {
-                this.RemoveRecordFromSearchDictionaries(oldRecord.Current, pos);
+                Console.WriteLine("Record #{0} already exists. To update the record use command 'update'.", record.Id);
+                return false;
             }
 
-            var result = this.WriteToFile(record, pos);
-            if (result)
+            // Increase file size by one record.
+            this.fileStream.SetLength(this.fileStream.Length + RecordSize);
+
+            // If there were no entries in the file, just add record to the beginning of the file
+            List<int> keyList = new (this.idsDictionary.Keys);
+            if (keyList.Count == 0)
             {
-                this.AddRecordToSearchDictionaries(record, pos);
+                this.WriteToFile(record, 0);
+                return true;
             }
 
-            return result;
+            // Iterate over records from the end moving them one down the file
+            // until find the position for the inserted record.
+            var pos = this.fileStream.Length - RecordSize;
+            for (int i = keyList.Count - 1; i >= 0; i--)
+            {
+                var it = this.FindById(keyList[i]).GetEnumerator();
+                if (it.MoveNext() && it.Current.Id > record.Id)
+                {
+                    this.WriteToFile(it.Current, pos);
+                }
+                else
+                {
+                    this.WriteToFile(record, pos);
+                    break;
+                }
+
+                pos -= RecordSize;
+            }
+
+            this.UpdateSearchDictionaries();
+
+            return true;
         }
 
         /// <inheritdoc/>
@@ -255,33 +286,137 @@ namespace FileCabinetApp.FileCabinetService
         }
 
         /// <inheritdoc/>
-        public bool RemoveRecord(int id)
+        public string Delete(string expression)
         {
-            // find id
-            if (!this.idsDictionary.TryGetValue(id, out var position))
+            const string whereStr = "where ";
+
+            if (!expression.StartsWith(whereStr, StringComparison.InvariantCultureIgnoreCase))
             {
-                return false;
+                return "Invalid parameters. Call 'help delete' for help.";
             }
 
+            var recordsForDeletion = Parser.ParseWhereExpression(new FilesystemEnumerable(this.fileStream), expression);
+
+            StringBuilder returnMessage = new ();
+            var counter = 0;
+            foreach (var id in recordsForDeletion.Select(p => p.Id))
+            {
+                if (counter == 0)
+                {
+                    returnMessage.Append('#');
+                }
+                else
+                {
+                    returnMessage.Append(", #");
+                }
+
+                counter++;
+                returnMessage.Append(id);
+                this.RemoveRecord(id);
+            }
+
+            this.UpdateSearchDictionaries();
+
+            if (returnMessage.Length == 0)
+            {
+                return "No record is deleted." + Environment.NewLine;
+            }
+
+            if (counter == 1)
+            {
+                returnMessage.Insert(0, "Record ");
+                returnMessage.Append(" is deleted.");
+            }
+            else
+            {
+                returnMessage.Insert(0, "Records ");
+                returnMessage.Append(" are deleted.");
+            }
+
+            returnMessage.Append(Environment.NewLine);
+
+            return returnMessage.ToString();
+        }
+
+        /// <inheritdoc/>
+        public string Update(string expression)
+        {
+            const string setStr = "set ";
+            const string errorMessage = "Invalid parameters. Call 'help update' for help.";
+            const string norecordUpdateMessage = "No record is updated.";
+
+            if (string.IsNullOrEmpty(expression))
+            {
+                return errorMessage;
+            }
+
+            var whereIndex = expression.IndexOf("where ", StringComparison.InvariantCultureIgnoreCase);
+            if (!expression.StartsWith(setStr, StringComparison.InvariantCultureIgnoreCase)
+                || whereIndex == -1)
+            {
+                return errorMessage;
+            }
+
+            IEnumerable<FileCabinetRecord> recordsForUpdate;
+            Dictionary<string, string> fieldsToUpdate;
             try
             {
-                var oldRecord = new FilesystemEnumerable(this.fileStream, new List<long>() { position }).GetEnumerator();
-                if (oldRecord.MoveNext())
-                {
-                    this.RemoveRecordFromSearchDictionaries(oldRecord.Current, position);
+                fieldsToUpdate = Parser.ParseFields(expression[setStr.Length..whereIndex]);
+                recordsForUpdate = Parser.ParseWhereExpression(new FilesystemEnumerable(this.fileStream), expression[whereIndex..]);
+            }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine(ex.Message);
+                return errorMessage;
+            }
 
-                    this.fileStream.Position = position;
-                    this.fileStream.Write(BitConverter.GetBytes((short)Status.Deleted), 0, sizeof(short));
-                    this.fileStream.Flush();
+            StringBuilder returnMessage = new ();
+            List<int> updatedIds = new ();
+            foreach (var record in recordsForUpdate.ToArray())
+            {
+                if (updatedIds.Count == 0)
+                {
+                    returnMessage.Append('#');
+                }
+                else
+                {
+                    returnMessage.Append(", #");
+                }
+
+                var newRecord = Parser.GetUpdatedRecord(record, fieldsToUpdate, this.validator);
+                if (newRecord == null)
+                {
+                    return norecordUpdateMessage;
+                }
+
+                if (this.idsDictionary.TryGetValue(newRecord.Id, out var pos))
+                {
+                    this.WriteToFile(newRecord, pos);
+                    returnMessage.Append(record.Id);
+                    updatedIds.Add(record.Id);
                 }
             }
-            catch (Exception e)
+
+            if (updatedIds.Count == 0)
             {
-                Console.WriteLine("Error deleting a record: {0}", e.ToString());
-                return false;
+                return norecordUpdateMessage;
             }
 
-            return true;
+            this.UpdateSearchDictionaries();
+
+            if (updatedIds.Count == 1)
+            {
+                returnMessage.Insert(0, "Record ");
+                returnMessage.Append(" is updated.");
+            }
+            else
+            {
+                returnMessage.Insert(0, "Records ");
+                returnMessage.Append(" are updated.");
+            }
+
+            returnMessage.Append(Environment.NewLine);
+            return returnMessage.ToString();
         }
 
         /// <inheritdoc/>
@@ -387,6 +522,32 @@ namespace FileCabinetApp.FileCabinetService
         private static int GetRecordQuantity(long value)
         {
             return (int)(value / RecordSize);
+        }
+
+        private void RemoveRecord(int id)
+        {
+            // find id
+            if (!this.idsDictionary.TryGetValue(id, out var position))
+            {
+                return;
+            }
+
+            try
+            {
+                var oldRecord = new FilesystemEnumerable(this.fileStream, new List<long>() { position }).GetEnumerator();
+                if (oldRecord.MoveNext())
+                {
+                    this.RemoveRecordFromSearchDictionaries(oldRecord.Current, position);
+
+                    this.fileStream.Position = position;
+                    this.fileStream.Write(BitConverter.GetBytes((short)Status.Deleted), 0, sizeof(short));
+                    this.fileStream.Flush();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error deleting a record: {0}", e.ToString());
+            }
         }
 
         /// <summary>
@@ -635,26 +796,26 @@ namespace FileCabinetApp.FileCabinetService
             this.idsDictionary.Remove(record.Id);
 
             // Update firstNameDictionary
-            var recordList = this.firstNameDictionary[record.FirstName.ToUpperInvariant()];
-            recordList.Remove(pos);
-            if (recordList.Count == 0)
+            this.firstNameDictionary.TryGetValue(record.FirstName.ToUpperInvariant(), out var recordList);
+            recordList!.Remove(pos);
+            if (recordList!.Count == 0)
             {
                 this.firstNameDictionary.Remove(record.FirstName.ToUpperInvariant());
             }
 
             // Update lastNameDictionary
-            recordList = this.lastNameDictionary[record.LastName.ToUpperInvariant()];
-            recordList.Remove(pos);
-            if (recordList.Count == 0)
+            this.lastNameDictionary.TryGetValue(record.LastName.ToUpperInvariant(), out recordList);
+            recordList!.Remove(pos);
+            if (recordList!.Count == 0)
             {
                 this.lastNameDictionary.Remove(record.LastName.ToUpperInvariant());
             }
 
             // Update dateOfBirthDictionary
             string dateOfBirthString = record.DateOfBirth.ToString(DateMask, CultureInfo.InvariantCulture);
-            recordList = this.dateOfBirthDictionary[dateOfBirthString];
-            recordList.Remove(pos);
-            if (recordList.Count == 0)
+            this.dateOfBirthDictionary.TryGetValue(dateOfBirthString, out recordList);
+            recordList!.Remove(pos);
+            if (recordList!.Count == 0)
             {
                 this.dateOfBirthDictionary.Remove(dateOfBirthString);
             }
