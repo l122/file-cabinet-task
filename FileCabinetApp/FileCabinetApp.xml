@@ -37,6 +37,11 @@
             The Command Handler Base class.
             </summary>
         </member>
+        <member name="F:FileCabinetApp.CommandHandlers.CommandHandlerBase.HelpMessages">
+            <summary>
+            Help messages.
+            </summary>
+        </member>
         <member name="M:FileCabinetApp.CommandHandlers.CommandHandlerBase.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
             <inheritdoc/>
         </member>
