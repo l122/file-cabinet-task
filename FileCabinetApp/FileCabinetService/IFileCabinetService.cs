@@ -28,13 +28,6 @@ namespace FileCabinetApp.FileCabinetService
         public (int, int) GetStat();
 
         /// <summary>
-        /// Edits a record.
-        /// </summary>
-        /// <param name="record">The <see cref="FileCabinetRecord"/> instance of the new record.</param>
-        /// <returns>true if success, false - otherwise.</returns>
-        public bool EditRecord(FileCabinetRecord record);
-
-        /// <summary>
         /// Searches for a record by first name.
         /// </summary>
         /// <param name="firstName">The <see cref="string"/> instance of the first name.</param>
@@ -67,13 +60,6 @@ namespace FileCabinetApp.FileCabinetService
         /// <param name="snapshot">A <see cref="IFileCabinetServiceSnapshot"/> specialized instance with data to be restored from.</param>
         /// <returns>an <see cref="int"/> of restored number of records.</returns>
         public int Restore(IFileCabinetServiceSnapshot snapshot);
-
-        /// <summary>
-        /// Removes a record.
-        /// </summary>
-        /// <param name="id">A <see cref="int"/> instance of id.</param>
-        /// <returns>true if success, false otherwise.</returns>
-        public bool RemoveRecord(int id);
 
         /// <summary>
         /// Removes the records that are marked as deleted from a database.

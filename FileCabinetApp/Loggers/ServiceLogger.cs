@@ -48,26 +48,6 @@ namespace FileCabinetApp.Loggers
         }
 
         /// <inheritdoc/>
-        public bool EditRecord(FileCabinetRecord record)
-        {
-            this.sw.Write("{0} - Calling Edit() with ", GetCurrentTime());
-            this.sw.Write("FirstName = '{0}', ", record.FirstName);
-            this.sw.Write("LastName = '{0}', ", record.LastName);
-            this.sw.Write("DateOfBirth = '{0}', ", record.DateOfBirth.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture));
-            this.sw.Write("Workplace = '{0}', ", record.WorkPlaceNumber);
-            this.sw.Write("Salary = '{0}', ", record.Salary);
-            this.sw.WriteLine("Department = '{0}'.", record.Department);
-            this.sw.Flush();
-
-            var result = this.service.EditRecord(record);
-
-            this.sw.WriteLine("{0} - Edit() returned '{1}'", GetCurrentTime(), result.ToString());
-            this.sw.Flush();
-
-            return result;
-        }
-
-        /// <inheritdoc/>
         public bool Insert(FileCabinetRecord record)
         {
             this.sw.Write("{0} - Calling Insert() with ", GetCurrentTime());
@@ -183,21 +163,6 @@ namespace FileCabinetApp.Loggers
             var result = this.service.Purge();
 
             this.sw.WriteLine("{0} - Purge() returned '{1}' of '{2}' records were purged.", GetCurrentTime(), result.Item1, result.Item2);
-            this.sw.Flush();
-
-            return result;
-        }
-
-        /// <inheritdoc/>
-        public bool RemoveRecord(int id)
-        {
-            this.sw.Write("{0} - Calling RemoveRecord() with ", GetCurrentTime());
-            this.sw.WriteLine("id = '{0}'.", id);
-            this.sw.Flush();
-
-            var result = this.service.RemoveRecord(id);
-
-            this.sw.WriteLine("{0} - RemoveRecord() returned '{1}'.", GetCurrentTime(), result.ToString());
             this.sw.Flush();
 
             return result;

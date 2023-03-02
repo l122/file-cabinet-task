@@ -109,29 +109,6 @@ namespace FileCabinetApp.FileCabinetService
         }
 
         /// <inheritdoc/>
-        public bool EditRecord(FileCabinetRecord record)
-        {
-            if (!this.idsDictionary.TryGetValue(record.Id, out var pos))
-            {
-                return false;
-            }
-
-            var oldRecord = new FilesystemEnumerable(this.fileStream, new List<long>() { pos }).GetEnumerator();
-            if (oldRecord.MoveNext())
-            {
-                this.RemoveRecordFromSearchDictionaries(oldRecord.Current, pos);
-            }
-
-            var result = this.WriteToFile(record, pos);
-            if (result)
-            {
-                this.AddRecordToSearchDictionaries(record, pos);
-            }
-
-            return result;
-        }
-
-        /// <inheritdoc/>
         public bool Insert(FileCabinetRecord record)
         {
             // validate record
@@ -443,36 +420,6 @@ namespace FileCabinetApp.FileCabinetService
         }
 
         /// <inheritdoc/>
-        public bool RemoveRecord(int id)
-        {
-            // find id
-            if (!this.idsDictionary.TryGetValue(id, out var position))
-            {
-                return false;
-            }
-
-            try
-            {
-                var oldRecord = new FilesystemEnumerable(this.fileStream, new List<long>() { position }).GetEnumerator();
-                if (oldRecord.MoveNext())
-                {
-                    this.RemoveRecordFromSearchDictionaries(oldRecord.Current, position);
-
-                    this.fileStream.Position = position;
-                    this.fileStream.Write(BitConverter.GetBytes((short)Status.Deleted), 0, sizeof(short));
-                    this.fileStream.Flush();
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Error deleting a record: {0}", e.ToString());
-                return false;
-            }
-
-            return true;
-        }
-
-        /// <inheritdoc/>
         public (int, int) Purge()
         {
             long oldSize = this.fileStream.Length;
@@ -575,6 +522,32 @@ namespace FileCabinetApp.FileCabinetService
         private static int GetRecordQuantity(long value)
         {
             return (int)(value / RecordSize);
+        }
+
+        private void RemoveRecord(int id)
+        {
+            // find id
+            if (!this.idsDictionary.TryGetValue(id, out var position))
+            {
+                return;
+            }
+
+            try
+            {
+                var oldRecord = new FilesystemEnumerable(this.fileStream, new List<long>() { position }).GetEnumerator();
+                if (oldRecord.MoveNext())
+                {
+                    this.RemoveRecordFromSearchDictionaries(oldRecord.Current, position);
+
+                    this.fileStream.Position = position;
+                    this.fileStream.Write(BitConverter.GetBytes((short)Status.Deleted), 0, sizeof(short));
+                    this.fileStream.Flush();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error deleting a record: {0}", e.ToString());
+            }
         }
 
         /// <summary>

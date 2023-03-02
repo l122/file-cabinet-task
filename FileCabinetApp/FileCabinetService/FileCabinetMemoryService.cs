@@ -62,30 +62,6 @@ namespace FileCabinetApp.FileCabinetService
         }
 
         /// <inheritdoc/>
-        public bool EditRecord(FileCabinetRecord record)
-        {
-            int listId = this.GetListId(record.Id);
-            if (listId == -1)
-            {
-                return false;
-            }
-
-            this.RemoveRecordFromSearchDictionaries(this.list[listId]);
-
-            // Update record
-            this.list[listId].FirstName = record.FirstName;
-            this.list[listId].LastName = record.LastName;
-            this.list[listId].DateOfBirth = record.DateOfBirth;
-            this.list[listId].WorkPlaceNumber = record.WorkPlaceNumber;
-            this.list[listId].Salary = record.Salary;
-            this.list[listId].Department = record.Department;
-
-            this.AddRecordToSearchDictionaries(record);
-
-            return true;
-        }
-
-        /// <inheritdoc/>
         public bool Insert(FileCabinetRecord record)
         {
             int listId = this.GetListId(record.Id);
@@ -192,22 +168,6 @@ namespace FileCabinetApp.FileCabinetService
             this.list.Sort((x, y) => x.Id.CompareTo(y.Id));
 
             return records.Length;
-        }
-
-        /// <inheritdoc/>
-        public bool RemoveRecord(int id)
-        {
-            var listId = this.list.FindIndex(p => p.Id == id);
-
-            if (listId == -1)
-            {
-                return false;
-            }
-
-            this.RemoveRecordFromSearchDictionaries(this.list[listId]);
-            this.list.RemoveAt(listId);
-
-            return true;
         }
 
         /// <inheritdoc/>

@@ -35,16 +35,6 @@ namespace FileCabinetApp.Loggers
         }
 
         /// <inheritdoc/>
-        public bool EditRecord(FileCabinetRecord record)
-        {
-            this.stopwatch.Restart();
-            var result = this.service.EditRecord(record);
-            this.stopwatch.Stop();
-            Log(this.stopwatch.ElapsedTicks, "Edit");
-            return result;
-        }
-
-        /// <inheritdoc/>
         public bool Insert(FileCabinetRecord record)
         {
             this.stopwatch.Restart();
@@ -127,16 +117,6 @@ namespace FileCabinetApp.Loggers
             var result = this.service.Purge();
             this.stopwatch.Stop();
             Log(this.stopwatch.ElapsedTicks, "Purge");
-            return result;
-        }
-
-        /// <inheritdoc/>
-        public bool RemoveRecord(int id)
-        {
-            this.stopwatch.Restart();
-            var result = this.service.RemoveRecord(id);
-            this.stopwatch.Stop();
-            Log(this.stopwatch.ElapsedTicks, "RemoveRecord");
             return result;
         }
 
