@@ -50,9 +50,9 @@ namespace FileCabinetApp.FileCabinetService
         }
 
         /// <inheritdoc/>
-        public IEnumerable<FileCabinetRecord> GetRecords()
+        public IEnumerable<FileCabinetRecord> SelectRecords(string expression)
         {
-            return new MemoryEnumerable(this.list);
+            return Memoizer.Memoize(this.SelectRecords1)(expression);
         }
 
         /// <inheritdoc/>
@@ -84,6 +84,8 @@ namespace FileCabinetApp.FileCabinetService
 
             this.AddRecordToSearchDictionaries(record);
 
+            Memoizer.MemoizeReset();
+
             return true;
         }
 
@@ -91,44 +93,6 @@ namespace FileCabinetApp.FileCabinetService
         public IFileCabinetServiceSnapshot MakeSnapshot()
         {
             return new FileCabinetServiceSnapshot(new MemoryEnumerable(this.list));
-        }
-
-        /// <inheritdoc/>
-        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
-        {
-            if (this.firstNameDictionary.TryGetValue(firstName.ToUpperInvariant(), out List<FileCabinetRecord>? result))
-            {
-                return new MemoryEnumerable(result);
-            }
-
-            return new MemoryEnumerable();
-        }
-
-        /// <inheritdoc/>
-        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
-        {
-            if (this.lastNameDictionary.TryGetValue(lastName.ToUpperInvariant(), out List<FileCabinetRecord>? result))
-            {
-                return new MemoryEnumerable(result);
-            }
-
-            return new MemoryEnumerable();
-        }
-
-        /// <inheritdoc/>
-        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(string dateOfBirthString)
-        {
-            if (DateTime.TryParse(dateOfBirthString, out DateTime dateOfBirth))
-            {
-                dateOfBirthString = dateOfBirth.ToString(DateMask, CultureInfo.InvariantCulture);
-            }
-
-            if (this.dateOfBirthDictionary.TryGetValue(dateOfBirthString, out List<FileCabinetRecord>? result))
-            {
-                return new MemoryEnumerable(result);
-            }
-
-            return new MemoryEnumerable();
         }
 
         /// <inheritdoc/>
@@ -234,6 +198,8 @@ namespace FileCabinetApp.FileCabinetService
 
             returnMessage.Append(Environment.NewLine);
 
+            Memoizer.MemoizeReset();
+
             return returnMessage.ToString();
         }
 
@@ -260,7 +226,7 @@ namespace FileCabinetApp.FileCabinetService
             Dictionary<string, string> fieldsToUpdate;
             try
             {
-                fieldsToUpdate = Parser.ParseFields(expression[setStr.Length..whereIndex]);
+                fieldsToUpdate = Parser.ParseFieldsAndValues(expression[setStr.Length..whereIndex]);
                 recordsForUpdate = Parser.ParseWhereExpression(new MemoryEnumerable(this.list), expression[whereIndex..]);
             }
             catch (ArgumentException ex)
@@ -313,6 +279,9 @@ namespace FileCabinetApp.FileCabinetService
             }
 
             returnMessage.Append(Environment.NewLine);
+
+            Memoizer.MemoizeReset();
+
             return returnMessage.ToString();
         }
 
@@ -407,6 +376,37 @@ namespace FileCabinetApp.FileCabinetService
         private int GetListId(int id)
         {
             return this.list.FindIndex(p => p.Id == id);
+        }
+
+        private IEnumerable<FileCabinetRecord> SelectRecords1(string expression)
+        {
+            const string errorMessage = "Invalid parameters. Call 'help select' for help.";
+
+            if (string.IsNullOrEmpty(expression))
+            {
+                return new MemoryEnumerable(this.list);
+            }
+
+            IEnumerable<FileCabinetRecord> result;
+            var whereIndex = expression.IndexOf("where ", StringComparison.InvariantCultureIgnoreCase);
+            try
+            {
+                if (whereIndex != -1)
+                {
+                    result = Parser.ParseWhereExpression(new MemoryEnumerable(this.list), expression[whereIndex..]);
+                }
+                else
+                {
+                    result = new MemoryEnumerable(this.list);
+                }
+            }
+            catch (ArgumentException)
+            {
+                Console.WriteLine(errorMessage);
+                return new MemoryEnumerable(new List<FileCabinetRecord>());
+            }
+
+            return result;
         }
     }
 }

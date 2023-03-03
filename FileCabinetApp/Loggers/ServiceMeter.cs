@@ -45,45 +45,12 @@ namespace FileCabinetApp.Loggers
         }
 
         /// <inheritdoc/>
-        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
+        public IEnumerable<FileCabinetRecord> SelectRecords(string expression)
         {
             this.stopwatch.Restart();
-            var result = this.service.FindByFirstName(firstName);
+            var result = this.service.SelectRecords(expression);
             this.stopwatch.Stop();
-            Log(this.stopwatch.ElapsedTicks, "FindByFirstName");
-
-            return result;
-        }
-
-        /// <inheritdoc/>
-        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
-        {
-            this.stopwatch.Restart();
-            var result = this.service.FindByLastName(lastName);
-            this.stopwatch.Stop();
-            Log(this.stopwatch.ElapsedTicks, "FindByLastName");
-
-            return result;
-        }
-
-        /// <inheritdoc/>
-        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(string dateOfBirthString)
-        {
-            this.stopwatch.Restart();
-            var result = this.service.FindByDateOfBirth(dateOfBirthString);
-            this.stopwatch.Stop();
-            Log(this.stopwatch.ElapsedTicks, "FindByDateOfBirth");
-
-            return result;
-        }
-
-        /// <inheritdoc/>
-        public IEnumerable<FileCabinetRecord> GetRecords()
-        {
-            this.stopwatch.Restart();
-            var result = this.service.GetRecords();
-            this.stopwatch.Stop();
-            Log(this.stopwatch.ElapsedTicks, "GetRecords");
+            Log(this.stopwatch.ElapsedTicks, "SelectRecords");
 
             return result;
         }

@@ -110,7 +110,7 @@ namespace FileCabinetApp
                     FirstName = firstName,
                     LastName = lastName,
                     DateOfBirth = dateOfBirth,
-                    WorkPlaceNumber = workPlaceNumber,
+                    Workplace = workPlaceNumber,
                     Salary = salary,
                     Department = department.ToString().ToUpper(CultureInfo.InvariantCulture)[0],
                 };
@@ -160,8 +160,7 @@ namespace FileCabinetApp
             var helpHandler = new HelpCommandHandler();
             var createHandler = new CreateCommandHandler(fileCabinetService);
             var statHandler = new StatCommandHandler(fileCabinetService);
-            var listHandler = new ListCommandHandler(fileCabinetService, DefaultRecordPrint);
-            var findHandler = new FindCommandHandler(fileCabinetService, DefaultRecordPrint);
+            var selectHandler = new SelectCommandHandler(fileCabinetService);
             var updateHandler = new UpdateCommandHandler(fileCabinetService);
             var deleteHandler = new DeleteCommandHandler(fileCabinetService);
             var purgeHandler = new PurgeCommandHandler(fileCabinetService);
@@ -173,9 +172,8 @@ namespace FileCabinetApp
 
             helpHandler.SetNext(createHandler);
             createHandler.SetNext(statHandler);
-            statHandler.SetNext(listHandler);
-            listHandler.SetNext(findHandler);
-            findHandler.SetNext(updateHandler);
+            statHandler.SetNext(selectHandler);
+            selectHandler.SetNext(updateHandler);
             updateHandler.SetNext(deleteHandler);
             deleteHandler.SetNext(purgeHandler);
             purgeHandler.SetNext(insertHandler);
@@ -256,21 +254,6 @@ namespace FileCabinetApp
         private static IRecordValidator GetDefaultValidatorObject()
         {
             return new ValidatorBuilder().CreateDefaultValidator();
-        }
-
-        private static void DefaultRecordPrint(IEnumerable<FileCabinetRecord> records)
-        {
-            int counter = 0;
-            Console.WriteLine("--------------------------------------");
-            foreach (var record in records)
-            {
-                Console.WriteLine("  {0}", record.ToString());
-                counter++;
-            }
-
-            Console.WriteLine("--------------------------------------");
-            Console.WriteLine("Total records displayed: {0}", counter);
-            Console.WriteLine();
         }
     }
 }

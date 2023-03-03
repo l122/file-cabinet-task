@@ -34,7 +34,7 @@ namespace FileCabinetApp.Loggers
             this.sw.Write("FirstName = '{0}', ", record.FirstName);
             this.sw.Write("LastName = '{0}', ", record.LastName);
             this.sw.Write("DateOfBirth = '{0}', ", record.DateOfBirth.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture));
-            this.sw.Write("Workplace = '{0}', ", record.WorkPlaceNumber);
+            this.sw.Write("Workplace = '{0}', ", record.Workplace);
             this.sw.Write("Salary = '{0}', ", record.Salary);
             this.sw.WriteLine("Department = '{0}'.", record.Department);
             this.sw.Flush();
@@ -54,7 +54,7 @@ namespace FileCabinetApp.Loggers
             this.sw.Write("FirstName = '{0}', ", record.FirstName);
             this.sw.Write("LastName = '{0}', ", record.LastName);
             this.sw.Write("DateOfBirth = '{0}', ", record.DateOfBirth.ToString("MM/dd/yyyy", CultureInfo.InvariantCulture));
-            this.sw.Write("Workplace = '{0}', ", record.WorkPlaceNumber);
+            this.sw.Write("Workplace = '{0}', ", record.Workplace);
             this.sw.Write("Salary = '{0}', ", record.Salary);
             this.sw.WriteLine("Department = '{0}'.", record.Department);
             this.sw.Flush();
@@ -68,69 +68,10 @@ namespace FileCabinetApp.Loggers
         }
 
         /// <inheritdoc/>
-        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
-        {
-            this.sw.Write("{0} - Calling FindByFirstName() with ", GetCurrentTime());
-            this.sw.WriteLine("FirstName = '{0}'.", firstName);
-            this.sw.Flush();
-
-            var result = this.service.FindByFirstName(firstName);
-
-            this.sw.WriteLine("{0} - FindByFirstName() returned an iterator.", GetCurrentTime());
-            this.sw.Flush();
-
-            return result;
-        }
-
-        /// <inheritdoc/>
-        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
-        {
-            this.sw.Write("{0} - Calling FindByLastName() with ", GetCurrentTime());
-            this.sw.WriteLine("LastName = '{0}'.", lastName);
-            this.sw.Flush();
-
-            var result = this.service.FindByLastName(lastName);
-
-            this.sw.WriteLine("{0} - FindByLastName() returned an iterator.", GetCurrentTime());
-            this.sw.Flush();
-
-            return result;
-        }
-
-        /// <inheritdoc/>
-        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(string dateOfBirthString)
-        {
-            this.sw.Write("{0} - Calling FindByDateOfBirth() with ", GetCurrentTime());
-            this.sw.WriteLine("DateOfBirth = '{0}'.", dateOfBirthString);
-            this.sw.Flush();
-
-            var result = this.service.FindByDateOfBirth(dateOfBirthString);
-
-            this.sw.WriteLine("{0} - FindByDateOfBirth() returned an iterator.", GetCurrentTime());
-            this.sw.Flush();
-
-            return result;
-        }
-
-        /// <inheritdoc/>
         public IEnumerable<FileCabinetRecord> FindById(int id)
         {
             // No need to log it, because this method is always called by the other logged methods.
             return this.service.FindById(id);
-        }
-
-        /// <inheritdoc/>
-        public IEnumerable<FileCabinetRecord> GetRecords()
-        {
-            this.sw.WriteLine("{0} - Calling GetRecords().", GetCurrentTime());
-            this.sw.Flush();
-
-            var result = this.service.GetRecords();
-
-            this.sw.WriteLine("{0} - GetRecords() returned an iterator.", GetCurrentTime());
-            this.sw.Flush();
-
-            return result;
         }
 
         /// <inheritdoc/>
@@ -205,6 +146,20 @@ namespace FileCabinetApp.Loggers
             var result = this.service.Update(expression);
 
             this.sw.WriteLine("{0} - Update() return the following message: {1}", GetCurrentTime(), result);
+            this.sw.Flush();
+
+            return result;
+        }
+
+        /// <inheritdoc/>
+        public IEnumerable<FileCabinetRecord> SelectRecords(string expression)
+        {
+            this.sw.WriteLine("{0} - Calling SelectRecords().", GetCurrentTime());
+            this.sw.Flush();
+
+            var result = this.service.SelectRecords(expression);
+
+            this.sw.WriteLine("{0} - SelectRecords() returned an iterator.", GetCurrentTime());
             this.sw.Flush();
 
             return result;

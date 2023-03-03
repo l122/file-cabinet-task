@@ -72,9 +72,35 @@ namespace FileCabinetApp.FileCabinetService
         }
 
         /// <inheritdoc/>
-        public IEnumerable<FileCabinetRecord> GetRecords()
+        public IEnumerable<FileCabinetRecord> SelectRecords(string expression)
         {
-            return new FilesystemEnumerable(this.fileStream);
+            const string errorMessage = "Invalid parameters. Call 'help select' for help.";
+
+            if (string.IsNullOrEmpty(expression))
+            {
+                return new FilesystemEnumerable(this.fileStream);
+            }
+
+            IEnumerable<FileCabinetRecord> result;
+            var whereIndex = expression.IndexOf("where ", StringComparison.InvariantCultureIgnoreCase);
+            try
+            {
+                if (whereIndex != -1)
+                {
+                    result = Parser.ParseWhereExpression(new FilesystemEnumerable(this.fileStream), expression[whereIndex..]);
+                }
+                else
+                {
+                    result = new FilesystemEnumerable(this.fileStream);
+                }
+            }
+            catch (ArgumentException)
+            {
+                Console.WriteLine(errorMessage);
+                return new FilesystemEnumerable(this.fileStream, new List<long>());
+            }
+
+            return result;
         }
 
         /// <inheritdoc/>
@@ -163,45 +189,7 @@ namespace FileCabinetApp.FileCabinetService
         /// <inheritdoc/>
         public IFileCabinetServiceSnapshot MakeSnapshot()
         {
-            return new FileCabinetServiceSnapshot(this.GetRecords());
-        }
-
-        /// <inheritdoc/>
-        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
-        {
-            if (this.firstNameDictionary.TryGetValue(firstName.ToUpperInvariant(), out var list))
-            {
-                return new FilesystemEnumerable(this.fileStream, list);
-            }
-
-            return new FilesystemEnumerable(this.fileStream, new List<long>());
-        }
-
-        /// <inheritdoc/>
-        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
-        {
-            if (this.lastNameDictionary.TryGetValue(lastName.ToUpperInvariant(), out var list))
-            {
-                return new FilesystemEnumerable(this.fileStream, list);
-            }
-
-            return new FilesystemEnumerable(this.fileStream, new List<long>());
-        }
-
-        /// <inheritdoc/>
-        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(string dateOfBirthString)
-        {
-            if (DateTime.TryParse(dateOfBirthString, out DateTime dateOfBirth))
-            {
-                dateOfBirthString = dateOfBirth.ToString(DateMask, CultureInfo.InvariantCulture);
-            }
-
-            if (this.dateOfBirthDictionary.TryGetValue(dateOfBirthString, out var list))
-            {
-                return new FilesystemEnumerable(this.fileStream, list);
-            }
-
-            return new FilesystemEnumerable(this.fileStream, new List<long>());
+            return new FileCabinetServiceSnapshot(this.SelectRecords(string.Empty));
         }
 
         /// <inheritdoc/>
@@ -361,7 +349,7 @@ namespace FileCabinetApp.FileCabinetService
             Dictionary<string, string> fieldsToUpdate;
             try
             {
-                fieldsToUpdate = Parser.ParseFields(expression[setStr.Length..whereIndex]);
+                fieldsToUpdate = Parser.ParseFieldsAndValues(expression[setStr.Length..whereIndex]);
                 recordsForUpdate = Parser.ParseWhereExpression(new FilesystemEnumerable(this.fileStream), expression[whereIndex..]);
             }
             catch (ArgumentException ex)
@@ -604,7 +592,7 @@ namespace FileCabinetApp.FileCabinetService
             CopyToBuffer(BitConverter.GetBytes(record.DateOfBirth.Day), buffer, ref offset);
 
             // Copy Work Place Number
-            CopyToBuffer(BitConverter.GetBytes(record.WorkPlaceNumber), buffer, ref offset);
+            CopyToBuffer(BitConverter.GetBytes(record.Workplace), buffer, ref offset);
 
             // Copy SalaryType
             CopyIntToBuffer(decimal.GetBits(record.Salary), buffer, ref offset);
@@ -713,7 +701,7 @@ namespace FileCabinetApp.FileCabinetService
             record.DateOfBirth = new DateTime(year, month, day);
 
             // Parse Work Place Number
-            record.WorkPlaceNumber = BitConverter.ToInt16(buffer, offset);
+            record.Workplace = BitConverter.ToInt16(buffer, offset);
             offset += sizeof(short);
 
             // Parse SalaryType

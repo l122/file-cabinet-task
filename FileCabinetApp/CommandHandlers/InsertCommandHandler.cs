@@ -70,7 +70,7 @@ namespace FileCabinetApp.CommandHandlers
                 FirstName = ReadValue(Converter.StringConverter, argsDict[FirstName]),
                 LastName = ReadValue(Converter.StringConverter, argsDict[LastName]),
                 DateOfBirth = ReadValue(Converter.DateConverter, argsDict[DateOfBirth]),
-                WorkPlaceNumber = ReadValue(Converter.ShortConverter, argsDict[Workplace]),
+                Workplace = ReadValue(Converter.ShortConverter, argsDict[Workplace]),
                 Salary = ReadValue(Converter.DecimalConverter, argsDict[Salary]),
                 Department = ReadValue(Converter.CharConverter, argsDict[Department]),
             };

@@ -41,7 +41,7 @@ namespace FileCabinetApp.FileCabinetService
             this.xmlWriter.WriteElementString("firstName", $"{record.FirstName}");
             this.xmlWriter.WriteElementString("lastName", $"{record.LastName}");
             this.xmlWriter.WriteElementString("dateOfBirth", record.DateOfBirth.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
-            this.xmlWriter.WriteElementString("workPlace", $"{record.WorkPlaceNumber}");
+            this.xmlWriter.WriteElementString("workPlace", $"{record.Workplace}");
             this.xmlWriter.WriteElementString("salary", $"{record.Salary}");
             this.xmlWriter.WriteElementString("department", $"{(int)record.Department}");
             this.xmlWriter.WriteEndElement();

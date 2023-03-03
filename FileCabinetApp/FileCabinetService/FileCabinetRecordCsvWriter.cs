@@ -21,7 +21,7 @@ namespace FileCabinetApp.FileCabinetService
                 $"{nameof(FileCabinetRecord.FirstName)}," +
                 $"{nameof(FileCabinetRecord.LastName)}," +
                 $"{nameof(FileCabinetRecord.DateOfBirth)}," +
-                $"{nameof(FileCabinetRecord.WorkPlaceNumber)}," +
+                $"{nameof(FileCabinetRecord.Workplace)}," +
                 $"{nameof(FileCabinetRecord.Salary)}," +
                 $"{nameof(FileCabinetRecord.Department)}");
 
