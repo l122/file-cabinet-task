@@ -110,7 +110,7 @@ namespace FileCabinetApp
                     FirstName = firstName,
                     LastName = lastName,
                     DateOfBirth = dateOfBirth,
-                    WorkPlaceNumber = workPlaceNumber,
+                    Workplace = workPlaceNumber,
                     Salary = salary,
                     Department = department.ToString().ToUpper(CultureInfo.InvariantCulture)[0],
                 };
@@ -160,6 +160,7 @@ namespace FileCabinetApp
             var helpHandler = new HelpCommandHandler();
             var createHandler = new CreateCommandHandler(fileCabinetService);
             var statHandler = new StatCommandHandler(fileCabinetService);
+            var selectHandler = new SelectCommandHandler(fileCabinetService);
             var listHandler = new ListCommandHandler(fileCabinetService, DefaultRecordPrint);
             var findHandler = new FindCommandHandler(fileCabinetService, DefaultRecordPrint);
             var updateHandler = new UpdateCommandHandler(fileCabinetService);
@@ -173,7 +174,8 @@ namespace FileCabinetApp
 
             helpHandler.SetNext(createHandler);
             createHandler.SetNext(statHandler);
-            statHandler.SetNext(listHandler);
+            statHandler.SetNext(selectHandler);
+            selectHandler.SetNext(listHandler);
             listHandler.SetNext(findHandler);
             findHandler.SetNext(updateHandler);
             updateHandler.SetNext(deleteHandler);

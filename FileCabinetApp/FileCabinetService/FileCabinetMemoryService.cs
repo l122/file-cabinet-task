@@ -56,6 +56,38 @@ namespace FileCabinetApp.FileCabinetService
         }
 
         /// <inheritdoc/>
+        public IEnumerable<FileCabinetRecord> SelectRecords(string expression)
+        {
+            const string errorMessage = "Invalid parameters. Call 'help select' for help.";
+
+            if (string.IsNullOrEmpty(expression))
+            {
+                return new MemoryEnumerable(this.list);
+            }
+
+            IEnumerable<FileCabinetRecord> result;
+            var whereIndex = expression.IndexOf("where ", StringComparison.InvariantCultureIgnoreCase);
+            try
+            {
+                if (whereIndex != -1)
+                {
+                    result = Parser.ParseWhereExpression(new MemoryEnumerable(this.list), expression[whereIndex..]);
+                }
+                else
+                {
+                    result = new MemoryEnumerable(this.list);
+                }
+            }
+            catch (ArgumentException)
+            {
+                Console.WriteLine(errorMessage);
+                return new MemoryEnumerable(new List<FileCabinetRecord>());
+            }
+
+            return result;
+        }
+
+        /// <inheritdoc/>
         public (int, int) GetStat()
         {
             return (this.list.Count, 0);
@@ -260,7 +292,7 @@ namespace FileCabinetApp.FileCabinetService
             Dictionary<string, string> fieldsToUpdate;
             try
             {
-                fieldsToUpdate = Parser.ParseFields(expression[setStr.Length..whereIndex]);
+                fieldsToUpdate = Parser.ParseFieldsAndValues(expression[setStr.Length..whereIndex]);
                 recordsForUpdate = Parser.ParseWhereExpression(new MemoryEnumerable(this.list), expression[whereIndex..]);
             }
             catch (ArgumentException ex)

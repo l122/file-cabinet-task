@@ -130,7 +130,7 @@ namespace FileCabinetGenerator
                     FirstName = RandomString(random.Next(rules.FirstName.Min, rules.FirstName.Max)),
                     LastName = RandomString(random.Next(rules.LastName.Min, rules.LastName.Max)),
                     DateOfBirth = new DateTime(random.NextInt64(ticksFrom, ticksTo)),
-                    WorkPlaceNumber = (short)random.Next(rules.Workplace.Min, rules.Workplace.Max),
+                    Workplace = (short)random.Next(rules.Workplace.Min, rules.Workplace.Max),
                     Salary = Convert.ToDecimal(random.Next(Convert.ToInt32(rules.Salary.Min), Convert.ToInt32(rules.Salary.Max))),
                     Department = Convert.ToChar(random.Next(rules.Department.Start, rules.Department.End))
                 };

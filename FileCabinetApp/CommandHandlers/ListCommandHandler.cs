@@ -5,7 +5,7 @@ using FileCabinetApp.FileCabinetService;
 namespace FileCabinetApp.CommandHandlers
 {
     /// <summary>
-    /// Handles the List Command Request.
+    /// Handles the Select Command Request.
     /// </summary>
     public class ListCommandHandler : ServiceCommandHandlerBase
     {

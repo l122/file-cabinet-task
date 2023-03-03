@@ -25,11 +25,11 @@ namespace FileCabinetApp.Validators
         /// <inheritdoc/>
         public Tuple<bool, string> ValidateParameters(FileCabinetRecord record)
         {
-            short value = record.WorkPlaceNumber;
+            short value = record.Workplace;
 
             if (value < this.fromNumber || value > this.toNumber)
             {
-                return Tuple.Create(false, $"WorkPlaceNumber cannot be less than {this.fromNumber} and greater than {this.toNumber}.");
+                return Tuple.Create(false, $"Workplace cannot be less than {this.fromNumber} and greater than {this.toNumber}.");
             }
 
             return Tuple.Create(true, string.Empty);

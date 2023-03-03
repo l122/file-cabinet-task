@@ -94,5 +94,12 @@ namespace FileCabinetApp.FileCabinetService
         /// <param name="expression">A <see cref="string"/> instance of input fields and expression.</param>
         /// <returns>A <see cref="string"/> convfirmation of updated records.</returns>
         public string Update(string expression);
+
+        /// <summary>
+        /// Selects records according to the expression.
+        /// </summary>
+        /// <param name="expression">A <see cref="string"/> instance of the expression.</param>
+        /// <returns>An <see cref="IEnumerable{T}"/> specialized instance of selected records.</returns>
+        public IEnumerable<FileCabinetRecord> SelectRecords(string expression);
     }
 }

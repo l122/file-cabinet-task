@@ -182,7 +182,7 @@
         </member>
         <member name="T:FileCabinetApp.CommandHandlers.ListCommandHandler">
             <summary>
-            Handles the List Command Request.
+            Handles the Select Command Request.
             </summary>
         </member>
         <member name="M:FileCabinetApp.CommandHandlers.ListCommandHandler.#ctor(FileCabinetApp.FileCabinetService.IFileCabinetService,System.Action{System.Collections.Generic.IEnumerable{FileCabinetApp.FileCabinetService.FileCabinetRecord}})">
@@ -215,6 +215,20 @@
             <param name="fileCabinetService">A <see cref="T:FileCabinetApp.FileCabinetService.IFileCabinetService"/> specialized instance.</param>
         </member>
         <member name="M:FileCabinetApp.CommandHandlers.PurgeCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
+            <inheritdoc/>
+        </member>
+        <member name="T:FileCabinetApp.CommandHandlers.SelectCommandHandler">
+            <summary>
+            Handles the SelectRecords Command Request.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.SelectCommandHandler.#ctor(FileCabinetApp.FileCabinetService.IFileCabinetService)">
+            <summary>
+            Initializes a new instance of the <see cref="T:FileCabinetApp.CommandHandlers.SelectCommandHandler"/> class.
+            </summary>
+            <param name="fileCabinetService">A <see cref="T:FileCabinetApp.FileCabinetService.IFileCabinetService"/> specialized instance.</param>
+        </member>
+        <member name="M:FileCabinetApp.CommandHandlers.SelectCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
             <inheritdoc/>
         </member>
         <member name="T:FileCabinetApp.CommandHandlers.ServiceCommandHandlerBase">
@@ -276,6 +290,9 @@
             <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService.GetRecords">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService.SelectRecords(System.String)">
             <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService.GetStat">
@@ -366,6 +383,9 @@
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetMemoryService.GetRecords">
             <inheritdoc/>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetService.FileCabinetMemoryService.SelectRecords(System.String)">
+            <inheritdoc/>
+        </member>
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetMemoryService.GetStat">
             <inheritdoc/>
         </member>
@@ -447,7 +467,7 @@
             </summary>
             <value>Employee's date of birth.</value>
         </member>
-        <member name="P:FileCabinetApp.FileCabinetService.FileCabinetRecord.WorkPlaceNumber">
+        <member name="P:FileCabinetApp.FileCabinetService.FileCabinetRecord.Workplace">
             <summary>
             Gets or sets employee's work place number.
             </summary>
@@ -710,6 +730,13 @@
             <param name="expression">A <see cref="T:System.String"/> instance of input fields and expression.</param>
             <returns>A <see cref="T:System.String"/> convfirmation of updated records.</returns>
         </member>
+        <member name="M:FileCabinetApp.FileCabinetService.IFileCabinetService.SelectRecords(System.String)">
+            <summary>
+            Selects records according to the expression.
+            </summary>
+            <param name="expression">A <see cref="T:System.String"/> instance of the expression.</param>
+            <returns>An <see cref="T:System.Collections.Generic.IEnumerable`1"/> specialized instance of selected records.</returns>
+        </member>
         <member name="T:FileCabinetApp.FileCabinetService.IFileCabinetServiceSnapshot">
             <summary>
             File Cabinet Service Snapshot interface.
@@ -817,6 +844,9 @@
         <member name="M:FileCabinetApp.Loggers.ServiceLogger.Update(System.String)">
             <inheritdoc/>
         </member>
+        <member name="M:FileCabinetApp.Loggers.ServiceLogger.SelectRecords(System.String)">
+            <inheritdoc/>
+        </member>
         <member name="M:FileCabinetApp.Loggers.ServiceLogger.GetCurrentTime">
             <summary>
             Return a string of the current date and time.
@@ -847,6 +877,9 @@
             <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.Loggers.ServiceMeter.FindByDateOfBirth(System.String)">
+            <inheritdoc/>
+        </member>
+        <member name="M:FileCabinetApp.Loggers.ServiceMeter.SelectRecords(System.String)">
             <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.Loggers.ServiceMeter.GetRecords">
@@ -1160,7 +1193,7 @@
             <returns>An <see cref="T:System.Collections.Generic.IEnumerable`1"/> specialized instance of parsed expression.</returns>
             <exception cref="T:System.ArgumentException">if invalid invalid expression.</exception>
         </member>
-        <member name="M:FileCabinetApp.StaticClasses.Parser.ParseFields(System.String)">
+        <member name="M:FileCabinetApp.StaticClasses.Parser.ParseFieldsAndValues(System.String)">
             <summary>
             Parses record's fields and their values into a dictionary.
             </summary>

@@ -79,7 +79,7 @@ namespace FileCabinetApp.FileCabinetService
             FileCabinetRecord? record = null;
             if (int.TryParse(values[this.headers[nameof(record.Id)]], out var id)
                 && DateTime.TryParse(values[this.headers[nameof(record.DateOfBirth)]], out var dateOfBirth)
-                && short.TryParse(values[this.headers[nameof(record.WorkPlaceNumber)]], out var workPlaceNumber)
+                && short.TryParse(values[this.headers[nameof(record.Workplace)]], out var workPlaceNumber)
                 && decimal.TryParse(values[this.headers[nameof(record.Salary)]], out var salary)
                 && char.TryParse(values[this.headers[nameof(record.Department)]], out var department))
             {
@@ -89,7 +89,7 @@ namespace FileCabinetApp.FileCabinetService
                     FirstName = values[this.headers[nameof(record.FirstName)]],
                     LastName = values[this.headers[nameof(record.LastName)]],
                     DateOfBirth = dateOfBirth,
-                    WorkPlaceNumber = workPlaceNumber,
+                    Workplace = workPlaceNumber,
                     Salary = salary,
                     Department = department.ToString().ToUpper(CultureInfo.InvariantCulture)[0],
                 };
@@ -107,7 +107,7 @@ namespace FileCabinetApp.FileCabinetService
                 nameof(record.FirstName),
                 nameof(record.LastName),
                 nameof(record.DateOfBirth),
-                nameof(record.WorkPlaceNumber),
+                nameof(record.Workplace),
                 nameof(record.Salary),
                 nameof(record.Department),
             };

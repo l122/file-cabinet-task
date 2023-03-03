@@ -114,7 +114,7 @@ namespace FileCabinetApp.StaticClasses
             record.DateOfBirth = new DateTime(year, month, day);
 
             // Parse Work Place Number
-            record.WorkPlaceNumber = BitConverter.ToInt16(buffer, offset);
+            record.Workplace = BitConverter.ToInt16(buffer, offset);
             offset += sizeof(short);
 
             // Parse SalaryType
@@ -218,7 +218,7 @@ namespace FileCabinetApp.StaticClasses
                 if ((i < minimumParameters && logicalOperator.Equals(WhereStr, StringComparison.OrdinalIgnoreCase))
                     || logicalOperator.Equals(OrStr, StringComparison.OrdinalIgnoreCase))
                 {
-                    result = result.Concat(CreateQuery(enumerable, equalityOperator, field, value, negation));
+                    result = result.UnionBy(CreateQuery(enumerable, equalityOperator, field, value, negation), p => p.Id);
                 }
                 else if (logicalOperator.Equals(AndStr, StringComparison.Ordinal))
                 {
@@ -228,7 +228,7 @@ namespace FileCabinetApp.StaticClasses
                 i++;
             }
 
-            return result;
+            return result.OrderBy(p => p.Id);
         }
 
         /// <summary>
@@ -236,7 +236,7 @@ namespace FileCabinetApp.StaticClasses
         /// </summary>
         /// <param name="args">A <see cref="string"/> instance of fields and values.</param>
         /// <returns>A <see cref="Dictionary{TKey, TValue}"/> instance of parsed fields and their values.</returns>
-        public static Dictionary<string, string> ParseFields(string args)
+        public static Dictionary<string, string> ParseFieldsAndValues(string args)
         {
             Dictionary<string, string> result = new ();
 
@@ -269,7 +269,7 @@ namespace FileCabinetApp.StaticClasses
                 FirstName = record.FirstName,
                 LastName = record.LastName,
                 DateOfBirth = record.DateOfBirth,
-                WorkPlaceNumber = record.WorkPlaceNumber,
+                Workplace = record.Workplace,
                 Salary = record.Salary,
                 Department = record.Department,
             };
@@ -305,7 +305,7 @@ namespace FileCabinetApp.StaticClasses
                         var workplace = Converter.ShortConverter(fieldsToUpdate[key]);
                         if (workplace.Item1)
                         {
-                            newRecord.WorkPlaceNumber = workplace.Item3;
+                            newRecord.Workplace = workplace.Item3;
                             break;
                         }
                         else
@@ -426,7 +426,7 @@ namespace FileCabinetApp.StaticClasses
                         {
                             result =
                                 from record in result
-                                where record.WorkPlaceNumber == workplace.Item3
+                                where record.Workplace == workplace.Item3
                                 select record;
                         }
 
@@ -505,7 +505,7 @@ namespace FileCabinetApp.StaticClasses
                         {
                             result =
                                 from record in result
-                                where record.WorkPlaceNumber != workplace.Item3
+                                where record.Workplace != workplace.Item3
                                 select record;
                         }
 

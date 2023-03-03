@@ -78,6 +78,17 @@ namespace FileCabinetApp.Loggers
         }
 
         /// <inheritdoc/>
+        public IEnumerable<FileCabinetRecord> SelectRecords(string expression)
+        {
+            this.stopwatch.Restart();
+            var result = this.service.SelectRecords(expression);
+            this.stopwatch.Stop();
+            Log(this.stopwatch.ElapsedTicks, "SelectRecords");
+
+            return result;
+        }
+
+        /// <inheritdoc/>
         public IEnumerable<FileCabinetRecord> GetRecords()
         {
             this.stopwatch.Restart();

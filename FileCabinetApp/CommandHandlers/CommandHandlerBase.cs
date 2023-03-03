@@ -31,6 +31,13 @@ namespace FileCabinetApp.CommandHandlers
             new string[] { "insert", "inserts a record", "The 'insert (id, firstname, lastname, dateofbirth, workplace, salary, department) values ('id#', 'firstname', 'lastname', 'dd.mm.yyyy', 'place#', 'salary', 'department')' command inserts a record." },
             new string[] { "list", "prints all records", "The 'list' command prints all records." },
             new string[] { "purge", "removes records marked as deleted from the database", "The 'purge' command removes records marked as deleted from the database." },
+            new string[]
+            {
+                "select",
+                "displays records according to an expression",
+                "Ussage: select field1, field2 where field1 = 'value1' and not field2 = 'value2' or field3 != 'value3'"
+                + "\nSupported operators: and, or, not, =, !=",
+            },
             new string[] { "stat", "prints the number of records", "The 'stat' command prints the number of records." },
             new string[]
             {

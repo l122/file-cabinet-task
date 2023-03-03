@@ -46,7 +46,7 @@ namespace FileCabinetApp.FileCabinetService
         /// </summary>
         /// <value>Employee's work place number.</value>
         [XmlElement(ElementName = "workPlace")]
-        public short WorkPlaceNumber { get; set; }
+        public short Workplace { get; set; }
 
         /// <summary>
         /// Gets or sets employee's salary.
@@ -73,7 +73,7 @@ namespace FileCabinetApp.FileCabinetService
             builder.Append(CultureInfo.InvariantCulture, $"{this.FirstName}, ");
             builder.Append(CultureInfo.InvariantCulture, $"{this.LastName}, ");
             builder.Append(CultureInfo.InvariantCulture, $"{this.DateOfBirth.ToString("yyyy-MMM-dd", CultureInfo.InvariantCulture)}, ");
-            builder.Append(CultureInfo.InvariantCulture, $"{this.WorkPlaceNumber}, ");
+            builder.Append(CultureInfo.InvariantCulture, $"{this.Workplace}, ");
             builder.Append(CultureInfo.InvariantCulture, $"{this.Salary}, ");
             builder.Append(CultureInfo.InvariantCulture, $"{this.Department}");
             return builder.ToString();
