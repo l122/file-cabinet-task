@@ -72,12 +72,6 @@ namespace FileCabinetApp.FileCabinetService
         }
 
         /// <inheritdoc/>
-        public IEnumerable<FileCabinetRecord> GetRecords()
-        {
-            return new FilesystemEnumerable(this.fileStream);
-        }
-
-        /// <inheritdoc/>
         public IEnumerable<FileCabinetRecord> SelectRecords(string expression)
         {
             const string errorMessage = "Invalid parameters. Call 'help select' for help.";
@@ -195,45 +189,7 @@ namespace FileCabinetApp.FileCabinetService
         /// <inheritdoc/>
         public IFileCabinetServiceSnapshot MakeSnapshot()
         {
-            return new FileCabinetServiceSnapshot(this.GetRecords());
-        }
-
-        /// <inheritdoc/>
-        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
-        {
-            if (this.firstNameDictionary.TryGetValue(firstName.ToUpperInvariant(), out var list))
-            {
-                return new FilesystemEnumerable(this.fileStream, list);
-            }
-
-            return new FilesystemEnumerable(this.fileStream, new List<long>());
-        }
-
-        /// <inheritdoc/>
-        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
-        {
-            if (this.lastNameDictionary.TryGetValue(lastName.ToUpperInvariant(), out var list))
-            {
-                return new FilesystemEnumerable(this.fileStream, list);
-            }
-
-            return new FilesystemEnumerable(this.fileStream, new List<long>());
-        }
-
-        /// <inheritdoc/>
-        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(string dateOfBirthString)
-        {
-            if (DateTime.TryParse(dateOfBirthString, out DateTime dateOfBirth))
-            {
-                dateOfBirthString = dateOfBirth.ToString(DateMask, CultureInfo.InvariantCulture);
-            }
-
-            if (this.dateOfBirthDictionary.TryGetValue(dateOfBirthString, out var list))
-            {
-                return new FilesystemEnumerable(this.fileStream, list);
-            }
-
-            return new FilesystemEnumerable(this.fileStream, new List<long>());
+            return new FileCabinetServiceSnapshot(this.SelectRecords(string.Empty));
         }
 
         /// <inheritdoc/>

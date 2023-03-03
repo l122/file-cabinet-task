@@ -25,11 +25,9 @@ namespace FileCabinetApp.CommandHandlers
             },
             new string[] { "exit", "exits the application", "The 'exit' command exits the application." },
             new string[] { "export", "exports records to csv or xml", "The 'export <csv, xml> <file_name>' command exports records to a csv or xml file." },
-            new string[] { "find", "searches records", "The 'find <firstname, lastname, dateofbirth> <criterion>' command searches all records with <field> = <criterion>." },
             new string[] { "help", "prints the help screen", "The 'help' command prints the help screen." },
             new string[] { "import", "imports records from csv or xml", "The 'import <csv, xml> <file_name>' command imports records from a csv or xml file." },
             new string[] { "insert", "inserts a record", "The 'insert (id, firstname, lastname, dateofbirth, workplace, salary, department) values ('id#', 'firstname', 'lastname', 'dd.mm.yyyy', 'place#', 'salary', 'department')' command inserts a record." },
-            new string[] { "list", "prints all records", "The 'list' command prints all records." },
             new string[] { "purge", "removes records marked as deleted from the database", "The 'purge' command removes records marked as deleted from the database." },
             new string[]
             {

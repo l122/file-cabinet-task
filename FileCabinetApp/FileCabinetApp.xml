@@ -112,21 +112,6 @@
         <member name="M:FileCabinetApp.CommandHandlers.ExportCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
             <inheritdoc/>
         </member>
-        <member name="T:FileCabinetApp.CommandHandlers.FindCommandHandler">
-            <summary>
-            Handles the Find Command Request.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.CommandHandlers.FindCommandHandler.#ctor(FileCabinetApp.FileCabinetService.IFileCabinetService,System.Action{System.Collections.Generic.IEnumerable{FileCabinetApp.FileCabinetService.FileCabinetRecord}})">
-            <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.CommandHandlers.FindCommandHandler"/> class.
-            </summary>
-            <param name="fileCabinetService">A <see cref="T:FileCabinetApp.FileCabinetService.IFileCabinetService"/> specialized instance.</param>
-            <param name="printer">An <see cref="T:System.Action`1"/> specialized instance.</param>
-        </member>
-        <member name="M:FileCabinetApp.CommandHandlers.FindCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
-            <inheritdoc/>
-        </member>
         <member name="T:FileCabinetApp.CommandHandlers.HelpCommandHandler">
             <summary>
             Handles the Help Command Request.
@@ -178,21 +163,6 @@
             <param name="fileCabinetService">A <see cref="T:FileCabinetApp.FileCabinetService.IFileCabinetService"/> specialized instance.</param>
         </member>
         <member name="M:FileCabinetApp.CommandHandlers.InsertCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
-            <inheritdoc/>
-        </member>
-        <member name="T:FileCabinetApp.CommandHandlers.ListCommandHandler">
-            <summary>
-            Handles the Select Command Request.
-            </summary>
-        </member>
-        <member name="M:FileCabinetApp.CommandHandlers.ListCommandHandler.#ctor(FileCabinetApp.FileCabinetService.IFileCabinetService,System.Action{System.Collections.Generic.IEnumerable{FileCabinetApp.FileCabinetService.FileCabinetRecord}})">
-            <summary>
-            Initializes a new instance of the <see cref="T:FileCabinetApp.CommandHandlers.ListCommandHandler"/> class.
-            </summary>
-            <param name="fileCabinetService">A <see cref="T:FileCabinetApp.FileCabinetService.IFileCabinetService"/> specialized instance.</param>
-            <param name="printer">An <see cref="T:System.Action`1"/> specialized instance.</param>
-        </member>
-        <member name="M:FileCabinetApp.CommandHandlers.ListCommandHandler.Handle(FileCabinetApp.CommandHandlers.AppCommandRequest)">
             <inheritdoc/>
         </member>
         <member name="T:FileCabinetApp.CommandHandlers.MissedCommandHandler">
@@ -289,9 +259,6 @@
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService.CreateRecord(FileCabinetApp.FileCabinetService.FileCabinetRecord)">
             <inheritdoc/>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService.GetRecords">
-            <inheritdoc/>
-        </member>
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService.SelectRecords(System.String)">
             <inheritdoc/>
         </member>
@@ -302,15 +269,6 @@
             <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService.MakeSnapshot">
-            <inheritdoc/>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService.FindByFirstName(System.String)">
-            <inheritdoc/>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService.FindByLastName(System.String)">
-            <inheritdoc/>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService.FindByDateOfBirth(System.String)">
             <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetFilesystemService.FindById(System.Int32)">
@@ -380,9 +338,6 @@
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetMemoryService.CreateRecord(FileCabinetApp.FileCabinetService.FileCabinetRecord)">
             <inheritdoc/>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetService.FileCabinetMemoryService.GetRecords">
-            <inheritdoc/>
-        </member>
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetMemoryService.SelectRecords(System.String)">
             <inheritdoc/>
         </member>
@@ -393,15 +348,6 @@
             <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetMemoryService.MakeSnapshot">
-            <inheritdoc/>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.FileCabinetMemoryService.FindByFirstName(System.String)">
-            <inheritdoc/>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.FileCabinetMemoryService.FindByLastName(System.String)">
-            <inheritdoc/>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.FileCabinetMemoryService.FindByDateOfBirth(System.String)">
             <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.FileCabinetMemoryService.FindById(System.Int32)">
@@ -650,38 +596,11 @@
             <param name="record">A <see cref="T:FileCabinetApp.FileCabinetService.FileCabinetRecord"/> instance.</param>
             <returns>An <see cref="T:System.Int32"/> instance.</returns>
         </member>
-        <member name="M:FileCabinetApp.FileCabinetService.IFileCabinetService.GetRecords">
-            <summary>
-            Returns all records.
-            </summary>
-            <returns>An <see cref="T:System.Collections.Generic.IEnumerable`1"/> specialized instance.</returns>
-        </member>
         <member name="M:FileCabinetApp.FileCabinetService.IFileCabinetService.GetStat">
             <summary>
             Returns a pair of (total, deleted) number of records.
             </summary>
             <returns>The <see cref="T:System.Tuple"/> instance of total and deleted number of records.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.IFileCabinetService.FindByFirstName(System.String)">
-            <summary>
-            Searches for a record by first name.
-            </summary>
-            <param name="firstName">The <see cref="T:System.String"/> instance of the first name.</param>
-            <returns>An <see cref="T:System.Collections.Generic.IEnumerable`1"/> specialized instance.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.IFileCabinetService.FindByLastName(System.String)">
-            <summary>
-            Searches for a record by last name.
-            </summary>
-            <param name="lastName">The <see cref="T:System.String"/> instance of the last name.</param>
-            <returns>An <see cref="T:System.Collections.Generic.IEnumerable`1"/> specialized instance.</returns>
-        </member>
-        <member name="M:FileCabinetApp.FileCabinetService.IFileCabinetService.FindByDateOfBirth(System.String)">
-            <summary>
-            Searches for a record by date of birth.
-            </summary>
-            <param name="dateOfBirthString">The <see cref="T:System.String"/> instance of the date of birth.</param>
-            <returns>An <see cref="T:System.Collections.Generic.IEnumerable`1"/> specialized instance.</returns>
         </member>
         <member name="M:FileCabinetApp.FileCabinetService.IFileCabinetService.MakeSnapshot">
             <summary>
@@ -811,19 +730,7 @@
         <member name="M:FileCabinetApp.Loggers.ServiceLogger.Insert(FileCabinetApp.FileCabinetService.FileCabinetRecord)">
             <inheritdoc/>
         </member>
-        <member name="M:FileCabinetApp.Loggers.ServiceLogger.FindByFirstName(System.String)">
-            <inheritdoc/>
-        </member>
-        <member name="M:FileCabinetApp.Loggers.ServiceLogger.FindByLastName(System.String)">
-            <inheritdoc/>
-        </member>
-        <member name="M:FileCabinetApp.Loggers.ServiceLogger.FindByDateOfBirth(System.String)">
-            <inheritdoc/>
-        </member>
         <member name="M:FileCabinetApp.Loggers.ServiceLogger.FindById(System.Int32)">
-            <inheritdoc/>
-        </member>
-        <member name="M:FileCabinetApp.Loggers.ServiceLogger.GetRecords">
             <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.Loggers.ServiceLogger.GetStat">
@@ -870,19 +777,7 @@
         <member name="M:FileCabinetApp.Loggers.ServiceMeter.Insert(FileCabinetApp.FileCabinetService.FileCabinetRecord)">
             <inheritdoc/>
         </member>
-        <member name="M:FileCabinetApp.Loggers.ServiceMeter.FindByFirstName(System.String)">
-            <inheritdoc/>
-        </member>
-        <member name="M:FileCabinetApp.Loggers.ServiceMeter.FindByLastName(System.String)">
-            <inheritdoc/>
-        </member>
-        <member name="M:FileCabinetApp.Loggers.ServiceMeter.FindByDateOfBirth(System.String)">
-            <inheritdoc/>
-        </member>
         <member name="M:FileCabinetApp.Loggers.ServiceMeter.SelectRecords(System.String)">
-            <inheritdoc/>
-        </member>
-        <member name="M:FileCabinetApp.Loggers.ServiceMeter.GetRecords">
             <inheritdoc/>
         </member>
         <member name="M:FileCabinetApp.Loggers.ServiceMeter.GetStat">

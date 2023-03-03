@@ -50,12 +50,6 @@ namespace FileCabinetApp.FileCabinetService
         }
 
         /// <inheritdoc/>
-        public IEnumerable<FileCabinetRecord> GetRecords()
-        {
-            return new MemoryEnumerable(this.list);
-        }
-
-        /// <inheritdoc/>
         public IEnumerable<FileCabinetRecord> SelectRecords(string expression)
         {
             const string errorMessage = "Invalid parameters. Call 'help select' for help.";
@@ -123,44 +117,6 @@ namespace FileCabinetApp.FileCabinetService
         public IFileCabinetServiceSnapshot MakeSnapshot()
         {
             return new FileCabinetServiceSnapshot(new MemoryEnumerable(this.list));
-        }
-
-        /// <inheritdoc/>
-        public IEnumerable<FileCabinetRecord> FindByFirstName(string firstName)
-        {
-            if (this.firstNameDictionary.TryGetValue(firstName.ToUpperInvariant(), out List<FileCabinetRecord>? result))
-            {
-                return new MemoryEnumerable(result);
-            }
-
-            return new MemoryEnumerable();
-        }
-
-        /// <inheritdoc/>
-        public IEnumerable<FileCabinetRecord> FindByLastName(string lastName)
-        {
-            if (this.lastNameDictionary.TryGetValue(lastName.ToUpperInvariant(), out List<FileCabinetRecord>? result))
-            {
-                return new MemoryEnumerable(result);
-            }
-
-            return new MemoryEnumerable();
-        }
-
-        /// <inheritdoc/>
-        public IEnumerable<FileCabinetRecord> FindByDateOfBirth(string dateOfBirthString)
-        {
-            if (DateTime.TryParse(dateOfBirthString, out DateTime dateOfBirth))
-            {
-                dateOfBirthString = dateOfBirth.ToString(DateMask, CultureInfo.InvariantCulture);
-            }
-
-            if (this.dateOfBirthDictionary.TryGetValue(dateOfBirthString, out List<FileCabinetRecord>? result))
-            {
-                return new MemoryEnumerable(result);
-            }
-
-            return new MemoryEnumerable();
         }
 
         /// <inheritdoc/>
