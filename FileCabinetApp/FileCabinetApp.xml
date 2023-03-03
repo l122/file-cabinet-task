@@ -1060,6 +1060,23 @@
             <param name="validator">A <see cref="T:FileCabinetApp.Validators.ValidatorBuilder"/> instance object.</param>
             <returns>An <see cref="T:FileCabinetApp.Validators.IRecordValidator"/> instance.</returns>
         </member>
+        <member name="T:FileCabinetApp.StaticClasses.Memoizer">
+            <summary>
+            Helper class that implements memoization for the select records function in FileCabinetMemoryService.
+            </summary>
+        </member>
+        <member name="M:FileCabinetApp.StaticClasses.Memoizer.Memoize(System.Func{System.String,System.Collections.Generic.IEnumerable{FileCabinetApp.FileCabinetService.FileCabinetRecord}})">
+            <summary>
+            Stores the results of the input function.
+            </summary>
+            <param name="func">The input function.</param>
+            <returns>A <see cref="T:System.Func`2"/> instance of the function result.</returns>
+        </member>
+        <member name="M:FileCabinetApp.StaticClasses.Memoizer.MemoizeReset">
+            <summary>
+            Resets the memo.
+            </summary>
+        </member>
         <member name="T:FileCabinetApp.StaticClasses.Parser">
             <summary>
             Helper static class with parsing static functions.

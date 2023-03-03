@@ -52,33 +52,7 @@ namespace FileCabinetApp.FileCabinetService
         /// <inheritdoc/>
         public IEnumerable<FileCabinetRecord> SelectRecords(string expression)
         {
-            const string errorMessage = "Invalid parameters. Call 'help select' for help.";
-
-            if (string.IsNullOrEmpty(expression))
-            {
-                return new MemoryEnumerable(this.list);
-            }
-
-            IEnumerable<FileCabinetRecord> result;
-            var whereIndex = expression.IndexOf("where ", StringComparison.InvariantCultureIgnoreCase);
-            try
-            {
-                if (whereIndex != -1)
-                {
-                    result = Parser.ParseWhereExpression(new MemoryEnumerable(this.list), expression[whereIndex..]);
-                }
-                else
-                {
-                    result = new MemoryEnumerable(this.list);
-                }
-            }
-            catch (ArgumentException)
-            {
-                Console.WriteLine(errorMessage);
-                return new MemoryEnumerable(new List<FileCabinetRecord>());
-            }
-
-            return result;
+            return Memoizer.Memoize(this.SelectRecords1)(expression);
         }
 
         /// <inheritdoc/>
@@ -109,6 +83,8 @@ namespace FileCabinetApp.FileCabinetService
             this.list.Sort((x, y) => x.Id.CompareTo(y.Id));
 
             this.AddRecordToSearchDictionaries(record);
+
+            Memoizer.MemoizeReset();
 
             return true;
         }
@@ -222,6 +198,8 @@ namespace FileCabinetApp.FileCabinetService
 
             returnMessage.Append(Environment.NewLine);
 
+            Memoizer.MemoizeReset();
+
             return returnMessage.ToString();
         }
 
@@ -301,6 +279,9 @@ namespace FileCabinetApp.FileCabinetService
             }
 
             returnMessage.Append(Environment.NewLine);
+
+            Memoizer.MemoizeReset();
+
             return returnMessage.ToString();
         }
 
@@ -395,6 +376,37 @@ namespace FileCabinetApp.FileCabinetService
         private int GetListId(int id)
         {
             return this.list.FindIndex(p => p.Id == id);
+        }
+
+        private IEnumerable<FileCabinetRecord> SelectRecords1(string expression)
+        {
+            const string errorMessage = "Invalid parameters. Call 'help select' for help.";
+
+            if (string.IsNullOrEmpty(expression))
+            {
+                return new MemoryEnumerable(this.list);
+            }
+
+            IEnumerable<FileCabinetRecord> result;
+            var whereIndex = expression.IndexOf("where ", StringComparison.InvariantCultureIgnoreCase);
+            try
+            {
+                if (whereIndex != -1)
+                {
+                    result = Parser.ParseWhereExpression(new MemoryEnumerable(this.list), expression[whereIndex..]);
+                }
+                else
+                {
+                    result = new MemoryEnumerable(this.list);
+                }
+            }
+            catch (ArgumentException)
+            {
+                Console.WriteLine(errorMessage);
+                return new MemoryEnumerable(new List<FileCabinetRecord>());
+            }
+
+            return result;
         }
     }
 }
