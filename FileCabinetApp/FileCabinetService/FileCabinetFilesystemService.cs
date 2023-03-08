@@ -785,16 +785,16 @@ namespace FileCabinetApp.FileCabinetService
 
             // Update firstNameDictionary
             this.firstNameDictionary.TryGetValue(record.FirstName.ToUpperInvariant(), out var recordList);
-            recordList!.Remove(pos);
-            if (recordList!.Count == 0)
+            recordList?.Remove(pos);
+            if (recordList?.Count == 0)
             {
                 this.firstNameDictionary.Remove(record.FirstName.ToUpperInvariant());
             }
 
             // Update lastNameDictionary
             this.lastNameDictionary.TryGetValue(record.LastName.ToUpperInvariant(), out recordList);
-            recordList!.Remove(pos);
-            if (recordList!.Count == 0)
+            recordList?.Remove(pos);
+            if (recordList?.Count == 0)
             {
                 this.lastNameDictionary.Remove(record.LastName.ToUpperInvariant());
             }
@@ -802,8 +802,8 @@ namespace FileCabinetApp.FileCabinetService
             // Update dateOfBirthDictionary
             string dateOfBirthString = record.DateOfBirth.ToString(DateMask, CultureInfo.InvariantCulture);
             this.dateOfBirthDictionary.TryGetValue(dateOfBirthString, out recordList);
-            recordList!.Remove(pos);
-            if (recordList!.Count == 0)
+            recordList?.Remove(pos);
+            if (recordList?.Count == 0)
             {
                 this.dateOfBirthDictionary.Remove(dateOfBirthString);
             }
