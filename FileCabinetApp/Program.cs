@@ -98,10 +98,10 @@ namespace FileCabinetApp
                 Console.Write("Work Place Number: ");
                 short workPlaceNumber = ReadInput(Converter.ShortConverter);
 
-                Console.Write("SalaryType: ");
+                Console.Write("Salary: ");
                 decimal salary = ReadInput(Converter.DecimalConverter);
 
-                Console.Write("DepartmentType (one letter): ");
+                Console.Write("Department (one letter): ");
                 char department = ReadInput(Converter.CharConverter);
 
                 record = new FileCabinetRecord()
