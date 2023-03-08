@@ -7,14 +7,16 @@ It's a console application of managing user data.
 - IDE: Microsoft Visual Studio 2022
 
 # How to use it on Windows
-1) Clone the repository to your computer.
-2) Go to the downloaded folder and open the FileCabinet.sln with Microsoft Visual Studio.
-3) Press F5 to build and run the application.
-4) Type 'help' in the appeared console window to see the available commands.
+1) Download the [release](https://github.com/l122/file-cabinet-task/releases/tag/v.1.0.0)
+2) Go to the downloaded folder.
+3) Download [validation-rules.json](https://github.com/l122/file-cabinet-task/blob/main/ValidationRules/validation-rules.json) in this folder.
+4) Open a command prompt in this folder.
+5) Type 'FileCabinetGenerator.exe args' (see the generator arguments list below) to generate some sample data.
+6) Type 'FileCabinetApp.exe args' (see the application arguments list below) to start the program.
+7) Type 'help' in the appeared console window to see the available commands.
 
 # Application arguments
-An alternative way of running the application is to use the application arguments.
-To do so, open the command prompt in the build folder (*file-cabinet-task\FileCabinetApp\bin\Debug\net7.0*) where the executable files are located, and type 'FileCabinetApp.exe args', where args could be any of the following flags:
+The app can include any of the arguments below in any order:
 - Validation rules options: -v | --validation-rules= default | custom
 - Storage options: -s | --storage= memory | file
 - Use stopwatch flag: --use-stopwatch
@@ -24,15 +26,14 @@ Example: FileCabinetApp.exe -v custom -s file
 
 The above command would start the application with custom data validation rules and save all the data to a file in the build folder.
 
-# How to generate sample records
-1) Go to the *file-cabinet-task\FileCabinetGenerator\bin\Debug\net7.0* folder.
-2) Open a command prompt in this folder.
-3) Type 'FileCabinetGenerator.exe args', where args should be the following:
+# Generator arguments
+The generator must include all of the argument below in any order:
 - Output file type options: -t | --output-type= csv | xml
 - Name of output file: -o | --output=
 - Records amount: -a | --records-amount=
 - Starting record id: -i | --start-id=
+- Validation rules options: -v | --validation-rules= default | custom
 
-Example: FileCabinetGenerator.exe -t csv -o data.csv -a 1000 -i 1
+Example: FileCabinetGenerator.exe -t csv -o data.csv -a 1000 -i 1 -v default
 
-This would generate data.csv file with 1000 records starting with id = 1. This generated file could be used for importing data in File Cabinet App.
+This would generate data.csv file with 1000 records starting with id = 1 with default validation rules. This generated file could be used for importing data in File Cabinet App.
